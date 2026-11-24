@@ -1,0 +1,200 @@
+<div class="d-flex flex-row">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  @if (!isEmptyObject(appData)) {
+  <div class="container-fluid px-3 py-4 mx-auto">
+    <div class="row d-flex justify-content-sm-start">
+      <div class="col-xl-10 col-lg-12 col-md-12 col-12">
+        <div class="card shadow-lg rounded-lg border-0">
+          <div class="card-body" style="max-height: 90vh; overflow-y: auto">
+
+            <!-- Top Header + Status & Login Flag Bar -->
+            <div class="d-flex justify-content-between align-items-center w-100 mb-3 flex-wrap gap-2">
+              <div>
+                <h5 class="fw-semibold mb-1">
+                  Application No: <span class="text-primary">{{ appData?.EalApplicationNo || appData?.AppId }}</span>
+                </h5>
+                <div class="d-flex align-items-center gap-2 flex-wrap mt-1">
+                  <span class="badge px-3 py-1 fw-semibold" [ngClass]="applicationStatusFlag.badgeClass">
+                    <i class="fa me-1" [ngClass]="applicationStatusFlag.icon"></i>
+                    Status: {{ applicationStatusFlag.label }}
+                  </span>
+                  <span class="badge bg-light text-dark border px-3 py-1 fw-semibold">
+                    <i class="fa fa-user-shield text-primary me-1"></i>
+                    {{ applicationStatusFlag.deskFlag }}
+                  </span>
+                </div>
+              </div>
+
+              <div class="text-end">
+                <div class="fw-semibold mb-2">
+                  Date: <span class="text-primary">{{ (appData?.CreateDate || appData?.CreatedAt) | date: "dd-MM-yyyy" }}</span>
+                </div>
+                <div>
+                  <button class="btn btn-success btn-sm me-2" (click)="printApplication()">
+                    <i class="fa fa-print me-1"></i> Print Document
+                  </button>
+                  <button class="btn btn-secondary btn-sm" (click)="goBack()">
+                    <i class="fa fa-arrow-left me-1"></i> Back
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <hr>
+
+            <!-- Company Details (District ID resolved to District Name) -->
+            <h6 class="text-primary fw-bold mb-2"><i class="fa fa-building me-2"></i>Company Details</h6>
+            <div class="p-3 bg-light rounded mb-4 shadow-sm">
+              <p class="mb-1"><strong>Name:</strong> {{ appData?.Company_name || appData?.Company_Name }}</p>
+              <p class="mb-1"><strong>Address:</strong> {{ appData?.Address }}</p>
+              <p class="mb-1">
+                <strong>District:</strong> {{ resolvedDistrictName }} |
+                <strong>State:</strong> {{ appData?.State }}
+              </p>
+              <p class="mb-0">
+                <strong>Pin:</strong> {{ appData?.Pin }} |
+                <strong>Mode of Transport:</strong> {{ appData?.ModeOfTransport }} |
+                <strong>Route:</strong> {{ appData?.Route }}
+              </p>
+            </div>
+
+            <!-- Authorised Person -->
+            <h6 class="text-primary fw-bold mb-2"><i class="fa fa-user-check me-2"></i>Authorised Person</h6>
+            <div class="p-3 bg-light rounded mb-4 shadow-sm">
+              <p class="mb-1"><strong>Name:</strong> {{ appData?.AuthPersonName }}</p>
+              <p class="mb-1"><strong>Phone:</strong> {{ appData?.AuthPersonPhone }}</p>
+              <p class="mb-0"><strong>Address:</strong> {{ appData?.AuthPersonAdd }}</p>
+            </div>
+
+            <!-- Purchase Orders (Clean EAL Ledger Columns) -->
+            <h6 class="text-primary fw-bold mt-4"><i class="fa fa-file-text me-2"></i> Purchase Orders</h6>
+            <div class="table-responsive table-scroll mb-3">
+              <table class="table table-hover table-bordered align-middle text-center">
+                <thead class="table-primary">
+                  <tr>
+                    <th>Purchase Order Date</th>
+                    <th>Purchase Order Number</th>
+                    <th>Total EAL Qty</th>
+                    <th>Remaining Qty</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (po of filteredPurchaseOrders; track po) {
+                  <tr>
+                    <td>{{ po.PurchaseOrderDate | date: 'dd/MM/yyyy' }}</td>
+                    <td><strong>{{ po.PurchaseOrderNumber }}</strong></td>
+                    <td>{{ po.TotalQty | number }}</td>
+                    <td class="fw-bold text-success">{{ po.RemainingQty | number }}</td>
+                    <td>
+                      <span class="badge"
+                        [ngClass]="po.RemainingQty === 0 || po.Status === 'Fully Used' ? 'bg-secondary' : 'bg-warning text-dark'">
+                        {{ po.Status || (po.RemainingQty === 0 ? 'Fully Used' : 'Partially Used') }}
+                      </span>
+                    </td>
+                  </tr>
+                  }
+                  @if (!filteredPurchaseOrders || filteredPurchaseOrders.length === 0) {
+                  <tr>
+                    <td colspan="5" class="text-muted text-center py-3"><b>No Purchase Order records found</b></td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Challan Details -->
+            <h6 class="text-primary fw-bold mt-4"><i class="fa fa-file me-2"></i> Challan Details</h6>
+            <div class="table-responsive mb-3">
+              <table class="table table-hover table-bordered align-middle text-center">
+                <thead class="table-primary">
+                  <tr>
+                    <th>Challan Date</th>
+                    <th>Challan Number</th>
+                    <th>Challan Amount</th>
+                    <th>Remaining Amount</th>
+                    <th>Status</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (ch of filteredChallans; track ch) {
+                  <tr>
+                    <td>{{ ch.ChallanDate | date: 'dd/MM/yyyy' }}</td>
+                    <td><strong>{{ ch.ChallanNo }}</strong></td>
+                    <td>₹ {{ ch.ChallanAmount | number:'1.2-2' }}</td>
+                    <td class="fw-bold text-success">₹ {{ ch.RemainingAmount | number:'1.2-2' }}</td>
+                    <td>
+                      <span class="badge"
+                        [ngClass]="ch.Status === 'Issued' || ch.Status === 'Success' || ch.Status === 'Used' ? 'bg-success' : 'bg-warning text-dark'">
+                        {{ ch.Status || 'Pending' }}
+                      </span>
+                    </td>
+                  </tr>
+                  }
+                  @if (!filteredChallans || filteredChallans.length === 0) {
+                  <tr>
+                    <td colspan="5" class="text-muted text-center py-3"><b>No Challan Details available</b></td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+            <!-- Demand Details & Mapped Ranges -->
+            <h6 class="text-primary fw-bold mb-2"><i class="fa fa-list-alt me-2"></i> Demand Details & Mapped Ranges</h6>
+            <div class="table-responsive mb-4 shadow-sm rounded">
+              <table class="table table-hover table-bordered align-middle m-0">
+                <thead class="table-primary text-center">
+                  <tr>
+                    <th>Liquor Type</th>
+                    <th>Label Applied Quantity</th>
+                    <th>Label Assigned Quantity</th>
+                    <th>Start No - End No Ranges</th>
+                  </tr>
+                </thead>
+                <tbody class="text-center">
+                  @for (demand of (appData?.DemandDataObjectViewMode || appData?.DemandDataObject); track demand) {
+                  <tr>
+                    <td class="fw-semibold text-uppercase">{{ demand.type }}</td>
+                    <td><strong>{{ demand.qty || 0 }}</strong></td>
+                    <td>
+                      <span class="fw-bold" [ngClass]="demand.assignedQuantity > 0 ? 'text-success' : 'text-danger'">
+                        {{ demand.assignedQuantity > 0 ? demand.assignedQuantity : 0 }}
+                      </span>
+                    </td>
+                    <td class="text-center">
+                      <span class="badge p-2 fs-6 w-100 text-center text-wrap font-monospace"
+                        [ngClass]="demand.assignedQuantity > 0 ? 'bg-success text-white' : 'bg-warning text-dark'">
+                        {{ demand.rangeDisplay_text || '-- No Labels Assigned --' }}
+                      </span>
+                    </td>
+                  </tr>
+                  }
+                  @if (!(appData?.DemandDataObjectViewMode || appData?.DemandDataObject)?.length) {
+                  <tr>
+                    <td colspan="4" class="text-muted">No Demand Details available</td>
+                  </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+
+
+            <!-- Status -->
+            <h6 class="text-primary fw-bold mb-2"><i class="fa fa-folder-open me-2"></i> Status</h6>
+            <div class="table-responsive shadow-sm rounded mb-4">
+              <textarea class="form-control bg-light" rows="3"
+                [value]="appData?.AdminRemarks || applicationStatusFlag.deskFlag" disabled
+                placeholder="No remarks available..."></textarea>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+  }
+</div>

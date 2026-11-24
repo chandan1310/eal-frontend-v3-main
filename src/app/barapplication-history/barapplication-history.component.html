@@ -1,0 +1,168 @@
+<div class="d-flex flex-row" style="background-color: #f4f6f9; min-height: 100vh;">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  @if (isEmptyObject(selectedApplication)) {
+    <div class="container-fluid px-4 py-4" style="margin-left: 15px; max-width: calc(100% - 15px);">
+      <div class="row mb-4 mt-2">
+        <div class="col-12">
+          <div class="card border-0 shadow-sm rounded-3 overflow-hidden">
+            <div class="card-body text-center py-4" style="background-color: #143366;">
+              <h3 class="fw-bold text-white mb-1" style="font-family: 'Segoe UI', system-ui, sans-serif; letter-spacing: 0.5px; font-size: 1.6rem;">
+                Application History (District/Bar)
+              </h3>
+              <p class="text-white-50 small mb-0 tracking-wider text-uppercase" style="font-size: 0.75rem; font-weight: 500;">
+                Review and manage your real-time entry logs
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="card border-0 shadow-sm rounded-3 mb-4" style="background-color: #ffffff; border: 1px solid #eef2f6 !important;">
+        <div class="card-body py-2.5 px-4">
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-4">
+            <div class="d-flex align-items-center gap-3 flex-grow-1 flex-sm-grow-0">
+              <div class="d-flex align-items-center gap-2">
+                <span class="fw-bold text-secondary text-uppercase text-nowrap" style="font-size: 0.72rem; letter-spacing: 0.5px;">FY:</span>
+                <select class="form-select border-2 py-1.5 px-3" style="border-color: #e2e8f0; border-radius: 6px; font-size: 0.85rem; min-width: 140px;" [(ngModel)]="filter.financialYear" (change)="applyFilter()">
+                  <option value="">Select Year</option>
+                  @for (fy of financialYears; track fy) {
+                    <option [value]="fy">{{ fy }}</option>
+                  }
+                </select>
+              </div>
+              <div class="d-flex align-items-center gap-2">
+                <span class="fw-bold text-secondary text-uppercase text-nowrap" style="font-size: 0.72rem; letter-spacing: 0.5px;">Status:</span>
+                <select class="form-select border-2 py-1.5 px-3" style="border-color: #e2e8f0; border-radius: 6px; font-size: 0.85rem; min-width: 150px;" [(ngModel)]="filter.status" (change)="applyFilter()">
+                  <option value="">Select Status</option>
+                  @for (s of allStatus; track s) {
+                    <option [value]="s.Status_Id">{{ s.Status_Name }}</option>
+                  }
+                </select>
+              </div>
+            </div>
+            <div style="min-width: 320px; max-width: 450px;" class="flex-grow-1">
+              <div class="input-group">
+                <span class="input-group-text bg-white border-2 border-end-0" style="border-color: #e2e8f0; border-radius: 6px 0 0 6px;">
+                  <i class="fa fa-search text-muted"></i>
+                </span>
+                <input type="text" class="form-control border-2 border-start-0 py-1.5" style="border-color: #e2e8f0; border-radius: 0 6px 6px 0; font-size: 0.88rem;" placeholder="Quick Search...">
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      @if (loader) {
+        <div class="d-flex justify-content-center align-items-center py-5 my-5">
+          <div class="spinner-border text-primary" role="status" style="width: 3rem; height: 3rem;">
+            <span class="visually-hidden">Loading...</span>
+          </div>
+        </div>
+      }
+      @if (!loader && applicationHistory.length === 0) {
+        <div class="card border-0 shadow-sm rounded-3 p-5 text-center bg-white">
+          <i class="fa fa-folder-open text-muted mb-3" style="font-size: 3rem;"></i>
+          <h5 class="text-secondary fw-semibold">No records found</h5>
+          <p class="text-muted small mb-0">Try adjusting your filters or search criteria above.</p>
+        </div>
+      }
+      @if (!loader && applicationHistory.length > 0) {
+        <div class="pe-1" style="max-height: 72vh; overflow-y: auto;">
+          @for (app of applicationHistory; track app; let i = $index) {
+            <div class="card border-0 shadow-sm rounded-3 mb-3 overflow-hidden bg-white" style="border: 1px solid #eef2f6 !important;">
+              <div class="px-4 py-2.5 text-dark fw-medium d-flex justify-content-between align-items-center border-bottom" style="background-color: #f8fafc; font-size: 0.88rem;">
+                <div class="d-flex align-items-center gap-2">
+                  <span class="text-secondary">S.No: <strong class="text-dark fw-bold">{{ i + 1 }}</strong></span>
+                  <span class="text-muted opacity-50">|</span>
+                  <span class="text-secondary">Date: <strong class="text-dark fw-bold">{{ app.CreateDate | date: "dd-MM-yyyy" }}</strong></span>
+                  <span class="text-muted opacity-50">|</span>
+                  <span class="text-secondary">ID: <strong class="text-dark fw-bold">{{ app.EalApplicationNo }}</strong></span>
+                </div>
+                <div>
+                  <span class="badge bg-light text-secondary border px-2 py-1 fw-semibold" style="font-size: 0.75rem; border-color: #e2e8f0 !important; border-radius: 4px;">District/Bar Application</span>
+                </div>
+              </div>
+              <div class="card-body p-4">
+                <div class="row align-items-start g-3">
+                  <div class="col-md-4 border-end-md">
+                    <small class="text-uppercase fw-bold text-secondary d-block mb-2" style="font-size: 0.72rem; letter-spacing: 0.5px; color: #64748b !important;">Challan Details</small>
+                    <div class="d-flex flex-column gap-2">
+                      @for (challan of app.ChallanList; track challan) {
+                        <div class="d-flex align-items-start gap-2 mb-1">
+                          <i class="fa fa-credit-card text-muted mt-1" style="font-size: 0.85rem; width: 15px;"></i>
+                          <span class="small text-dark fw-semibold" style="line-height: 1.4; color: #1e293b !important;">
+                            <strong>{{ challan.ChallanNo }}</strong> - ₹{{ challan.Amount | number }} <br>
+                            <small class="text-muted fw-normal">{{ challan.BankName }} | {{ challan.ChallanDate | date:'dd-MM-yyyy' }}</small>
+                          </span>
+                        </div>
+                      }
+                      @if (!app.ChallanList || app.ChallanList.length === 0) {
+                        <div class="small text-muted">—</div>
+                      }
+                    </div>
+                  </div>
+                  <div class="col-md-3 border-end-md">
+                    <small class="text-uppercase fw-bold text-secondary d-block mb-2" style="font-size: 0.72rem; letter-spacing: 0.5px; color: #64748b !important;">Demand Matrix</small>
+                    <div class="d-flex align-items-start gap-2">
+                      <i class="fa fa-cubes text-muted mt-1" style="font-size: 0.85rem; width: 15px;"></i>
+                      <span class="small text-dark fw-semibold" style="line-height: 1.5; color: #1e293b !important;">
+                        @for (demand of app.DemandNos.split(', '); track demand) {
+                          <span>
+                            {{ demand }}<br>
+                          </span>
+                        }
+                      </span>
+                    </div>
+                  </div>
+                  <div class="col-md-3 border-end-md">
+                    <small class="text-uppercase fw-bold text-secondary d-block mb-2" style="font-size: 0.72rem; letter-spacing: 0.5px; color: #64748b !important;">Status & Remarks</small>
+                    <div class="d-flex flex-column gap-2">
+                      <div>
+                  <!-- <span class="badge px-3 py-1.5 d-inline-flex align-items-center gap-2" [ngClass]="{
+                        'bg-success-subtle text-success': app.Status === '3' || app.StatusName === 'Completed',
+                        'bg-danger-subtle text-danger': app.Status === '2' || app.StatusName === 'Rejected',
+                        'bg-warning-subtle text-warning': app.Status === '1' || app.StatusName === 'Pending' || (app.StatusName !== 'Completed' && app.StatusName !== 'Rejected')
+                      }" style="font-size: 0.78rem; font-weight: 600; border-radius: 6px !important;">
+                          <span class="d-inline-block rounded-circle" style="width: 6px; height: 6px; background-color: currentColor;"></span>
+                          {{ app.StatusName || 'Pending' }}
+                        </span> -->
+                         <span class="badge px-3 py-1.5 d-inline-flex align-items-center gap-2" [ngClass]="{
+    'bg-success-subtle text-success': app.StatusName === 'Completed' || app.StatusName === 'Issued' || app.Status === '3' || app.Status === '14', 
+    'bg-danger-subtle text-danger': app.StatusName === 'Rejected' || app.Status === '2' || app.Status === '4', 
+    'bg-warning-subtle text-warning': app.StatusName === 'Pending' || app.StatusName === 'Approved' || app.Status === '1' || app.Status === '5'
+  }">
+                  <span class="d-inline-block rounded-circle"
+                    style="width: 6px; height: 6px; background-color: currentColor;"></span>
+                  {{ app.StatusName || 'Pending' }}
+                </span>
+                      </div>
+                      <div class="text-secondary small mt-1" style="line-height: 1.4; font-size: 0.85rem;">
+                        <span class="fw-semibold text-dark">Remark:</span>
+                        {{ (app.AdminRemarks && app.AdminRemarks.replace(',','').trim() !== '') ? app.AdminRemarks : '—' }}
+                      </div>
+                    </div>
+                  </div>
+                  <div class="col-md-2 text-end ps-2 align-self-center">
+                    @if (['1', '3', '4', '5', '6','14'].includes(app.Status)) {
+                      <button class="btn btn-primary py-2 px-3 w-100 rounded-3 d-flex align-items-center justify-content-center gap-2" (click)="onActionClick('view', app)" style="background-color: #143366; border-color: #143366; font-size: 0.85rem; font-weight: 500;">
+                        <i class="fa fa-eye"></i>
+                        <span>View Details</span>
+                      </button>
+                    }
+                    @if (app.Status == '2') {
+                      <button class="btn btn-success py-2 px-3 w-100 rounded-3 d-flex align-items-center justify-content-center gap-2" (click)="onActionClick('edit', app)" style="font-size: 0.85rem; font-weight: 500;">
+                        <i class="fa fa-edit"></i>
+                        <span>Edit Request</span>
+                      </button>
+                    }
+                  </div>
+                </div>
+              </div>
+            </div>
+          }
+        </div>
+      }
+    </div>
+  }
+</div>

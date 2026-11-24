@@ -1,0 +1,120 @@
+<div class="page-container" (mousemove)="onMouseMove($event)">
+
+  <div class="bg-shapes">
+    <span class="shape s1"></span><span class="shape s2"></span><span class="shape s3"></span>
+    <span class="shape s4"></span><span class="shape s5"></span><span class="shape s6"></span>
+    <span class="shape s7"></span><span class="shape s8"></span><span class="shape s9"></span>
+    <span class="shape s10"></span><span class="shape s11"></span><span class="shape s12"></span>
+    <span class="shape s13"></span><span class="shape s14"></span><span class="shape s15"></span>
+    <span class="shape s16"></span><span class="shape s17"></span><span class="shape s18"></span>
+    <span class="shape s19"></span><span class="shape s20"></span><span class="shape s21"></span>
+    <span class="shape s22"></span><span class="shape s23"></span><span class="shape s24"></span>
+    <span class="shape s25"></span><span class="shape s26"></span><span class="shape s27"></span>
+    <span class="shape s28"></span><span class="shape s29"></span><span class="shape s30"></span>
+  </div>
+
+  <div class="login-card">
+
+    <div class="brand-section">
+      <div class="brand-content">
+        <div class="logo"></div>
+        <h4>EXCISE ADHESIVE LABELS (EAL)</h4>
+        <div class="illustration"></div>
+      </div>
+    </div>
+
+    <div class="form-section">
+
+      <div class="login-top">
+        <h3>{{ isOtpStep ? 'Security Verification' : 'Login' }}</h3>
+      </div>
+
+      <form [formGroup]="myLogin" (ngSubmit)="getLogin()" [hidden]="isOtpStep">
+        <div class="form-group">
+          <div class="input-container">
+            <label class="floating-label">Username:</label>
+            <input type="text" formControlName="usrIDtxt" autocomplete="username" />
+          </div>
+        </div>
+
+        <div class="form-group">
+          <div class="input-container">
+            <label class="floating-label">Password:</label>
+            <input type="password" formControlName="usrPWDtxt" autocomplete="current-password" />
+          </div>
+        </div>
+
+        <div class="form-group captcha-group">
+          <div class="captcha-row-wrapper">
+            <div class="captcha-display">
+              <canvas #captchaCanvas width="140" height="35"></canvas>
+              <button type="button" class="refresh-btn" (click)="generateCaptcha()">
+                <i class="fa fa-rotate-right"></i>
+              </button>
+            </div>
+            <input
+              type="text"
+              placeholder="Enter captcha"
+              [(ngModel)]="enteredCaptcha"
+              [ngModelOptions]="{ standalone: true }"
+              class="captcha-input"
+            />
+          </div>
+        </div>
+
+        <button class="login-btn" type="submit" [disabled]="myLogin.invalid || isSubmitting">
+          {{ isSubmitting ? 'Sending OTP...' : 'Send OTP' }}
+        </button>
+
+        <div class="footer-link">
+          <!-- <a href="http://excise.cg.nic.in" target="_blank">
+            Back to MainPage
+          </a> -->
+        </div>
+      </form>
+
+      @if (isOtpStep) {
+        <div class="otp-container">
+          <p class="otp-info-text" style="color: #ffffff; opacity: 0.8; font-size: 14px; margin-bottom: 20px;">
+            An OTP has been sent to your registered mobile number. Please enter it below to complete verification.
+          </p>
+
+          <div class="form-group">
+            <div class="input-container">
+              <label class="floating-label">Enter OTP:</label>
+              <input
+                type="text"
+                maxlength="6"
+                [(ngModel)]="enteredOtp"
+                placeholder="******"
+                style="letter-spacing: 4px; font-weight: bold; text-align: center;"
+              />
+            </div>
+          </div>
+
+          <button
+            class="login-btn"
+            type="button"
+            [disabled]="!enteredOtp || enteredOtp.length < 4 || isSubmitting"
+            (click)="verifyOtp()"
+          >
+            {{ isSubmitting ? 'Verifying...' : 'Verify & Login' }}
+          </button>
+
+          <div class="footer-link">
+            <a
+              href="javascript:void(0)"
+              (click)="backToLoginForm()"
+              style="color: #ffaa00;"
+            >
+              <i class="fa fa-arrow-left"></i> Back to Login
+            </a>
+          </div>
+        </div>
+      }
+
+    </div>
+
+  </div>
+
+</div>

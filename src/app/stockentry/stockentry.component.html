@@ -1,0 +1,225 @@
+<div style="display: flex; flex-direction: row">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="container-fluid px-4 py-4 mx-auto" style="overflow-x: auto; background: #f4f7fe; min-height: 100vh;">
+    <div class="row justify-content-center h-90">
+      <div class="col-12">
+        <div class="card app-wrapper shadow-sm" style="min-height: 80vh; border: 0;">
+          <div class="d-flex justify-content-between align-items-center p-4">
+            <div class="flex-grow-1 text-center">
+              <h5 class="mb-0">Stock Entry · Dispatch to Excise Office</h5>
+            </div>
+          </div>
+
+          <!-- Tab Navigation -->
+          <ul class="nav nav-tabs" id="stockEntryTabs" role="tablist">
+            <li class="nav-item" role="presentation">
+              <button class="nav-link active" id="create-tab" data-bs-toggle="tab" data-bs-target="#create"
+                type="button" role="tab" aria-controls="create" aria-selected="true">
+                New Dispatch
+              </button>
+            </li>
+            <li class="nav-item" role="presentation">
+              <button class="nav-link" id="manage-tab" data-bs-toggle="tab" data-bs-target="#existingDC" type="button"
+                role="tab" aria-controls="manage" aria-selected="false">
+                Manage Existing DC
+              </button>
+            </li>
+          </ul>
+
+          <!-- Tab Content -->
+          <div class="tab-content p-4" id="stockEntryTabsContent">
+            <!-- Create Fresh Stock Entry Tab -->
+            <div class="tab-pane fade show active" id="create" role="tabpanel" aria-labelledby="create-tab">
+              <!-- Dispatch against an approved indent (Nashik) -->
+              <app-dispatch-entry></app-dispatch-entry>
+                        </div>
+
+                        <!-- Manage Existing DC Tab -->
+                        <div class="tab-pane fade" id="existingDC" role="tabpanel" aria-labelledby="manage-tab">
+                          <div class="mb-3 d-flex align-items-center">
+                            <div class="flex-grow-1">
+                              <label class="form-control-label">Search DC Number</label>
+                              <input type="text" class="form-control" [(ngModel)]="searchDC" placeholder="Enter DC Number" />
+                            </div>
+                            <div class="flex-grow-1 ms-2">
+                              <label class="form-control-label">Select Date</label>
+                              <input type="date" class="form-control" [(ngModel)]="searchDate" />
+                            </div>
+                            <button class="btn btn-primary ms-2 mt-4" (click)="searchDcNumber()">
+                              <i class="fa fa-search"></i> Search
+                            </button>
+                            <button class="btn btn-primary ms-2 mt-4" (click)="clearSearch()">
+                              <i class="fa fa-filter"></i> Clear
+                            </button>
+                          </div>
+
+                          @if (existingDCsData['isData']) {
+                            <div class="row g-3 mb-4">
+                              <div class="col-md-3">
+                                <label class="form-control-label">Financial Year</label>
+                                <select class="form-select" id="financialYear" disabled>
+                                  <option>{{ existingDCsData.FinancialYear }}</option>
+                                </select>
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-control-label">Receive Date</label>
+                                <input type="date" class="form-control" id="entryDate" [value]="existingDCsData.EntryDate" disabled />
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-control-label">DC No</label>
+                                <input type="text" class="form-control" id="DCnumber" [value]="existingDCsData.DC_No" disabled />
+                              </div>
+                              <div class="col-md-3">
+                                <label class="form-control-label">Place From</label>
+                                <select class="form-select" id="placefrom" disabled>
+                                  <option>{{ existingDCsData.FromPlaceName }}</option>
+                                </select>
+                              </div>
+                            </div>
+                          }
+
+                          @if (existingDCsData['isData']) {
+                            <div class="table-responsive">
+                              <table class="table table-bordered">
+                                <thead>
+                                  <tr>
+                                    <th>Liquor Type</th>
+                                    <th>Box No</th>
+                                    <th>Start No</th>
+                                    <th>End No</th>
+                                  </tr>
+                                </thead>
+                                <tbody>
+                                  @if (isLoading) {
+                                    <tr>
+                                      <td colspan="9" class="text-center">
+                                        <div class="spinner-border text-primary"></div>
+                                      </td>
+                                    </tr>
+                                  }
+                                  @for (dc of existingDCsData['data']; track dc) {
+                                    <tr>
+                                      <td>{{ dc.liquorType }}-{{ dc.typeName }}</td>
+                                      <td>{{ dc.BoxNo }}</td>
+                                      <td>{{ dc.ealLatestCode }}-{{ dc.FromNo }}</td>
+                                      <td>{{ dc.ealLatestCode }}-{{ dc.FromTo }}</td>
+                                    </tr>
+                                  }
+                                </tbody>
+                              </table>
+                              <div class="stock-items-container mb-4">
+                                @for (item of existingStockItems; track item; let i = $index) {
+                                  <div
+                                    class="stock-item mb-3 p-3 border rounded">
+                                    <div class="row g-3">
+                                      <div class="col-md-3">
+                                        <label class="form-control-label">EAL Type<span class="text-danger"> *</span></label>
+                                        <select class="form-select" [(ngModel)]="item.selectedEalType" [name]="'ealType' + i"
+                          #eal2TypeRef="ngModel" [class.is-invalid]="
+                              eal2TypeRef.invalid && eal2TypeRef.touched
+                            " required>
+                                          <option [value]="null" disabled selected>
+                                            Select EAL Type
+                                          </option>
+                                          @for (eal of ealTypes; track eal) {
+                                            <option [value]="eal.Id">
+                                              {{ eal.Type }} - {{ eal.Code }}
+                                            </option>
+                                          }
+                                        </select>
+                                        @if (eal2TypeRef.invalid && eal2TypeRef.touched) {
+                                          <div class="text-danger small">
+                                            EAL Type is required.
+                                          </div>
+                                        }
+                                      </div>
+                                      <div class="col-md-2">
+                                        <label class="form-control-label">Box Number<span class="text-danger"> *</span></label>
+                                        <input type="text" class="form-control" [name]="'boxNo' + i" [(ngModel)]="item.BoxNo"
+                          #boxNoRef="ngModel" [class.is-invalid]="
+                              boxNoRef.invalid && boxNoRef.touched
+                            " required />
+                                          @if (boxNoRef.invalid && boxNoRef.touched) {
+                                            <div class="text-danger small">
+                                              Box Number is required.
+                                            </div>
+                                          }
+                                        </div>
+                                        <div class="col-md-2">
+                                          <label class="form-control-label">Spool From<span class="text-danger"> *</span></label>
+                                          <input type="number" class="form-control" [name]="'spoolFrom' + i" [(ngModel)]="item.FromNo"
+                          (input)="calculateExistingSpoolEnd(i)" #spoolFRef="ngModel" [class.is-invalid]="
+                              spoolFRef.invalid && spoolFRef.touched
+                            " required />
+                                            @if (spoolFRef.invalid && spoolFRef.touched) {
+                                              <div class="text-danger small">
+                                                Spool From is required.
+                                              </div>
+                                            }
+                                          </div>
+                                          <div class="col-md-2">
+                                            <label class="form-control-label">Spool To<span class="text-danger"> *</span></label>
+                                            <input type="number" class="form-control" [name]="'spoolTo' + i" [(ngModel)]="item.FromTo"
+                                              readonly />
+                                            </div>
+                                            <div class="col-md-2">
+                                              <label class="form-control-label">Remark</label>
+                                              <input type="text" class="form-control" [name]="'remark' + i" [(ngModel)]="item.Remark" />
+                                            </div>
+                                            <div class="col-md-1 d-flex align-items-end">
+                                              @if (existingStockItems.length > 0) {
+                                                <button type="button" class="btn btn-danger btn-sm" (click)="removeExistingStockItem(i)"
+                                                  >
+                                                  ×
+                                                </button>
+                                              }
+                                            </div>
+                                          </div>
+                                        </div>
+                                      }
+                                      <!-- <div class="d-flex justify-content-center mt-3">
+                                      <button type="button" class="btn btn-outline-primary btn-sm" (click)="addExistingStockItem()">
+                                        <i class="bi bi-plus-lg"></i> Add More Stock
+                                      </button>
+                                    </div> -->
+                                    <div class="row justify-content-center mt-3">
+                                      <div class="col-md-3">
+                                        @if (existingStockItems.length > 0) {
+                                          <button type="button" class="btn btn-primary w-100" (click)="saveAllStockAction('existing')"
+                                          >Save All</button>
+                                        }
+                                        <!-- [disabled]="!isFormValid()" -->
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              }
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                <div class="modal fade bd-example-modal-lg" [id]="[globalStatus]" tabindex="-1" role="dialog"
+                  aria-labelledby="ConfirmationModalTitle" aria-hidden="true">
+                  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+                    <div class="modal-content">
+                      <div class="modal-body">
+                        <p>Are you sure you want to Submit ? {{ globalStatus }}</p>
+                      </div>
+                      <div class="modal-footer">
+                        <button type="button" class="btn btn-success" (click)="confirmModalAction(globalStatus)" data-dismiss="modal">
+                          Yes
+                        </button>
+                        <button type="button" class="btn btn-secondary" (click)="cancelModalAction(globalStatus)" data-dismiss="modal">
+                          Cancel
+                        </button>
+                      </div>
+                    </div>
+                  </div>
+                </div>

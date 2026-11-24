@@ -1,0 +1,336 @@
+<div class="wrapper d-flex align-items-stretch">
+  <app-sidebar></app-sidebar>
+
+  <div id="content" class="p-4 p-md-5 pt-5 w-100 bg-light min-vh-100">
+    <div class="container-fluid px-2 px-md-4">
+
+      <!-- Page Header -->
+      <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+          <div
+            class="d-flex flex-wrap align-items-center justify-content-between bg-white p-4 rounded-4 shadow-sm border">
+            <div>
+              <h3 class="text-dark fw-bold mb-1">Manage Authorized Persons</h3>
+              <p class="text-muted small mb-0">Add and manage active/deactivated authorized representatives securely.</p>
+            </div>
+            <div class="mt-2 mt-sm-0">
+              <span
+                class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-3 py-2 rounded-pill fs-6">
+                Active Limit: <strong>{{ authPersons.length }} / 3</strong>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Limit Warning Banner -->
+      @if (isLimitReached) {
+      <div class="row justify-content-center mb-4">
+        <div class="col-lg-10">
+          <div class="alert alert-warning border-0 shadow-sm rounded-4 text-start d-flex align-items-center p-3 mb-0"
+            role="alert">
+            <div class="bg-warning text-dark rounded-circle p-2 me-3 d-flex align-items-center justify-content-center"
+              style="width: 38px; height: 38px;">
+              <i class="bi bi-exclamation-triangle-fill"></i>
+            </div>
+            <div class="small">
+              <strong>Notice:</strong> Maximum limit of 3 active authorized persons reached. Please deactivate an
+              existing record to add a new one.
+            </div>
+          </div>
+        </div>
+      </div>
+      }
+
+      <!-- Form Card -->
+      <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+          <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-white py-3 px-4 border-bottom">
+              <h5 class="mb-0 text-primary fw-bold">Add New Authorised Person</h5>
+            </div>
+
+            <div class="card-body p-4 p-md-4">
+              <form [formGroup]="authForm" (ngSubmit)="onSubmit()">
+
+                <div class="row g-3">
+                  <div class="col-md-6 text-start">
+                    <label class="form-label fw-semibold text-secondary small">Authorised Person Name <span
+                        class="text-danger">*</span></label>
+                    <input type="text" formControlName="authPersonName" class="form-control form-control-md"
+                      placeholder="Enter name" />
+                  </div>
+
+                  <div class="col-md-6 text-start">
+                    <label class="form-label fw-semibold text-secondary small">Mobile Number <span
+                        class="text-danger">*</span></label>
+                    <input type="text" formControlName="authPersonMobile" class="form-control form-control-md"
+                      placeholder="Enter 10 digit number" maxlength="10" />
+                  </div>
+                </div>
+
+                <div class="row g-3 mt-1">
+                  <div class="col-md-12 text-start">
+                    <label class="form-label fw-semibold text-secondary small">Address <span
+                        class="text-danger">*</span></label>
+                    <input type="text" formControlName="authPersonAddress" class="form-control form-control-md"
+                      placeholder="Enter full address" />
+                  </div>
+                </div>
+
+                <div class="row g-3 mt-1">
+                  <div class="col-md-6 text-start">
+                    <label class="form-label fw-semibold text-secondary small">Person Name <span
+                        class="text-danger">*</span></label>
+                    <input type="text" formControlName="personName" class="form-control form-control-md"
+                      placeholder="Enter actual person name" />
+                  </div>
+
+                  <div class="col-md-6 text-start">
+                    <label class="form-label fw-semibold text-secondary small">Designation <span
+                        class="text-danger">*</span></label>
+                    <select formControlName="designation" class="form-select form-select-md">
+                      <option value="" disabled selected hidden>Select Designation</option>
+                      @for (desig of designationsList; track desig) {
+                      <option [value]="desig">{{ desig }}</option>
+                      }
+                    </select>
+                  </div>
+                </div>
+
+                <div class="row g-3 mt-1">
+                  <div class="col-md-6 text-start">
+                    <label class="form-label fw-semibold text-secondary small">ID Card Type <span
+                        class="text-danger">*</span></label>
+                    <select formControlName="idCardType" class="form-select form-select-md">
+                      <option value="" disabled selected hidden>Select ID Card Type</option>
+                      @for (card of idCardTypesList; track card) {
+                      <option [value]="card">{{ card }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  <div class="col-md-6 text-start">
+                    <label class="form-label fw-semibold text-secondary small">Upload ID Card Document <span
+                        class="text-danger">*</span></label>
+                    <input type="file" #idFileInput (change)="onIdFileChange($event)"
+                      class="form-control form-control-md" accept="image/*, application/pdf" />
+                    <div class="text-muted small mt-1" style="font-size: 11px;">JPG, PNG, PDF (Max 2MB)</div>
+                  </div>
+                </div>
+
+                <div class="row g-3 mt-1">
+                  <div class="col-md-6 text-start">
+                    <label class="form-label fw-semibold text-secondary small">Person Image <span
+                        class="text-danger">*</span></label>
+                    <input type="file" #fileInput (change)="onFileChange($event)" class="form-control form-control-md"
+                      accept="image/*" />
+                    <div class="text-muted small mt-1" style="font-size: 11px;">JPG, PNG (Max 1MB)</div>
+                  </div>
+
+                  <div class="col-md-6 text-start">
+                    <label class="form-label fw-semibold text-secondary small">Authorization Letter / Company Document
+                      <span class="text-danger">*</span></label>
+                    <input type="file" #authLetterInput (change)="onAuthLetterChange($event)"
+                      class="form-control form-control-md" accept="image/*, application/pdf" />
+                    <div class="text-muted small mt-1" style="font-size: 11px;">JPG, PNG, PDF (Max 2MB)</div>
+                  </div>
+                </div>
+
+                <div class="row mt-4 pt-3 border-top">
+                  <div class="col-12 text-end">
+                    <button type="button" class="btn btn-outline-secondary px-4 me-2"
+                      (click)="resetForm()">Reset</button>
+                    <button type="submit" class="btn btn-primary px-4 shadow-sm"
+                      [disabled]="authForm.invalid || isSubmitting || isLimitReached">
+                      Save Record
+                    </button>
+                  </div>
+                </div>
+
+              </form>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Active Authorized Persons Table -->
+      <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+          <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-white py-3 px-4 border-bottom">
+              <h5 class="text-dark fw-bold mb-0">Active Authorized Persons ({{ authPersons.length }}/3)</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive mb-0">
+                <table class="table table-hover align-middle mb-0">
+                  <thead class="table-light text-uppercase fs-7 text-secondary">
+                    <tr>
+                      <th class="py-3 ps-4">Photo</th>
+                      <th class="py-3">Name</th>
+                      <th class="py-3">Mobile</th>
+                      <th class="py-3">Designation</th>
+                      <th class="py-3">ID Document</th>
+                      <th class="py-3">Auth Letter</th>
+                      <th class="py-3 text-end pe-4">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (p of authPersons; track p.AuthPersonId) {
+                    <tr>
+                      <td class="ps-4">
+                        @if (p.PhotoPath || p.photoPath) {
+                        <a [href]="getFileUrl(p.PhotoPath || p.photoPath)" target="_blank">
+                          <img [src]="getFileUrl(p.PhotoPath || p.photoPath)" alt="Photo"
+                            class="rounded-circle shadow-sm" style="width: 40px; height: 40px; object-fit: cover;" />
+                        </a>
+                        } @else {
+                        <span class="text-muted small">No Photo</span>
+                        }
+                      </td>
+                      <td class="fw-semibold text-dark">{{ p.AuthPersonName }}</td>
+                      <td class="text-muted">{{ p.AuthPersonMobile }}</td>
+                      <td><span class="badge bg-primary bg-opacity-10 text-primary px-2 py-1">{{ p.Designation }}</span>
+                      </td>
+                      <td>
+                        @if (p.IdCardPath) {
+                        <a [href]="getFileUrl(p.IdCardPath)" target="_blank"
+                          class="btn btn-sm btn-outline-secondary px-3 py-1 rounded-pill">View ID</a>
+                        } @else {
+                        <span class="text-muted small">No Doc</span>
+                        }
+                      </td>
+                      <td>
+                        @if (p.AuthLetterPath) {
+                        <a [href]="getFileUrl(p.AuthLetterPath)" target="_blank"
+                          class="btn btn-sm btn-outline-info px-3 py-1 rounded-pill">View Letter</a>
+                        } @else {
+                        <span class="text-muted small">No Letter</span>
+                        }
+                      </td>
+                      <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-danger px-3 py-1 rounded-pill shadow-sm"
+                          (click)="deactivatePerson(p.AuthPersonId)">Deactivate</button>
+                      </td>
+                    </tr>
+                    }
+                    @if (authPersons.length === 0) {
+                    <tr>
+                      <td colspan="7" class="text-center text-muted py-4">No active records found.</td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Deactivated Authorized Persons Table -->
+      <div class="row justify-content-center mb-5">
+        <div class="col-lg-10">
+          <div class="card shadow-sm border-0 rounded-4 overflow-hidden">
+            <div class="card-header bg-secondary text-white py-3 px-4">
+              <h5 class="fw-bold mb-0">Deactivated Authorized Persons</h5>
+            </div>
+            <div class="card-body p-0">
+              <div class="table-responsive mb-0">
+                <table class="table table-hover align-middle mb-0 bg-white">
+                  <thead class="table-light text-uppercase fs-7 text-secondary">
+                    <tr>
+                      <th class="py-3 ps-4">Photo</th>
+                      <th class="py-3">Name</th>
+                      <th class="py-3">Mobile</th>
+                      <th class="py-3">Designation</th>
+                      <th class="py-3">ID Document</th>
+                      <th class="py-3">Auth Letter</th>
+                      <th class="py-3">Deactivation Reason</th>
+                      <th class="py-3 text-end pe-4">Action</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @for (p of deactivatedPersons; track p.AuthPersonId) {
+                    <tr>
+                      <td class="ps-4">
+                        @if (p.PhotoPath || p.photoPath) {
+                        <a [href]="getFileUrl(p.PhotoPath || p.photoPath)" target="_blank">
+                          <img [src]="getFileUrl(p.PhotoPath || p.photoPath)" alt="Photo" class="rounded-circle shadow-sm"
+                            style="width: 40px; height: 40px; object-fit: cover;" />
+                        </a>
+                        } @else {
+                        <span class="text-muted small">No Photo</span>
+                        }
+                      </td>
+                      <td class="text-muted fw-semibold">{{ p.AuthPersonName }}</td>
+                      <td class="text-muted">{{ p.AuthPersonMobile }}</td>
+                      <td class="text-muted">{{ p.Designation }}</td>
+                      <td>
+                        @if (p.IdCardPath || p.idCardPath) {
+                        <a [href]="getFileUrl(p.IdCardPath || p.idCardPath)" target="_blank"
+                          class="btn btn-sm btn-outline-secondary px-3 py-1 rounded-pill">View ID</a>
+                        } @else {
+                        <span class="text-muted small">No Doc</span>
+                        }
+                      </td>
+                      <td>
+                        @if (p.AuthLetterPath || p.authLetterPath) {
+                        <a [href]="getFileUrl(p.AuthLetterPath || p.authLetterPath)" target="_blank"
+                          class="btn btn-sm btn-outline-info px-3 py-1 rounded-pill">View Letter</a>
+                        } @else {
+                        <span class="text-muted small">No Letter</span>
+                        }
+                      </td>
+                      <td>
+                        <span class="text-danger small fw-medium">
+                          {{ p.DeactivationRemark || p.deactivationRemark || 'N/A' }}
+                        </span>
+                      </td>
+                      <td class="text-end pe-4">
+                        <button class="btn btn-sm btn-success px-3 py-1 rounded-pill shadow-sm"
+                          (click)="activatePerson(p.AuthPersonId)">Activate</button>
+                      </td>
+                    </tr>
+                    }
+                    @if (deactivatedPersons.length === 0) {
+                    <tr>
+                      <td colspan="8" class="text-center text-muted py-4">No deactivated records found.</td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Deactivation Remark Modal -->
+@if (showDeactivateModal) {
+<div class="modal fade show d-block" tabindex="-1" style="background: rgba(0, 0, 0, 0.5);">
+  <div class="modal-dialog modal-dialog-centered">
+    <div class="modal-content border-0 shadow-lg rounded-4">
+      <div class="modal-header bg-danger text-white rounded-top-4 py-3 px-4">
+        <h5 class="modal-title fw-bold">
+          <i class="bi bi-exclamation-triangle-fill me-2"></i>Deactivate Authorized Person
+        </h5>
+        <button type="button" class="btn-close btn-close-white" (click)="closeDeactivateModal()"></button>
+      </div>
+      <div class="modal-body p-4 text-start">
+        <p class="text-muted small mb-2">Please provide a valid reason or remark for deactivating this record:</p>
+        <div class="form-group">
+          <textarea class="form-control rounded-3" rows="3" [(ngModel)]="deactivationRemark" placeholder="Enter deactivation reason here..."></textarea>
+        </div>
+      </div>
+      <div class="modal-footer bg-light rounded-bottom-4 py-3 px-4">
+        <button type="button" class="btn btn-outline-secondary px-4 rounded-pill" (click)="closeDeactivateModal()">Cancel</button>
+        <button type="button" class="btn btn-danger px-4 rounded-pill shadow-sm" (click)="confirmDeactivation()">Confirm Deactivation</button>
+      </div>
+    </div>
+  </div>
+</div>
+}

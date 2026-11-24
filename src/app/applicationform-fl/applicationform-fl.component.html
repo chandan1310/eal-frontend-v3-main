@@ -1,0 +1,843 @@
+<div class="app-layout-wrapper">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="container-fluid px-4 py-4 mx-auto main-workspace">
+    <div class="row d-flex justify-content-center">
+      <div class="col-xl-10 text-center">
+
+        <div class="portal-header-zone mb-4">
+          <h4 class="portal-main-title">APPLY FOR EXCISE ADHESIVE LABELS (FL)</h4>
+          <p class="portal-sub-title text-muted text-uppercase fw-bold small tracking-wider">WIZARD: Step {{
+            currentStep2 + 1 }} / 3</p>
+        </div>
+
+        <div class="wizard-nav-container mb-4">
+          <div class="wizard-step-node" [class.active]="currentStep2 === 0" [class.completed]="currentStep2 > 0">
+            <div class="step-badge-circle"><i class="bi bi-building"></i></div>
+            <span class="step-badge-text">1. COMPANY DETAILS (FL)</span>
+          </div>
+          <div class="wizard-step-connector"></div>
+
+          <div class="wizard-step-node" [class.active]="currentStep2 === 1" [class.completed]="currentStep2 > 1">
+            <div class="step-badge-circle"><i class="bi bi-file-earmark-text"></i></div>
+            <span class="step-badge-text">2. CHOOSE PO & CHALLAN</span>
+          </div>
+          <div class="wizard-step-connector"></div>
+
+          <div class="wizard-step-node" [class.active]="currentStep2 === 2" [class.completed]="currentStep2 > 2">
+            <div class="step-badge-circle"><i class="bi bi-person-gear"></i></div>
+            <span class="step-badge-text">3. ENTER DEMAND</span>
+          </div>
+        </div>
+
+        <!-- STEP 1: COMPANY DETAILS -->
+        @if (currentStep2 === 0) {
+        <div class="fade-in-animation">
+          <div class="card app-wrapper shadow p-4 border-0">
+            @if (step1Form) {
+            <form [formGroup]="step1Form" onsubmit="event.preventDefault()">
+              <div class="row g-4 match-height-container">
+                <div class="col-lg-6">
+                  <div class="ui-panel-card system-card h-100 p-4">
+                    <div class="group-caption-bar mb-4">
+                      <span class="caption-icon-tag"><i class="bi bi-alpha-a-circle-fill"></i></span>
+                      <span class="caption-text-tag">COMPANY DETAILS (FL)</span>
+                      <span class="badge badge-system-profile ms-2">AUTO-LOADED PROFILE</span>
+                    </div>
+                    <div class="row g-3">
+                      <div class="col-md-12 text-start position-relative">
+                        <label for="companyName" class="ui-field-label">Company Name</label>
+                        <div class="ui-readonly-box-icon">
+                          <i class="bi bi-lock-fill"></i>
+                          <input type="text" id="companyName" formControlName="companyName"
+                            class="form-control ui-input-readonly" placeholder="Loading company name..." />
+                        </div>
+                      </div>
+                      <div class="col-md-12 text-start position-relative mt-3">
+                        <label for="Adrs" class="ui-field-label">Office / Factory Address</label>
+                        <div class="ui-readonly-box-icon">
+                          <i class="bi bi-lock-fill"></i>
+                          <input type="text" id="Adrs" formControlName="address" class="form-control ui-input-readonly"
+                            placeholder="Loading address..." />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row g-3 mt-2">
+                      <div class="col-md-6 text-start position-relative">
+                        <label class="ui-field-label">State</label>
+                        <div class="ui-readonly-box-icon">
+                          <i class="bi bi-lock-fill"></i>
+                          <input type="text" formControlName="state" class="form-control ui-input-readonly" />
+                        </div>
+                      </div>
+                      <div class="col-md-6 text-start position-relative">
+                        <label class="ui-field-label">District</label>
+                        <div class="ui-readonly-box-icon">
+                          <i class="bi bi-lock-fill"></i>
+                          <select class="form-select ui-dropdown-readonly" formControlName="district">
+                            <option [value]="null" disabled selected>Select District</option>
+                            @for (d of districts; track d) {
+                            <option [value]="d.dist_id">{{ d.dist_name }}</option>
+                            }
+                          </select>
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row g-3 mt-2">
+                      <div class="col-md-12 text-start position-relative">
+                        <label for="Pin" class="ui-field-label">PIN Code</label>
+                        <div class="ui-readonly-box-icon">
+                          <i class="bi bi-lock-fill"></i>
+                          <input type="text" id="Pin" formControlName="pin" class="form-control ui-input-readonly"
+                            placeholder="Loading pin code..." />
+                        </div>
+                      </div>
+                    </div>
+                    <div class="row g-3 mt-2">
+                      <div class="col-md-6 text-start position-relative">
+                        <label for="modeTransport" class="ui-field-label">Mode of Transport</label>
+                        <div class="ui-readonly-box-icon">
+                          <i class="bi bi-lock-fill"></i>
+                          <input type="text" id="modeTransport" formControlName="modeOfTransport"
+                            class="form-control ui-input-readonly" placeholder="Loading transport mode..." />
+                        </div>
+                      </div>
+                      <div class="col-md-6 text-start position-relative">
+                        <label for="route" class="ui-field-label">Route</label>
+                        <div class="ui-readonly-box-icon">
+                          <i class="bi bi-lock-fill"></i>
+                          <input type="text" id="route" formControlName="route" class="form-control ui-input-readonly"
+                            placeholder="Loading route..." />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+                <div class="col-lg-6">
+                  <div class="ui-panel-card interactive-card h-100 p-4">
+                    <div class="group-caption-bar mb-2">
+                      <span class="caption-icon-tag color-blue"><i class="bi bi-beta-b-circle-fill"></i></span>
+                      <span class="caption-text-tag">AUTHORISED SIGNATORY & APPLICANT METRICS</span>
+                    </div>
+                    <p class="text-muted text-start small mb-3 fw-semibold tracking-wide">PLEASE SELECT AUTHORISED
+                      PERSON:</p>
+                    <div class="row g-3">
+                      <div class="col-md-6 text-start">
+                        <label for="authPersonName" class="ui-field-label">Authorised Person Name <span
+                            class="text-danger">*</span></label>
+                        <select id="authPersonName" formControlName="authPersonName" class="form-select ui-dropdown-box"
+                          (change)="onAuthPersonSelect($event)">
+                          <option value="" disabled selected hidden>Select Authorised Person</option>
+                          @for (person of authorisedPersons; track person) {
+                          <option [value]="person.AuthPersonName">{{ person.AuthPersonName }}</option>
+                          }
+                        </select>
+                        @if (step1Form.get('authPersonName')?.touched &&
+                        step1Form.get('authPersonName')?.hasError('required')) {
+                        <div class="text-danger text-start small mt-1">Authorised person name is required.</div>
+                        }
+                      </div>
+                      <div class="col-md-6 text-start">
+                        <label for="authPersonMob" class="ui-field-label">Authorised Person Mobile</label>
+                        <input type="text" id="authPersonMob" formControlName="authPersonMobile"
+                          class="form-control ui-input-box bg-light" readonly placeholder="Auto-filled mobile number" />
+                      </div>
+                    </div>
+                    <div class="row g-3 mt-2">
+                      <div class="col-md-12 text-start">
+                        <label for="authPersonAdrs" class="ui-field-label">Authorised Person Address</label>
+                        <input type="text" id="authPersonAdrs" formControlName="authPersonAddres"
+                          class="form-control ui-input-box bg-light" readonly placeholder="Auto-filled address" />
+                      </div>
+                    </div>
+                    <div class="row g-3 mt-2">
+                      <div class="col-md-6 text-start">
+                        <label for="PersonName" class="ui-field-label">Person Name</label>
+                        <input type="text" id="PersonName" formControlName="PersonName"
+                          class="form-control ui-input-box bg-light" readonly placeholder="Auto-filled name" />
+                      </div>
+                      <div class="col-md-6 text-start">
+                        <label for="designation" class="ui-field-label">Designation</label>
+                        <select id="designation" formControlName="designation"
+                          class="form-select ui-dropdown-box bg-light" style="pointer-events: none;">
+                          <option value="" disabled selected hidden>Auto-filled designation</option>
+                          @for (desig of designations; track desig) {
+                          <option [value]="desig">{{ desig }}</option>
+                          }
+                        </select>
+                      </div>
+                    </div>
+
+                    <div class="row g-3 mt-3">
+                      <div class="col-md-6 text-start">
+                        <label for="bottlingUnit" class="ui-field-label">Bottling Unit <span
+                            class="text-danger">*</span></label>
+                        <select id="bottlingUnit" formControlName="bottlingUnitId" class="form-select ui-dropdown-box">
+                          <option value="" disabled selected hidden>Select Bottling Unit</option>
+                          @for (unit of bottlingUnits; track unit) {
+                          <option [value]="unit.UnitID">{{ unit.UnitName }}</option>
+                          }
+                        </select>
+                        @if (step1Form.get('bottlingUnitId')?.touched &&
+                        step1Form.get('bottlingUnitId')?.hasError('required')) {
+                        <div class="text-danger text-start small mt-1">Bottling Unit is required.</div>
+                        }
+                      </div>
+
+                      <div class="col-md-6 text-start">
+                        <label for="photo" class="ui-field-label">Applicant Photo</label>
+                        <div class="d-flex align-items-center mt-2">
+                          <div class="identity-avatar-view-box">
+                            @if (!imagePreview) {
+                            <div class="avatar-frame-circle">
+                              <i class="bi bi-person-fill text-muted" style="font-size: 1.5rem;"></i>
+                            </div>
+                            }
+                            @if (imagePreview) {
+                            <img [src]="imagePreview" alt="Profile Preview" class="avatar-img-circle" />
+                            }
+                            <span class="avatar-caption mt-2 d-block text-center text-muted small">Applicant
+                              Photo</span>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            </form>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- STEP 2: CHOOSE PO & CHALLAN -->
+        @if (currentStep2 === 1) {
+        <div class="fade-in-animation">
+          <form [formGroup]="step0Form">
+
+            <!-- 1. PURCHASE ORDERS CARD (EAL-TYPE SCOPED FIFO) -->
+            <div class="card app-wrapper shadow p-4 border-0">
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <div class="text-start">
+                  <h5 class="panel-section-title m-0">
+                    <i class="bi bi-file-earmark-ruled"></i> Purchase Orders (Sorted: Oldest First)
+                  </h5>
+                  <small class="text-muted">Click any Purchase Order Number to view complete PO details.</small>
+                </div>
+
+                <div class="d-flex gap-2 flex-wrap align-items-center">
+                  <select class="form-select form-select-sm border-primary fw-semibold" style="width: 195px;"
+                    [(ngModel)]="poFilters.ealType" [ngModelOptions]="{standalone: true}"
+                    (change)="onEalTypeFilterChange()">
+                    <option value="">All EAL Types</option>
+                    @for (et of availablePoEalTypes; track et) {
+                    <option [value]="et">{{ et }}</option>
+                    }
+                  </select>
+
+                  <input type="text" class="form-control form-control-sm" style="width: 145px;"
+                    [(ngModel)]="poFilters.search" [ngModelOptions]="{standalone: true}" placeholder="PO Number..." />
+                  <select class="form-select form-select-sm" style="width: 105px;" [(ngModel)]="poFilters.month"
+                    [ngModelOptions]="{standalone: true}">
+                    <option value="">Month</option>
+                    @for (m of allMonths; track m) {
+                    <option [value]="m.month_id">{{ m.month_name }}</option>
+                    }
+                  </select>
+                  <input type="date" class="form-control form-control-sm" style="width: 135px;"
+                    [(ngModel)]="poFilters.date" [ngModelOptions]="{standalone: true}" title="Filter by Day" />
+                  <input type="text" class="form-control form-control-sm" style="width: 80px;"
+                    [(ngModel)]="poFilters.year" [ngModelOptions]="{standalone: true}" placeholder="Year"
+                    maxlength="4" />
+                </div>
+              </div>
+
+              @if (activeSelectedPoEalType) {
+              <div
+                class="alert alert-info py-2 px-3 text-start small mb-3 d-flex justify-content-between align-items-center">
+                <span>
+                  <i class="bi bi-funnel-fill me-1"></i>
+                  Active EAL Type FIFO Scope: <strong>{{ activeSelectedPoEalType }}</strong> — Select oldest PO first
+                  within this EAL Type.
+                </span>
+                @if (purchaseOrderArray.length === 0 && poFilters.ealType) {
+                <button type="button" class="btn btn-link btn-sm p-0 text-decoration-none"
+                  (click)="poFilters.ealType = ''">
+                  Show All Types
+                </button>
+                }
+              </div>
+              }
+
+              <div class="ui-table-scroll-container">
+                <table class="table table-bordered text-center custom-ui-table mb-0 align-middle">
+                  <thead class="table-light-tint sticky-table-header">
+                    <tr>
+                      <th style="width: 55px;"></th>
+                      <th>Purchase Order Date</th>
+                      <th>Purchase Order Number</th>
+                      <th>EAL Type</th>
+                      <th>Valid Upto</th>
+                      <th>Total EAL Quantity</th>
+                      <th>Issued Quantity</th>
+                      <th>Remaining Qty</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @if (poLoader) {
+                    <tr>
+                      <td colspan="8" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span>
+                        </div>
+                      </td>
+                    </tr>
+                    }
+                    @for (po of filteredPurchaseOrders; track po.Pur_OrderId || po.PurchaseOrderNo) {
+                    <tr [class.table-active]="po.isSelected">
+                      <td>
+                        <input type="checkbox" class="form-check-input table-row-checkbox" [(ngModel)]="po.isSelected"
+                          [ngModelOptions]="{ standalone: true }" (change)="onPurchaseOrderChange(po, $event)" />
+                      </td>
+                      <td>{{ po.PurchaseOrderDate | date : "dd/MM/yyyy" }}</td>
+                      <td>
+                        <button type="button"
+                          class="btn btn-link p-0 fw-bold text-decoration-underline"
+                          style="color: #0b5ed7;"
+                          title="Click to view full Purchase Order details"
+                          (click)="openPoDetailsModal(po)">
+                          {{ po.PurchaseOrderNo }}
+                        </button>
+                      </td>
+                      <td>
+                        <span class="badge px-3 py-1 fw-semibold" [ngStyle]="getEALTypeBadgeStyle(getEALTypeName(po))">
+                          {{ getEALTypeName(po) }}
+                        </span>
+                      </td>
+                      <td>{{ po.ValidUpto | date : "dd/MM/yyyy" }}</td>
+                      <td class="fw-semibold">{{ getPoTotalEalQty(po) | number }}</td>
+                      <td class="text-muted">{{ getPoUsedEalQty(po) > 0 ? (getPoUsedEalQty(po) | number) : '-' }}</td>
+                      <td>
+                        <span class="badge bg-soft-success font-semibold">
+                          {{ getPoRemainingEalQty(po) | number }}
+                        </span>
+                      </td>
+                    </tr>
+                    }
+                    @if (!poLoader && filteredPurchaseOrders?.length === 0) {
+                    <tr>
+                      <td colspan="8" class="text-center text-muted py-3"><b>No active Purchase Orders found.</b></td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- PO Allocation Breakdown Strip -->
+              @if (purchaseOrderArray.length > 0) {
+              <div class="row g-2 mt-3 text-center">
+                <div class="col-md-3">
+                  <div class="p-2 border rounded bg-light">
+                    <div class="small text-muted fw-bold">TOTAL EAL QUANTITY</div>
+                    <div class="fw-bold text-dark fs-6">{{ selectedPoGrossEalQuantity | number }}</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="p-2 border rounded bg-light">
+                    <div class="small text-muted fw-bold">PREVIOUSLY USED EAL</div>
+                    <div class="fw-bold text-secondary fs-6">{{ selectedPoPreviouslyUsedQuantity | number }}</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="p-2 border rounded bg-light">
+                    <div class="small text-muted fw-bold">CURRENT ALLOCATION</div>
+                    <div class="fw-bold text-primary fs-6">{{ currentAllocatedEalQuantity | number }}</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="p-2 border rounded bg-light">
+                    <div class="small text-muted fw-bold">REMAINING EAL QUANTITY</div>
+                    <div class="fw-bold text-success fs-6">{{ remainingPoEalAfterCurrentAllocation | number }}</div>
+                  </div>
+                </div>
+              </div>
+              }
+
+              @if (step0Form.touched && purchaseOrderArray.length === 0) {
+              <div class="text-danger text-center mt-2 small fw-bold">
+                Please select at least one Purchase Order.
+              </div>
+              }
+            </div>
+
+            <!-- 2. CHALLAN DETAILS CARD -->
+            <div class="card app-wrapper shadow p-4 border-0 mt-4">
+              <div class="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
+                <h5 class="panel-section-title text-start m-0"><i class="bi bi-wallet2"></i> Challan Details</h5>
+                <div class="d-flex gap-2 flex-wrap">
+                  <input type="text" class="form-control form-control-sm" style="width: 150px;"
+                    [(ngModel)]="challanFilters.search" [ngModelOptions]="{standalone: true}"
+                    placeholder="Challan No..." />
+                  <select class="form-select form-select-sm" style="width: 110px;" [(ngModel)]="challanFilters.month"
+                    [ngModelOptions]="{standalone: true}">
+                    <option value="">Month</option>
+                    @for (m of allMonths; track m) {
+                    <option [value]="m.month_id">{{ m.month_name }}</option>
+                    }
+                  </select>
+                  <input type="date" class="form-control form-control-sm" style="width: 140px;"
+                    [(ngModel)]="challanFilters.date" [ngModelOptions]="{standalone: true}" title="Filter by Day" />
+                  <input type="text" class="form-control form-control-sm" style="width: 90px;"
+                    [(ngModel)]="challanFilters.year" [ngModelOptions]="{standalone: true}" placeholder="Year"
+                    maxlength="4" />
+                </div>
+              </div>
+
+              <div class="ui-table-scroll-container">
+                <table class="table table-bordered text-center custom-ui-table mb-0 align-middle">
+                  <thead class="table-light-tint sticky-table-header">
+                    <tr>
+                      <th style="width: 55px;"></th>
+                      <th>Challan Date</th>
+                      <th>Challan Number</th>
+                      <th>Amount</th>
+                      <th>Used Amount</th>
+                      <th>Remaining Amount</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    @if (challanLoader) {
+                    <tr>
+                      <td colspan="6" class="text-center py-4">
+                        <div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span>
+                        </div>
+                      </td>
+                    </tr>
+                    }
+                    @for (cd of filteredChallans; track cd.ChallanNo) {
+                    <tr [class.table-active]="cd.isSelected">
+                      <td>
+                        <input type="checkbox" class="form-check-input table-row-checkbox" [(ngModel)]="cd.isSelected"
+                          [ngModelOptions]="{ standalone: true }" (change)="onChallanChange(cd, $event)" />
+                      </td>
+                      <td>{{ cd.ChallanDate | date : "dd/MM/yyyy" }}</td>
+                      <td><strong>{{ cd.ChallanNo }}</strong></td>
+                      <td class="fw-semibold">₹ {{ getChallanTotalAmount(cd) | number }}</td>
+                      <td class="text-muted">{{ getChallanUsedAmount(cd) > 0 ? (getChallanUsedAmount(cd) | number) : '0'
+                        }}</td>
+                      <td>
+                        <span class="text-primary-tint font-semibold">
+                          ₹ {{ getChallanRemainingAmount(cd) | number }}
+                        </span>
+                      </td>
+                    </tr>
+                    }
+                    @if (!challanLoader && (!filteredChallans || filteredChallans.length === 0)) {
+                    <tr>
+                      <td colspan="6" class="text-center text-muted py-3"><b>No Challans with remaining balance
+                          found.</b></td>
+                    </tr>
+                    }
+                  </tbody>
+                </table>
+              </div>
+
+              <!-- Challan Allocation Breakdown Strip -->
+              @if (challanArray.length > 0) {
+              <div class="row g-2 mt-3 text-center">
+                <div class="col-md-3">
+                  <div class="p-2 border rounded bg-light">
+                    <div class="small text-muted fw-bold">TOTAL CHALLAN AMOUNT</div>
+                    <div class="fw-bold text-dark fs-6">₹ {{ selectedChallanGrossAmount | number }}</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="p-2 border rounded bg-light">
+                    <div class="small text-muted fw-bold">PREVIOUSLY USED</div>
+                    <div class="fw-bold text-secondary fs-6">₹ {{ selectedChallanPreviouslyUsedAmount | number }}</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="p-2 border rounded bg-light">
+                    <div class="small text-muted fw-bold">CURRENT ALLOCATION</div>
+                    <div class="fw-bold text-primary fs-6">₹ {{ currentAllocatedChallanAmount | number }}</div>
+                  </div>
+                </div>
+                <div class="col-md-3">
+                  <div class="p-2 border rounded bg-light">
+                    <div class="small text-muted fw-bold">REMAINING AMOUNT</div>
+                    <div class="fw-bold text-success fs-6">₹ {{ remainingChallanAmountAfterCurrentAllocation | number }}
+                    </div>
+                  </div>
+                </div>
+              </div>
+              }
+
+              @if (step0Form.touched && challanArray.length === 0) {
+              <div class="text-danger text-center mt-2 small fw-bold">
+                Please select at least one Challan.
+              </div>
+              }
+            </div>
+
+            <!-- 3. BOTTOM DYNAMIC SUMMARY CARD -->
+            <div class="ui-metrics-card mt-4 p-3 shadow-sm">
+              <div class="row align-items-center text-center">
+                <div class="col-md-4 metric-border">
+                  <div class="metric-desc">SELECTED PO TOTAL EAL QUANTITY:</div>
+                  <div class="metric-val text-dark">{{ totalQuantity | number }}</div>
+                </div>
+                <div class="col-md-4 metric-border">
+                  <div class="metric-desc">SELECTED CHALLAN TOTAL AMOUNT:</div>
+                  <div class="metric-val text-primary-tint">₹ {{ totalChallanAmount | number }}</div>
+                </div>
+                <div class="col-md-4">
+                  <div class="metric-desc">PERMISSIBLE HOLOGRAM VOLUME:</div>
+                  <div class="metric-val text-success-custom">{{ totalHologramLabels | number }}</div>
+                </div>
+              </div>
+            </div>
+          </form>
+        </div>
+        }
+
+        <!-- STEP 3: ENTER DEMAND -->
+        @if (currentStep2 === 2) {
+        <div class="fade-in-animation">
+          <div class="card app-wrapper shadow p-4 border-0 mb-4">
+            <div class="d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <h5 class="text-start text-dark m-0">
+                You can create an application for <strong class="text-success-custom">{{ totalHologramLabels | number
+                  }}</strong> EAL{{ totalHologramLabels !== 1 ? '' : '' }}.
+              </h5>
+              <span class="badge bg-primary-subtle text-primary border px-3 py-2">
+                Selected PO Total EAL Quantity: <strong>{{ totalQuantity | number }}</strong>
+              </span>
+            </div>
+          </div>
+
+          <div class="card app-wrapper shadow p-4 border-0">
+            @if (step2Form) {
+            <form class="form-card" onsubmit="event.preventDefault()" id="secondform" [formGroup]="step2Form">
+              <ng-container>
+                <div class="row text-left">
+                  <table class="table table-bordered align-middle text-center custom-ui-table">
+                    <thead class="table-light-tint">
+                      <tr>
+                        <th colspan="3" class="table-secondary py-2">
+                          <div class="d-flex justify-content-between align-items-center px-2">
+                            <h5 class="m-0 fs-6 text-dark fw-bold">Enter Your Total EAL Quantity</h5>
+                          </div>
+                        </th>
+                      </tr>
+                      <tr>
+                        <th class="text-start ps-4">Selected EAL Type</th>
+                        <th style="width: 320px;">Total EAL Quantity</th>
+                        <!-- <th style="width: 150px;">Status</th> -->
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (row of quantities.controls; track row; let i = $index) {
+                      <tr [formGroup]="asFormGroup(row)">
+                        <td class="p-3 text-start ps-4">
+                          <span class="badge fs-6 px-3 py-2"
+                            [ngClass]="getEALTypeBadgeClass(getEALNameById(row.get('ealType')?.value))">
+                            {{ getEALNameById(row.get('ealType')?.value) }}
+                          </span>
+                          <input type="hidden" formControlName="ealType">
+                        </td>
+
+                        <td class="p-3">
+                          <input type="number" formControlName="quantity"
+                            class="form-control ui-input-box text-center font-semibold mx-auto"
+                            style="max-width: 220px;" (change)="onEalTypeChange(i)" placeholder="Enter value"
+                            [ngClass]="{'is-invalid': row.get('quantity')?.touched && row.get('quantity')?.invalid}" />
+
+                          @if (row.get('quantity')?.touched && row.get('quantity')?.invalid) {
+                          <div class="invalid-feedback text-center mt-1">
+                            Please enter a valid EAL quantity (minimum 1000, multiple of 100).
+                          </div>
+                          }
+                        </td>
+
+                        <!-- <td class="p-3">
+                          <span class="badge bg-secondary px-3 py-2 border">
+                            <i class="bi bi-lock-fill me-1"></i> Locked
+                          </span>
+                        </td> -->
+                      </tr>
+                      }
+                    </tbody>
+                  </table>
+
+                  @if (step2Form.get('quantities')?.touched &&
+                  step2Form.get('quantities')?.hasError('exceedsAvailable')) {
+                  <div class="text-danger text-center small mt-2 fw-bold">
+                    Entered EAL quantity ({{ totalEnteredQuantity | number }}) cannot exceed available limit ({{
+                    (totalHologramLabels < totalQuantity ? totalHologramLabels : totalQuantity) | number }}). </div>
+                      }
+                  </div>
+                  <br />
+                  <div class="row text-left">
+                    <div class="legal-framework-notice p-3 w-100">
+                      <div class="form-check d-flex align-items-start">
+                        <input class="form-check-input real-checkbox me-3 mt-1" type="checkbox" id="defaultCheck1"
+                          formControlName="checkboxControl" />
+                        <label class="form-check-label legal-notice-text" for="defaultCheck1">
+                          I hereby declare that the information provided above is true and correct to the best of my knowledge and belief. If any information is found to be incorrect or concealed at any point, my application shall be liable for rejection without notice, in accordance with the applicable rules and regulations.
+                        </label>
+                      </div>
+                      @if (step2Form.get('checkboxControl')?.touched &&
+                      step2Form.get('checkboxControl')?.hasError('required')) {
+                      <div class="text-danger small d-block mt-2 ps-4 fw-bold">You must agree to the declaration.</div>
+                      }
+                    </div>
+                  </div>
+              </ng-container>
+            </form>
+            }
+          </div>
+        </div>
+        }
+
+        <div class="head"></div>
+
+        <!-- WIZARD NAVIGATION BUTTONS -->
+        <div class="wizard-buttons d-flex align-items-center mt-4"
+          [ngClass]="{'space-between': currentStep2 !== 0, 'justify-end': currentStep2 === 0}">
+          @if (currentStep2 !== 0) {
+          <button class="btn btn-ui-nav-outline" (click)="prevStep()">Previous</button>
+          }
+          <div class="ms-auto">
+            @if (currentStep2 < steps2.length - 1) { <button class="btn btn-ui-nav-primary" (click)="nextStep2()"
+              [disabled]="(currentStep2 === 1 && !isStep0Valid()) || (currentStep2 === 0 && !step1Form?.valid)">
+              Next
+              </button>
+              }
+              @if (currentStep2 === steps2.length - 1) {
+              <button class="btn btn-ui-nav-success" (click)="saveApplication()" [disabled]="!step2Form?.valid">
+                Submit
+              </button>
+              }
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- PURCHASE ORDER DETAILS MODAL POPUP -->
+@if (showPoDetailModal) {
+<div class="modal fade show d-block" tabindex="-1"
+  style="background: rgba(15, 23, 42, 0.65); backdrop-filter: blur(4px); z-index: 1055;">
+  <div class="modal-dialog modal-lg modal-dialog-centered modal-dialog-scrollable">
+    <div class="modal-content border-0 shadow-lg rounded-4 overflow-hidden">
+
+      <!-- Deep Navy Executive Header -->
+      <div class="modal-header text-white border-0 py-3 px-4"
+        style="background: linear-gradient(135deg, #0f294a 0%, #1e40af 100%);">
+        <div class="d-flex align-items-center gap-2">
+          <div class="rounded-circle d-flex align-items-center justify-content-center"
+            style="width: 36px; height: 36px; background: rgba(255,255,255,0.15);">
+            <i class="bi bi-file-earmark-check fs-5"></i>
+          </div>
+          <div class="text-start">
+            <h5 class="modal-title fw-bold mb-0 fs-6">Purchase Order Complete Details</h5>
+            <small class="text-white-50">Verified Excise EAL Master & Ledger Summary</small>
+          </div>
+        </div>
+        <button type="button" class="btn-close btn-close-white" aria-label="Close"
+          (click)="closePoDetailsModal()"></button>
+      </div>
+
+      <div class="modal-body text-start p-4" style="background-color: #f8fafc;">
+        @if (poDetailLoading) {
+        <div class="text-center py-5">
+          <div class="spinner-border text-primary" role="status"></div>
+          <p class="mt-2 text-muted small fw-semibold">Fetching live Purchase Order details...</p>
+        </div>
+        } @else if (selectedPoDetailData) {
+
+        <!-- 1. TOP SECTION: Supplier / Company Information -->
+        <div class="bg-white border rounded-3 p-3 shadow-sm mb-4" style="border-left: 4px solid #1e40af !important;">
+          <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">
+            <i class="bi bi-building me-2 text-primary"></i>Supplier / Company Information
+          </h6>
+          <div class="row g-2 small">
+            <div class="col-md-6">
+              <span class="text-muted">Company Name:</span>
+              <strong class="ms-1 text-dark">{{ selectedPoDetailData.SupplierName || '-' }}</strong>
+            </div>
+            <div class="col-md-6">
+              <span class="text-muted">Registration No:</span>
+              <strong class="ms-1 text-dark">{{ selectedPoDetailData.SupplierRegistrationNo || '-' }}</strong>
+            </div>
+            <div class="col-md-6">
+              <span class="text-muted">City / District:</span>
+              <strong class="ms-1 text-dark">
+                {{ selectedPoDetailData.SupplierCity || getStep1DistrictName() || '-' }}
+              </strong>
+            </div>
+            <div class="col-md-6">
+              <span class="text-muted">Contact / Email:</span>
+              <strong class="ms-1 text-dark">
+                {{ selectedPoDetailData.SupplierMobileNo || '-' }}
+                {{ selectedPoDetailData.SupplierEmailId ? '(' + selectedPoDetailData.SupplierEmailId + ')' : '' }}
+              </strong>
+            </div>
+            @if (selectedPoDetailData.Purpose) {
+            <div class="col-12 mt-2 pt-2 border-top">
+              <span class="text-muted">Purpose / Remarks:</span>
+              <span class="ms-1 fw-semibold text-dark">{{ selectedPoDetailData.Purpose }}</span>
+            </div>
+            }
+          </div>
+        </div>
+
+        <!-- 2. Core PO Metadata Grid -->
+        <div class="row g-3 mb-4">
+          <div class="col-md-4">
+            <div class="p-3 bg-white border rounded-3 shadow-sm h-100">
+              <span class="text-secondary small fw-semibold d-block mb-1">
+                <i class="bi bi-hash me-1" style="color: #0f294a;"></i>Purchase Order Number
+              </span>
+              <span class="fw-bold fs-6" style="color: #0f294a;">{{ selectedPoDetailData.PurchaseOrderNo }}</span>
+            </div>
+          </div>
+          <div class="col-md-4">
+            <div class="p-3 bg-white border rounded-3 shadow-sm h-100">
+              <span class="text-muted small d-block mb-1"><i class="bi bi-calendar-event me-1 text-primary"></i>PO
+                Date</span>
+              <span class="fw-bold text-dark fs-6">{{ selectedPoDetailData.PurchaseOrderDate | date:'dd/MM/yyyy'
+                }}</span>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="p-3 bg-white border rounded-3 shadow-sm h-100">
+              <span class="text-muted small d-block mb-1"><i class="bi bi-calendar-check me-1 text-danger"></i>Valid
+                Upto</span>
+              <span class="fw-bold text-dark fs-6">{{ selectedPoDetailData.ValidUpto ? (selectedPoDetailData.ValidUpto |
+                date:'dd/MM/yyyy') : 'N/A' }}</span>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="p-3 bg-white border rounded-3 shadow-sm h-100">
+              <span class="text-secondary small fw-semibold d-block mb-1">
+                <i class="bi bi-tags me-1" style="color: #0f294a;"></i>EAL Type
+              </span>
+              <span class="badge px-3 py-1 mt-1 fw-semibold" [ngStyle]="getEALTypeBadgeStyle(selectedPoDetailData.EALType)">
+                {{ selectedPoDetailData.EALType || 'N/A' }}
+              </span>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="p-3 bg-white border rounded-3 shadow-sm h-100">
+              <span class="text-muted small d-block mb-1"><i class="bi bi-clock-history me-1 text-primary"></i>Financial
+                Year</span>
+              <span class="fw-bold text-dark fs-6">{{ selectedPoDetailData.FinancialYear || currentFinancialYear
+                }}</span>
+            </div>
+          </div>
+
+          <div class="col-md-4">
+            <div class="p-3 bg-white border rounded-3 shadow-sm h-100">
+              <span class="text-muted small d-block mb-1"><i class="bi bi-shield-check me-1 text-success"></i>Allocation
+                Status</span>
+              <span class="badge px-2 py-1 mt-1"
+                [ngClass]="selectedPoDetailData.ComputedStatus === 'Approved' ? 'bg-success' : (selectedPoDetailData.ComputedStatus === 'Partially Used' ? 'bg-warning text-dark' : 'bg-secondary')">
+                {{ selectedPoDetailData.ComputedStatus }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- 3. EAL Quantity Summary -->
+        <div class="bg-white border rounded-3 p-3 shadow-sm mb-4">
+          <div class="d-flex align-items-center justify-content-between border-bottom pb-2 mb-3">
+            <h6 class="fw-bold text-dark m-0"><i class="bi bi-bar-chart-line me-2 text-primary"></i>EAL Quantity Summary
+            </h6>
+            <span class="small text-muted">Formula: Total - Used = Remaining</span>
+          </div>
+
+          <div class="row g-3 text-center">
+            <div class="col-md-4">
+              <div class="p-3 rounded-3 border bg-light">
+                <small class="text-muted d-block fw-semibold mb-1">Total EAL Quantity</small>
+                <span class="fs-5 fw-bold text-dark">{{ selectedPoDetailData.TotalEALQuantity | number }}</span>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="p-3 rounded-3 border bg-light">
+                <small class="text-muted d-block fw-semibold mb-1">Used EAL Quantity</small>
+                <span class="fs-5 fw-bold text-secondary">{{ selectedPoDetailData.UsedEALQuantity | number }}</span>
+              </div>
+            </div>
+
+            <div class="col-md-4">
+              <div class="p-3 rounded-3 border border-success-subtle" style="background-color: #ecfdf5;">
+                <small class="text-success d-block fw-bold mb-1">Remaining EAL Quantity</small>
+                <span class="fs-5 fw-bold text-success">{{ selectedPoDetailData.RemainingEALQuantity | number }}</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <!-- 4. Packaging & Line Item Breakdown -->
+        @if (selectedPoDetailData.Items && selectedPoDetailData.Items.length > 0) {
+        <div class="bg-white border rounded-3 p-3 shadow-sm">
+          <h6 class="fw-bold text-dark border-bottom pb-2 mb-3">
+            <i class="bi bi-box-seam me-2 text-primary"></i>Packaging & Line Item Breakdown
+          </h6>
+          <div class="table-responsive">
+            <table class="table table-sm table-bordered table-hover text-center align-middle mb-0">
+              <thead class="table-light">
+                <tr>
+                  <th>#</th>
+                  <th>Brand ID</th>
+                  <th>Packsize ID</th>
+                  <th>EAL Code</th>
+                  <th>Item EAL Qty</th>
+                  <th>Rate</th>
+                  <th>Amount</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (it of selectedPoDetailData.Items; track it.Pur_Order_DetailId; let idx = $index) {
+                <tr>
+                  <td>{{ idx + 1 }}</td>
+                  <td class="fw-semibold">{{ it.BrandId }}</td>
+                  <td>{{ it.PacksizeId }}</td>
+                  <td>
+                    <span class="badge px-2 py-1" [ngClass]="getEALTypeBadgeClass(it.EALCode)">
+                      {{ it.EALCode || '-' }}
+                    </span>
+                  </td>
+                  <td class="fw-bold text-dark">{{ it.ItemEALQuantity | number }}</td>
+                  <td>₹ {{ it.Rate | number:'1.2-2' }}</td>
+                  <td class="fw-semibold text-primary">₹ {{ it.Amount | number:'1.2-2' }}</td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        }
+        }
+      </div>
+
+      <div class="modal-footer bg-white border-top px-4 py-3">
+        <button type="button" class="btn btn-primary px-4 fw-semibold" (click)="closePoDetailsModal()">
+          <i class="bi bi-x-circle me-1"></i> Close
+        </button>
+      </div>
+    </div>
+  </div>
+</div>
+}

@@ -1,0 +1,11 @@
+<div class="card p-4">
+  <h4>PDF Digital Signing</h4>
+  
+  <div class="my-3">
+    <input type="file" accept="application/pdf" (change)="onFileChange($event)" />
+  </div>
+
+  <button class="btn btn-primary" [disabled]="!selectedFile || isProcessing" (click)="onUploadAndSign()">
+    {{ isProcessing ? 'Signing Document...' : 'Sign & Download PDF' }}
+  </button>
+</div>

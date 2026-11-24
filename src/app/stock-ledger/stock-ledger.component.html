@@ -1,0 +1,185 @@
+<div class="d-flex flex-row">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="container-fluid px-3 py-5 mx-auto">
+    <div class="row d-flex justify-content-left">
+      <div class="col-xl-12 col-lg-12 col-md-12 col-12">
+        <div class="card shadow-lg rounded-lg border-0">
+          <div class="card-header bg-primary text-white d-flex justify-content-between align-items-center">
+            <h5 class="mb-0">Stock Details</h5>
+            <button class="btn btn-light btn-sm font-weight-bold" (click)="exportToExcel()">
+              <i class="fa fa-download me-2"></i> Export
+            </button>
+          </div>
+
+
+          <div class="card-body p-4">
+            <div class="table-responsive">
+              <table id="stock-table" class="table table-hover table-bordered text-center">
+                <thead>
+                  <tr>
+                    <th colspan="9">Stock Inward</th>
+                    <th colspan="9">Stock Outward</th>
+                  </tr>
+                  <tr>
+                    <th>Date</th>
+                    <th>DC No</th>
+                    <th>From</th>
+                    <th>PL</th>
+                    <th>ML</th>
+                    <th>ST</th>
+                    <th>BR</th>
+                    <th>HB</th>
+                    <th>Total</th>
+                    <th>Date</th>
+                    <th>Permit No</th>
+                    <th>To</th>
+                    <th>PL</th>
+                    <th>ML</th>
+                    <th>ST</th>
+                    <th>BR</th>
+                    <th>HB</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  @for (tx of transactions; track tx) {
+                    <tr>
+                      <!-- O/B in Stock Inward -->
+                      @if (tx.type === 'ob') {
+                        <td>{{ tx.date }}</td>
+                      }
+                      @if (tx.type === 'ob') {
+                        <td>-</td>
+                      }
+                      @if (tx.type === 'ob') {
+                        <td>O/B</td>
+                      }
+                      @if (tx.type === 'ob') {
+                        <td>{{ tx.count.PL }}</td>
+                      }
+                      @if (tx.type === 'ob') {
+                        <td>{{ tx.count.ML }}</td>
+                      }
+                      @if (tx.type === 'ob') {
+                        <td>{{ tx.count.ST }}</td>
+                      }
+                      @if (tx.type === 'ob') {
+                        <td>{{ tx.count.BR }}</td>
+                      }
+                      @if (tx.type === 'ob') {
+                        <td>{{ tx.count.HB }}</td>
+                      }
+                      @if (tx.type === 'ob') {
+                        <td>{{ tx.count.Total }}</td>
+                      }
+                      @if (tx.type === 'ob') {
+                        <td colspan="9"></td>
+                      }
+                      <!-- Stock Inward -->
+                      @if (tx.type === 'inward') {
+                        <td>{{ tx.date }}</td>
+                      }
+                      @if (tx.type === 'inward') {
+                        <td>{{ tx.dcNo?.[0] || '-' }}</td>
+                      }
+                      @if (tx.type === 'inward') {
+                        <td>{{ tx.fromPlace?.[0] || '-' }}</td>
+                      }
+                      @if (tx.type === 'inward') {
+                        <td>{{ tx.count.PL }}</td>
+                      }
+                      @if (tx.type === 'inward') {
+                        <td>{{ tx.count.ML }}</td>
+                      }
+                      @if (tx.type === 'inward') {
+                        <td>{{ tx.count.ST }}</td>
+                      }
+                      @if (tx.type === 'inward') {
+                        <td>{{ tx.count.BR }}</td>
+                      }
+                      @if (tx.type === 'inward') {
+                        <td>{{ tx.count.HB }}</td>
+                      }
+                      @if (tx.type === 'inward') {
+                        <td>{{ tx.count.Total }}</td>
+                      }
+                      @if (tx.type === 'inward') {
+                        <td colspan="9"></td>
+                      }
+                      <!-- Stock Outward -->
+                      @if (tx.type === 'outward') {
+                        <td colspan="9"></td>
+                      }
+                      @if (tx.type === 'outward') {
+                        <td>{{ tx.date }}</td>
+                      }
+                      @if (tx.type === 'outward') {
+                        <td>{{ tx.permitNo?.join(', ') || '-' }}</td>
+                      }
+                      @if (tx.type === 'outward') {
+                        <td>{{ tx.to || '-' }}</td>
+                      }
+                      @if (tx.type === 'outward') {
+                        <td>{{ tx.count.PL }}</td>
+                      }
+                      @if (tx.type === 'outward') {
+                        <td>{{ tx.count.ML }}</td>
+                      }
+                      @if (tx.type === 'outward') {
+                        <td>{{ tx.count.ST }}</td>
+                      }
+                      @if (tx.type === 'outward') {
+                        <td>{{ tx.count.BR }}</td>
+                      }
+                      @if (tx.type === 'outward') {
+                        <td>{{ tx.count.HB }}</td>
+                      }
+                      @if (tx.type === 'outward') {
+                        <td>{{ tx.count.Total }}</td>
+                      }
+                      <!-- C/B in Stock Outward -->
+                      @if (tx.type === 'cb') {
+                        <td colspan="9"></td>
+                      }
+                      @if (tx.type === 'cb') {
+                        <td>{{ tx.date }}</td>
+                      }
+                      @if (tx.type === 'cb') {
+                        <td>-</td>
+                      }
+                      @if (tx.type === 'cb') {
+                        <td>C/B</td>
+                      }
+                      @if (tx.type === 'cb') {
+                        <td>{{ tx.count.PL }}</td>
+                      }
+                      @if (tx.type === 'cb') {
+                        <td>{{ tx.count.ML }}</td>
+                      }
+                      @if (tx.type === 'cb') {
+                        <td>{{ tx.count.ST }}</td>
+                      }
+                      @if (tx.type === 'cb') {
+                        <td>{{ tx.count.BR }}</td>
+                      }
+                      @if (tx.type === 'cb') {
+                        <td>{{ tx.count.HB }}</td>
+                      }
+                      @if (tx.type === 'cb') {
+                        <td>{{ tx.count.Total }}</td>
+                      }
+                    </tr>
+                  }
+                </tbody>
+              </table>
+            </div>
+          </div>
+
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

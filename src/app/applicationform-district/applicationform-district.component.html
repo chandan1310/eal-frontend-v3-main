@@ -1,0 +1,458 @@
+<div class="app-layout-wrapper">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="container-fluid px-4 py-4 mx-auto main-workspace">
+    <div class="row d-flex justify-content-center">
+      <div class="col-xl-10 text-center">
+
+        <div class="portal-header-zone mb-4">
+          <h4 class="portal-main-title">APPLY FOR EXCISE ADHESIVE LABELS (DISTRICT/BAR)</h4>
+          <p class="portal-sub-title text-muted text-uppercase fw-bold small tracking-wider">
+            WIZARD: Step {{ currentStep2 + 1 }} / 2
+          </p>
+        </div>
+
+        <div class="wizard-nav-container mb-4">
+          <div class="wizard-step-node" [class.active]="currentStep2 === 0"
+            [class.completed]="currentStep2 > 0">
+            <div class="step-badge-circle"><i class="bi bi-building"></i></div>
+            <span class="step-badge-text">1. COMPANY DETAILS</span>
+          </div>
+          <div class="wizard-step-connector"></div>
+
+          <!-- <div class="wizard-step-node" [class.active]="currentStep2 === 1" [class.completed]="currentStep2 > 1">
+          <div class="step-badge-circle"><i class="bi bi-wallet2"></i></div>
+          <span class="step-badge-text">2. CHOOSE CHALLAN</span>
+        </div>
+        <div class="wizard-step-connector"></div> -->
+
+        <div class="wizard-step-node" [class.active]="currentStep2 === 2"
+          [class.completed]="currentStep2 > 2">
+          <div class="step-badge-circle"><i class="bi bi-person-gear"></i></div>
+          <span class="step-badge-text">2. ENTER DEMAND</span>
+        </div>
+      </div>
+
+      @if (currentStep2 === 0) {
+        <div class="fade-in-animation">
+          <div class="card app-wrapper shadow p-4 border-0">
+            @if (step1Form) {
+              <form [formGroup]="step1Form" onsubmit="event.preventDefault()">
+                <div class="row g-4 match-height-container">
+                  <div class="col-lg-6">
+                    <div class="ui-panel-card system-card h-100 p-4">
+                      <div class="group-caption-bar mb-4">
+                        <span class="caption-icon-tag"><i
+                        class="bi bi-alpha-a-circle-fill"></i></span>
+                        <span class="caption-text-tag">COMPANY DETAILS</span>
+                        <span class="badge badge-system-profile ms-2">AUTO-LOADED PROFILE</span>
+                      </div>
+                      <div class="row g-3">
+                        <div class="col-md-12 text-start position-relative">
+                          <label for="companyName" class="ui-field-label">Company Name</label>
+                          <div class="ui-readonly-box-icon">
+                            <i class="bi bi-lock-fill"></i>
+                            <input type="text" id="companyName" formControlName="companyName"
+                              class="form-control ui-input-readonly"
+                              placeholder="Loading company name..." />
+                            </div>
+                          </div>
+                          <div class="col-md-12 text-start position-relative mt-3">
+                            <label for="Adrs" class="ui-field-label">Office / Factory
+                            Address</label>
+                            <div class="ui-readonly-box-icon">
+                              <i class="bi bi-lock-fill"></i>
+                              <input type="text" id="Adrs" formControlName="address"
+                                class="form-control ui-input-readonly"
+                                placeholder="Loading address..." />
+                              </div>
+                            </div>
+                          </div>
+                          <div class="row g-3 mt-2">
+                            <div class="col-md-6 text-start position-relative">
+                              <label class="ui-field-label">State</label>
+                              <div class="ui-readonly-box-icon">
+                                <i class="bi bi-lock-fill"></i>
+                                <input type="text" formControlName="state"
+                                  class="form-control ui-input-readonly" />
+                                </div>
+                              </div>
+                              <div class="col-md-6 text-start position-relative">
+                                <label class="ui-field-label">District</label>
+                                <div class="ui-readonly-box-icon">
+                                  <i class="bi bi-lock-fill"></i>
+                                  <select class="form-select ui-dropdown-readonly"
+                                    formControlName="district">
+                                    <option [value]="null" disabled selected>Select District
+                                    </option>
+                                    @for (d of districts; track d) {
+                                      <option [value]="d.dist_id">{{
+                                      d.dist_name }}</option>
+                                    }
+                                  </select>
+                                </div>
+                              </div>
+                            </div>
+                            <div class="row g-3 mt-2">
+                              <div class="col-md-12 text-start position-relative">
+                                <label for="Pin" class="ui-field-label">PIN Code</label>
+                                <div class="ui-readonly-box-icon">
+                                  <i class="bi bi-lock-fill"></i>
+                                  <input type="text" id="Pin" formControlName="pin"
+                                    class="form-control ui-input-readonly"
+                                    placeholder="Loading pin code..." />
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="row g-3 mt-2">
+                                <div class="col-md-6 text-start position-relative">
+                                  <label for="modeTransport" class="ui-field-label">Mode of
+                                  Transport</label>
+                                  <div class="ui-readonly-box-icon">
+                                    <i class="bi bi-lock-fill"></i>
+                                    <input type="text" id="modeTransport"
+                                      formControlName="modeOfTransport"
+                                      class="form-control ui-input-readonly"
+                                      placeholder="Loading transport mode..." />
+                                    </div>
+                                  </div>
+                                  <div class="col-md-6 text-start position-relative">
+                                    <label for="route" class="ui-field-label">Route</label>
+                                    <div class="ui-readonly-box-icon">
+                                      <i class="bi bi-lock-fill"></i>
+                                      <input type="text" id="route" formControlName="route"
+                                        class="form-control ui-input-readonly"
+                                        placeholder="Loading route..." />
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+                              </div>
+                              <div class="col-lg-6">
+                                <div class="ui-panel-card interactive-card h-100 p-4">
+                                  <div class="group-caption-bar mb-2">
+                                    <span class="caption-icon-tag color-blue"><i
+                                    class="bi bi-beta-b-circle-fill"></i></span>
+                                    <span class="caption-text-tag">AUTHORISED SIGNATORY METRICS</span>
+                                  </div>
+                                  <p class="text-muted text-start small mb-3 fw-semibold tracking-wide">PLEASE
+                                  ENTER BELOW:</p>
+                                  <div class="row g-3">
+                                    <div class="col-md-6 text-start">
+                                      <label for="authPersonName" class="ui-field-label">Authorised Person
+                                        Name <span class="text-danger">*</span></label>
+                                        <input type="text" id="authPersonName" formControlName="authPersonName"
+                                          class="form-control ui-input-box"
+                                          placeholder="Enter authorised person name" />
+                                          @if (step1Form.get('authPersonName')?.touched && step1Form.get('authPersonName')?.hasError('required')) {
+                                            <div
+                                              class="text-danger text-start small mt-1">
+                                              Authorised person name is required.
+                                            </div>
+                                          }
+                                        </div>
+                                        <div class="col-md-6 text-start">
+                                          <label for="authPersonMob" class="ui-field-label">Authorised Person
+                                            Mobile <span class="text-danger">*</span></label>
+                                            <input type="text" id="authPersonMob" formControlName="authPersonMobile"
+                                              class="form-control ui-input-box"
+                                              placeholder="Enter 10-digit mobile number" />
+                                              @if (step1Form.get('authPersonMobile')?.touched && step1Form.get('authPersonMobile')?.errors) {
+                                                <div
+                                                  class="text-danger text-start small mt-1">
+                                                  @if (step1Form.get('authPersonMobile')?.hasError('required')) {
+                                                    <div
+                                                      >
+                                                    Mobile number is required.</div>
+                                                  }
+                                                  @if (step1Form.get('authPersonMobile')?.hasError('pattern')) {
+                                                    <div>
+                                                    Enter a valid 10-digit mobile number.</div>
+                                                  }
+                                                </div>
+                                              }
+                                            </div>
+                                          </div>
+                                          <div class="row g-3 mt-2">
+                                            <div class="col-md-12 text-start">
+                                              <label for="authPersonAdrs" class="ui-field-label">Authorised Person
+                                                Address <span class="text-danger">*</span></label>
+                                                <input type="text" id="authPersonAdrs"
+                                                  formControlName="authPersonAddres" class="form-control ui-input-box"
+                                                  placeholder="Enter full address" />
+                                                </div>
+                                              </div>
+                                              <div class="row g-3 mt-2">
+                                                <div class="col-md-6 text-start">
+                                                  <label for="PersonName" class="ui-field-label">Person Name <span
+                                                  class="text-danger">*</span></label>
+                                                  <input type="text" id="PersonName" formControlName="PersonName"
+                                                    class="form-control ui-input-box" placeholder="Enter full name" />
+                                                    @if (step1Form.get('PersonName')?.touched && step1Form.get('PersonName')?.hasError('required')) {
+                                                      <div
+                                                        class="text-danger text-start small mt-1">
+                                                        Person name is required.
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                  <div class="col-md-6 text-start">
+                                                    <label for="designation" class="ui-field-label">Designation <span
+                                                    class="text-danger">*</span></label>
+                                                    <select id="designation" formControlName="designation"
+                                                      class="form-select ui-dropdown-box">
+                                                      <option value="" disabled selected hidden>Select Designation
+                                                      </option>
+                                                      @for (desig of designations; track desig) {
+                                                        <option [value]="desig">{{ desig
+                                                        }}</option>
+                                                      }
+                                                    </select>
+                                                    @if (step1Form.get('designation')?.touched && step1Form.get('designation')?.hasError('required')) {
+                                                      <div
+                                                        class="text-danger text-start small mt-1">
+                                                        Designation is required.
+                                                      </div>
+                                                    }
+                                                  </div>
+                                                </div>
+                                                <div class="row g-3 mt-3">
+                                                  <div class="col-md-12 text-start">
+                                                    <label for="photo" class="ui-field-label">Photo <span
+                                                    class="text-danger">*</span></label>
+                                                    <div class="ui-upload-flex-container">
+                                                      <div class="upload-trigger-area">
+                                                        <label for="photo" class="upload-inner-blueprint">
+                                                          <span class="upload-icon-circle"><i
+                                                          class="bi bi-cloud-arrow-up-fill"></i></span>
+                                                          <div class="upload-strings">
+                                                            <span class="primary-text">Click to Upload (Accepts:
+                                                            JPG, PNG, max 1MB)</span>
+                                                            <span class="secondary-text">{{
+                                                              step1Form.get('photo')?.value || 'Choose File (No
+                                                            File Chosen)' }}</span>
+                                                          </div>
+                                                        </label>
+                                                        <input type="file" id="photo" (change)="onFileChange($event)"
+                                                          class="d-none" accept="image/*" />
+                                                        </div>
+                                                        <div class="identity-avatar-view-box">
+                                                          @if (!imagePreview) {
+                                                            <div class="avatar-frame-circle">
+                                                              <i class="bi bi-person-fill text-muted"
+                                                              style="font-size: 1.5rem;"></i>
+                                                            </div>
+                                                          }
+                                                          @if (imagePreview) {
+                                                            <img [src]="imagePreview" alt="Profile Preview"
+                                                              class="avatar-img-circle" />
+                                                          }
+                                                          <span class="avatar-caption">Applicant Photo</span>
+                                                        </div>
+                                                      </div>
+                                                      @if (step1Form.get('photo')?.touched && step1Form.get('photo')?.hasError('required')) {
+                                                        <div
+                                                          class="text-danger text-start small mt-1">
+                                                          Photo is required.
+                                                        </div>
+                                                      }
+                                                    </div>
+                                                  </div>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </form>
+                                        }
+                                      </div>
+                                    </div>
+                                  }
+
+                                  <!-- <div *ngIf="currentStep2 === 1" class="fade-in-animation">
+                                  <form *ngIf="step0Form" [formGroup]="step0Form">
+                                    <div class="card app-wrapper shadow p-4 border-0 text-start">
+                                      <h5 class="panel-section-title text-start mb-3"><i class="bi bi-wallet2"></i> Challan Details</h5>
+                                      <div class="ui-table-scroll-container">
+                                        <table class="table table-bordered text-center custom-ui-table mb-0">
+                                          <thead class="table-light-tint sticky-table-header">
+                                            <tr>
+                                              <th style="width: 55px;"></th>
+                                              <th>Challan Date</th>
+                                              <th>Challan Number</th>
+                                              <th>Amount</th>
+                                              <th>Used Amount</th>
+                                              <th>Remaining Amount</th>
+                                            </tr>
+                                          </thead>
+                                          <tbody>
+                                            <tr *ngIf="challanLoader">
+                                              <td colspan="6" class="text-center py-4">
+                                                <div class="spinner-border text-primary" role="status"><span class="sr-only">Loading...</span></div>
+                                              </td>
+                                            </tr>
+                                            <tr *ngFor="let cd of challanData">
+                                              <td style="width: 55px; text-align: center; vertical-align: middle;">
+                                                <input type="checkbox" class="form-check-input table-row-checkbox" [(ngModel)]="cd.isSelected" [ngModelOptions]="{ standalone: true }" (change)="onChallanChange(cd, $event)" />
+                                              </td>
+                                              <td>{{ cd.ChallanDate | date : "dd/MM/yyyy" }}</td>
+                                              <td><strong>{{ cd.ChallanNo }}</strong></td>
+                                              <td>₹ {{ cd.Amount | number }}</td>
+                                              <td>{{ cd.EAL_UsedAmount ? (cd.EAL_UsedAmount | number) : '0' }}</td>
+                                              <td><span class="text-primary-tint font-semibold">₹ {{ cd.EAL_UsedAmount != null ? (cd.Amount - cd.EAL_UsedAmount | number) : (cd.Amount | number) }}</span></td>
+                                            </tr>
+                                            <tr *ngIf="!challanLoader && (!challanData || challanData.length === 0)">
+                                              <td colspan="6" class="text-center text-muted py-3"><b>No records found.</b></td>
+                                            </tr>
+                                          </tbody>
+                                        </table>
+                                      </div>
+                                    </div>
+
+                                    <div *ngIf="challanData.length > 0" class="ui-metrics-card mt-4 p-3 shadow-sm">
+                                      <div class="row align-items-center text-center">
+                                        <div class="col-md-6 metric-border">
+                                          <div class="metric-desc">SELECTED CHALLAN TOTAL AMOUNT:</div>
+                                          <div class="metric-val text-primary-tint">₹ {{ totalChallanAmount | number }}</div>
+                                        </div>
+                                        <div class="col-md-6">
+                                          <div class="metric-desc">PERMISSIBLE HOLOGRAM VOLUME:</div>
+                                          <div class="metric-val text-success-custom fw-bold">{{ totalHologramLabels | number }}</div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </form>
+                                </div> -->
+
+                                @if (currentStep2 === 1) {
+                                  <div class="fade-in-animation">
+                                    @if (quotas.length > 0) {
+                                      <div class="card app-wrapper shadow p-4 border-0 mb-4">
+                                        <h5 class="panel-section-title text-start mb-3"><i class="bi bi-calendar3"></i> Current Month
+                                      Spirit & Malt Quotas</h5>
+                                      <div class="d-flex flex-column gap-2">
+                                        @for (quota of quotas; track quota) {
+                                          <div
+                                            class="quota-row d-flex justify-content-center align-items-center text-center p-3 border rounded bg-light flex-wrap gap-4">
+                                            <span class="badge bg-success px-3 py-2 fs-6">{{ quota.monthName }}</span>
+                                            <span class="badge bg-primary px-3 py-2 fs-6">Spirit: {{ quota.spirit | number }}</span>
+                                            <span class="badge bg-info px-3 py-2 fs-6 text-white">Malt: {{ quota.malt | number
+                                            }}</span>
+                                          </div>
+                                        }
+                                      </div>
+                                    </div>
+                                  }
+                                  <div class="card app-wrapper shadow p-4 border-0">
+                                    @if (step2Form) {
+                                      <form class="form-card" onsubmit="event.preventDefault()"
+                                        [formGroup]="step2Form">
+                                        <div class="row text-left">
+                                          <table class="table table-bordered align-middle text-center custom-ui-table">
+                                            <thead class="table-light-tint">
+                                              <tr>
+                                                <th colspan="3" class="table-secondary py-2">
+                                                  <h5 class="m-0 fs-6 text-dark fw-bold">Enter Your Label Quantity</h5>
+                                                </th>
+                                              </tr>
+                                              <tr>
+                                                <th class="text-start ps-4">Select EAL Type</th>
+                                                <th style="width: 320px;">Quantity</th>
+                                                <th style="width: 150px;">Action</th>
+                                              </tr>
+                                            </thead>
+                                            <tbody>
+                                              @for (row of quantities.controls; track row; let i = $index) {
+                                                <tr [formGroup]="row">
+                                                  <td class="p-3 text-start ps-4">
+                                                    <select formControlName="ealType"
+                                                      class="form-select ui-dropdown-box w-75"
+                                                      (change)="onEalTypeChange(i)">
+                                                      <option [value]="null" disabled>Select EAL Type</option>
+                                                      @for (eal of getAvailableEALTypes(i); track eal) {
+                                                        <option
+                                                        [value]="eal.Id">{{ eal.Type }} - {{ eal.Code }}</option>
+                                                      }
+                                                    </select>
+                                                  </td>
+                                                  <td class="p-3">
+                                                    <input type="number" formControlName="quantity"
+                                                      class="form-control ui-input-box text-center font-semibold"
+                                                      placeholder="Enter value" />
+                                                      @if (row.get('quantity')?.touched && row.get('quantity')?.invalid) {
+                                                        <div
+                                                          class="text-danger small mt-1">
+                                                          {{ getQuantityErrorMessage(row.get('quantity')!) }}
+                                                        </div>
+                                                      }
+                                                    </td>
+                                                    <td class="p-3">
+                                                      <button type="button" class="btn btn-action-delete btn-danger"
+                                                        [disabled]="quantities.length === 1"
+                                                      (click)="deleteEalRow(i)">Delete</button>
+                                                    </td>
+                                                  </tr>
+                                                }
+                                              </tbody>
+                                            </table>
+                                          </div>
+                                          <div class="row justify-content-center my-3">
+                                            <button type="button" (click)="addEalRow()" class="btn btn-success w-auto px-4"><i
+                                            class="bi bi-plus-circle me-2"></i>Add More</button>
+                                          </div>
+                                          @if (step2Form.get('quantities')?.touched && step2Form.hasError('exceedsAvailable')) {
+                                            <div
+                                              class="text-danger text-center small my-2 fw-bold">
+                                              Entered quantity ({{ totalEnteredQuantity | number }}) cannot exceed permissible
+                                              hologram volume ({{ totalHologramLabels | number }}).
+                                            </div>
+                                          }
+                                          <div class="row text-left mt-4">
+                                            <div class="legal-framework-notice p-3 w-100">
+                                              <div class="form-check d-flex align-items-start">
+                                                <input class="form-check-input real-checkbox me-3 mt-1" type="checkbox"
+                                                  id="defaultCheck1" formControlName="checkboxControl" />
+                                                  <label class="form-check-label legal-notice-text" for="defaultCheck1">
+                                                    I hereby declare that the information provided above is true to the best of
+                                                    my knowledge and belief. If any point of time, I am found to have
+                                                    concealed/distorted any information, my application shall be liable to be
+                                                    rejected/terminated without notice or compensation.
+                                                  </label>
+                                                </div>
+                                              </div>
+                                            </div>
+                                          </form>
+                                        }
+                                      </div>
+                                    </div>
+                                  }
+
+                                  <div class="head"></div>
+
+                                  <div class="wizard-buttons d-flex align-items-center mt-4"
+                                    [ngClass]="{'justify-content-between': currentStep2 !== 0, 'justify-content-end': currentStep2 === 0}">
+                                    @if (currentStep2 !== 0) {
+                                      <button class="btn btn-ui-nav-outline" (click)="prevStep()"
+                                      >Previous</button>
+                                    }
+                                    <div class="ms-auto">
+                                      <!-- Changed condition to check against currentStep2 === 0 for Next -->
+                                      @if (currentStep2 === 0) {
+                                        <button class="btn btn-ui-nav-primary" (click)="nextStep2()"
+                                          [disabled]="!step1Form?.valid">
+                                          Next
+                                        </button>
+                                      }
+                                      <!-- Changed condition to check against currentStep2 === 1 for Submit -->
+                                      @if (currentStep2 === 1) {
+                                        <button class="btn btn-ui-nav-success" (click)="saveBarApplication()"
+                                          [disabled]="!step2Form?.valid">
+                                          Submit
+                                        </button>
+                                      }
+                                    </div>
+                                  </div>
+
+                                </div>
+                              </div>
+                            </div>
+                          </div>

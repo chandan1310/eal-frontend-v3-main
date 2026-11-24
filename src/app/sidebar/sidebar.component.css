@@ -1,0 +1,481 @@
+/* =========================================================
+   SIDEBAR
+========================================================= */
+
+#sidebar {
+  width: 280px;
+  min-width: 280px;
+  max-width: 280px;
+
+  min-height: 100vh;
+  height: 100%;
+
+  background: #1a3a6d;
+
+  color: #ffffff;
+
+  display: flex;
+  flex-direction: column;
+
+  box-sizing: border-box;
+
+  padding: 20px 0;
+  margin: 0;
+
+  position: relative;
+
+  overflow-x: hidden;
+  overflow-y: auto;
+
+  transition:
+    width 0.3s ease,
+    min-width 0.3s ease,
+    max-width 0.3s ease;
+}
+
+
+/* =========================================================
+   COLLAPSED SIDEBAR
+========================================================= */
+
+#sidebar.active {
+  width: 80px;
+  min-width: 80px;
+  max-width: 80px;
+}
+
+
+/* =========================================================
+   HEADER
+========================================================= */
+
+.sidebar-header {
+  width: 100%;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: space-between;
+
+  padding: 0 20px;
+
+  margin-bottom: 20px;
+
+  box-sizing: border-box;
+
+  flex-shrink: 0;
+
+  transition: all 0.3s ease;
+}
+
+
+/* Collapsed Header */
+
+#sidebar.active .sidebar-header {
+  flex-direction: column;
+
+  justify-content: center;
+
+  align-items: center;
+
+  padding: 0 5px;
+
+  gap: 10px;
+}
+
+
+/* =========================================================
+   LOGO
+========================================================= */
+
+#sidebar .logo {
+  display: block;
+
+  color: #ffffff;
+
+  font-size: 28px;
+
+  font-weight: 900;
+
+  text-decoration: none;
+
+  white-space: nowrap;
+
+  margin: 0;
+
+  padding: 0;
+}
+
+
+#sidebar.active .logo {
+  font-size: 18px;
+}
+
+
+/* =========================================================
+   TOGGLE BUTTON
+========================================================= */
+
+.custom-menu {
+  margin: 0;
+
+  padding: 0;
+}
+
+
+#sidebarCollapse {
+  width: 42px;
+  height: 38px;
+
+  display: flex;
+
+  align-items: center;
+
+  justify-content: center;
+
+  padding: 0;
+
+  background: rgba(255, 255, 255, 0.1);
+
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  color: #ffffff;
+
+  border-radius: 5px;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+
+#sidebarCollapse:hover {
+  background: rgba(255, 255, 255, 0.2);
+}
+
+
+/* =========================================================
+   MENU
+========================================================= */
+
+#sidebar .sidebar-menu {
+  width: 100%;
+
+  padding: 0 !important;
+
+  margin: 0 !important;
+
+  list-style: none;
+
+  box-sizing: border-box;
+
+  flex: 0 0 auto;
+}
+
+
+/* =========================================================
+   MENU ITEM
+========================================================= */
+
+#sidebar .sidebar-menu li {
+  width: 100%;
+
+  padding: 0;
+
+  margin: 0;
+
+  border-bottom: 1px solid rgba(255, 255, 255, 0.06);
+
+  box-sizing: border-box;
+}
+
+
+/* =========================================================
+   MENU LINK
+========================================================= */
+
+#sidebar .sidebar-menu li a {
+  width: 100%;
+
+  min-height: 52px;
+
+  display: flex;
+
+  align-items: center;
+
+  box-sizing: border-box;
+
+  padding: 15px 25px;
+
+  color: #ffffff;
+
+  background: transparent;
+
+  text-decoration: none;
+
+  font-size: 16px;
+
+  font-weight: 600;
+
+  line-height: 1.2;
+
+  white-space: nowrap;
+
+  cursor: pointer;
+
+  transition:
+    background 0.2s ease,
+    color 0.2s ease,
+    padding 0.3s ease;
+}
+
+
+/* =========================================================
+   HOVER
+========================================================= */
+
+#sidebar .sidebar-menu li a:hover {
+  background: rgba(255, 255, 255, 0.10);
+
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   ACTIVE
+========================================================= */
+
+#sidebar .sidebar-menu li.active > a {
+  background: rgba(255, 255, 255, 0.15);
+
+  color: #ffffff;
+}
+
+
+/* =========================================================
+   ICON
+========================================================= */
+
+#sidebar .sidebar-menu li a > span:first-child {
+  width: 25px;
+
+  min-width: 25px;
+
+  margin-right: 15px;
+
+  font-size: 18px;
+
+  text-align: center;
+
+  flex-shrink: 0;
+}
+
+
+/* =========================================================
+   MENU TEXT
+========================================================= */
+
+#sidebar .menu-text {
+  display: inline-block;
+
+  overflow: hidden;
+
+  text-overflow: ellipsis;
+}
+
+
+/* =========================================================
+   COLLAPSED MENU
+========================================================= */
+
+#sidebar.active .sidebar-menu li a {
+  justify-content: center;
+
+  padding: 18px 0;
+
+  font-size: 0;
+}
+
+
+/* =========================================================
+   COLLAPSED ICON
+========================================================= */
+
+#sidebar.active .sidebar-menu li a > span:first-child {
+  width: auto;
+
+  min-width: auto;
+
+  margin-right: 0;
+
+  font-size: 22px;
+}
+
+
+/* =========================================================
+   COLLAPSED TEXT
+========================================================= */
+
+#sidebar.active .menu-text {
+  display: none;
+}
+
+
+/* =========================================================
+   FOOTER
+========================================================= */
+
+#sidebar .footer {
+  width: 100%;
+
+  box-sizing: border-box;
+
+  margin-top: auto;
+
+  padding: 20px;
+
+  flex-shrink: 0;
+
+  color: rgba(255, 255, 255, 0.6);
+
+  font-size: 13px;
+
+  line-height: 1.5;
+
+  text-align: left;
+}
+
+
+#sidebar .footer p {
+  margin: 0;
+}
+
+
+#sidebar .footer a {
+  color: rgba(255, 255, 255, 0.8);
+
+  text-decoration: none;
+}
+
+
+/* =========================================================
+   HIDE FOOTER WHEN COLLAPSED
+========================================================= */
+
+#sidebar.active .footer {
+  display: none;
+}
+
+
+/* =========================================================
+   LOGOUT
+========================================================= */
+
+#sidebar .logout-menu {
+  margin-top: 5px;
+}
+
+
+/* =========================================================
+   SCROLLBAR
+========================================================= */
+
+#sidebar::-webkit-scrollbar {
+  width: 5px;
+}
+
+
+#sidebar::-webkit-scrollbar-track {
+  background: rgba(255, 255, 255, 0.05);
+}
+
+
+#sidebar::-webkit-scrollbar-thumb {
+  background: rgba(255, 255, 255, 0.25);
+
+  border-radius: 10px;
+}
+
+
+/* =========================================================
+   TABLET
+========================================================= */
+
+@media (max-width: 992px) {
+
+  #sidebar {
+    width: 250px;
+
+    min-width: 250px;
+
+    max-width: 250px;
+  }
+
+  #sidebar.active {
+    width: 80px;
+
+    min-width: 80px;
+
+    max-width: 80px;
+  }
+
+  #sidebar .sidebar-menu li a {
+    padding: 14px 18px;
+
+    font-size: 15px;
+  }
+
+}
+
+
+/* =========================================================
+   MOBILE
+========================================================= */
+
+@media (max-width: 768px) {
+
+  #sidebar {
+    width: 240px;
+
+    min-width: 240px;
+
+    max-width: 240px;
+
+    min-height: 100vh;
+  }
+
+  #sidebar.active {
+    width: 70px;
+
+    min-width: 70px;
+
+    max-width: 70px;
+  }
+
+}
+
+
+/* =========================================================
+   SMALL MOBILE
+========================================================= */
+
+@media (max-width: 480px) {
+
+  #sidebar {
+    width: 220px;
+
+    min-width: 220px;
+
+    max-width: 220px;
+  }
+
+  #sidebar.active {
+    width: 65px;
+
+    min-width: 65px;
+
+    max-width: 65px;
+  }
+
+}

@@ -1,0 +1,177 @@
+<div class="d-flex flex-nowrap ix-page">
+  <div class="sidebar-container bg-white shadow-sm flex-shrink-0" style="width: 260px; min-width: 260px;">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="ix-main">
+    <div class="ix-row ix-between">
+      <div>
+        <h4 class="ix-title"><i class="fa fa-file-text-o"></i> Create Indent</h4>
+        <div class="ix-sub">Order EAL label boxes from the Nashik press. 1 box = {{ labelsPerBox | number }} labels (9 spools).</div>
+      </div>
+    </div>
+
+    <div class="ix-flow">
+      <div class="ix-step on"><b>1</b> Section raises indent</div><div class="ix-line"></div>
+      <div class="ix-step"><b>2</b> Nashik approves</div><div class="ix-line"></div>
+      <div class="ix-step"><b>3</b> Nashik dispatches boxes</div><div class="ix-line"></div>
+      <div class="ix-step"><b>4</b> Stock received</div>
+    </div>
+
+    <div class="ix-stats">
+      <div class="ix-stat"><i class="fa fa-hourglass-half ix-i-amber"></i><div><span>Waiting for Nashik</span><strong>{{ count('Pending') }}</strong></div></div>
+      <div class="ix-stat"><i class="fa fa-truck ix-i-blue"></i><div><span>Being dispatched</span><strong>{{ count('Approved', 'Partially Dispatched') }}</strong></div></div>
+      <div class="ix-stat"><i class="fa fa-cubes ix-i-indigo"></i><div><span>Boxes on the way</span><strong>{{ boxesOnTheWay }}</strong></div></div>
+      <div class="ix-stat"><i class="fa fa-check-circle ix-i-green"></i><div><span>Fully dispatched</span><strong>{{ count('Dispatched') }}</strong></div></div>
+    </div>
+
+    @if (accessLoaded && !canCreate) {
+      <div class="ix-banner"><i class="fa fa-eye"></i> View only. Indents are raised by the <b>Section</b> login and approved by <b>Nashik Admin</b>.</div>
+    }
+
+    <!-- ================= NEW INDENT (Section) ================= -->
+    @if (canCreate) {
+      <div class="ix-card">
+        <div class="ix-card-head">
+          <h5>New indent</h5>
+          @if (anySuggestion) {
+            <button type="button" class="ix-suggest" (click)="useAllSuggestions()"><i class="fa fa-magic"></i> Fill suggested boxes</button>
+          }
+        </div>
+        <div class="ix-card-body">
+          <div class="ix-fields">
+            <div>
+              <label class="ix-label">Period from <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" [(ngModel)]="startDate" />
+            </div>
+            <div>
+              <label class="ix-label">Period to <span class="text-danger">*</span></label>
+              <input type="date" class="form-control" [(ngModel)]="endDate" [min]="startDate || today" />
+            </div>
+            <div>
+              <label class="ix-label">Priority</label>
+              <div class="ix-seg">
+                <button type="button" [class.on]="priority === 'Normal'" (click)="priority = 'Normal'">Normal</button>
+                <button type="button" class="urgent" [class.on]="priority === 'Urgent'" (click)="priority = 'Urgent'">Urgent</button>
+              </div>
+            </div>
+          </div>
+
+          <table class="ix-table">
+            <thead>
+              <tr>
+                <th>EAL type</th>
+                <th class="ix-right">In stock</th>
+                <th class="ix-right">On order</th>
+                <th class="ix-right">Issued / month</th>
+                <th>Cover</th>
+                <th>Suggested</th>
+                <th style="width:150px">Boxes</th>
+                <th class="ix-right">Labels</th>
+              </tr>
+            </thead>
+            <tbody>
+              @for (r of rows; track r.EALTypeId) {
+                <tr>
+                  <td><div class="ix-type"><span class="ix-code">{{ r.Code }}</span><div><b>{{ r.Name }}</b><div class="ix-xs">{{ r.Type }}</div></div></div></td>
+                  <td class="ix-right">{{ r.InStockLabels | number }}<div class="ix-xs">≈ {{ boxesInStock(r) }} box</div></td>
+                  <td class="ix-right">{{ r.OnOrderBoxes }} box</td>
+                  <td class="ix-right">{{ r.MonthlyIssued | number }}</td>
+                  <td>
+                    @if (r.MonthsCover != null) { <span class="ix-cover" [ngClass]="coverClass(r)">{{ r.MonthsCover }} mo</span> }
+                    @else { <span class="ix-xs">no issue yet</span> }
+                  </td>
+                  <td>
+                    @if (r.SuggestedBoxes > 0) { <button type="button" class="ix-suggest" (click)="useSuggestion(r)">Use {{ r.SuggestedBoxes }}</button> }
+                    @else { <span class="ix-xs">—</span> }
+                  </td>
+                  <td>
+                    <div class="ix-stepper" [class.has]="r.boxQty > 0">
+                      <button type="button" (click)="step(r, -1)">−</button>
+                      <input type="number" min="0" [ngModel]="r.boxQty" (ngModelChange)="setBoxes(r, $event)" />
+                      <button type="button" (click)="step(r, 1)">+</button>
+                    </div>
+                  </td>
+                  <td class="ix-right ix-nowrap">{{ r.boxQty * labelsPerBox | number }}</td>
+                </tr>
+              } @empty {
+                <tr><td colspan="8" style="text-align:center; padding:30px; color:#94a3b8;">Loading EAL types…</td></tr>
+              }
+            </tbody>
+          </table>
+          <div class="ix-xs" style="margin-top:6px">
+            Cover = months that stock + boxes on order last at the last 3 months' issue rate. Suggestion keeps about 2 months of cover.
+          </div>
+
+          <div class="ix-mt">
+            <label class="ix-label">Note for Nashik @if (priority === 'Urgent') { <span class="text-danger">* why urgent</span> }</label>
+            <textarea class="form-control" rows="2" maxlength="500" [(ngModel)]="remark"
+              [placeholder]="priority === 'Urgent' ? 'e.g. Masala stock will finish before 10 Dec' : 'Optional'"></textarea>
+          </div>
+
+          <div class="ix-totalbar">
+            <div>
+              <div class="big">{{ totalBoxes }} box · {{ totalLabels | number }} labels</div>
+              <div class="muted">
+                @for (r of chosen; track r.EALTypeId; let last = $last) { {{ r.Name }} {{ r.boxQty }}{{ last ? '' : ' · ' }} }
+                @if (!chosen.length) { Enter boxes for the EAL types you need }
+              </div>
+            </div>
+            <button type="button" class="ix-btn light" [disabled]="totalBoxes === 0" (click)="review()">Review &amp; send to Nashik <i class="fa fa-arrow-right"></i></button>
+          </div>
+        </div>
+      </div>
+    }
+
+    <!-- ================= LIST ================= -->
+    <div class="ix-card">
+      <div class="ix-card-head"><h5>{{ canCreate ? 'Indents' : 'All indents' }}</h5><span class="ix-xs">Click a row for details and dispatch history</span></div>
+      <div class="ix-card-body">
+        <app-indent-list [indents]="indents" [loading]="loading" [mode]="canCreate ? 'creator' : 'monitor'" (action)="onListAction($event)"></app-indent-list>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- review before sending -->
+@if (confirmOpen) {
+  <div class="ix-backdrop" (click)="confirmOpen = false"></div>
+  <div class="ix-dialog">
+    <div class="ix-dialog-head">
+      <h6>Send indent to Nashik? @if (priority === 'Urgent') { <span class="ix-urgent">URGENT</span> }</h6>
+      <button type="button" class="ix-x" (click)="confirmOpen = false">&times;</button>
+    </div>
+    <div class="ix-dialog-body">
+      <div class="ix-xs" style="margin-bottom:10px">Period {{ startDate | date:'dd MMM yyyy' }} – {{ endDate | date:'dd MMM yyyy' }}</div>
+      <table class="ix-table">
+        <thead><tr><th>EAL type</th><th class="ix-right">Boxes</th><th class="ix-right">Labels</th></tr></thead>
+        <tbody>
+          @for (r of chosen; track r.EALTypeId) {
+            <tr><td><span class="ix-code">{{ r.Code }}</span>{{ r.Name }}</td><td class="ix-right">{{ r.boxQty }}</td><td class="ix-right">{{ r.boxQty * labelsPerBox | number }}</td></tr>
+          }
+        </tbody>
+        <tfoot><tr><td>Total</td><td class="ix-right">{{ totalBoxes }}</td><td class="ix-right">{{ totalLabels | number }}</td></tr></tfoot>
+      </table>
+      @if (remark.trim()) { <div class="ix-note">{{ remark }}</div> }
+    </div>
+    <div class="ix-dialog-foot">
+      <button type="button" class="ix-btn ghost" (click)="confirmOpen = false" [disabled]="saving">Edit</button>
+      <button type="button" class="ix-btn green" (click)="send()" [disabled]="saving">{{ saving ? 'Sending…' : 'Send to Nashik' }}</button>
+    </div>
+  </div>
+}
+
+<!-- cancel -->
+@if (cancelTarget) {
+  <div class="ix-backdrop" (click)="cancelTarget = null"></div>
+  <div class="ix-dialog" style="width:min(420px,94vw)">
+    <div class="ix-dialog-head"><h6>Cancel indent #{{ cancelTarget.IndentNo }}?</h6><button type="button" class="ix-x" (click)="cancelTarget = null">&times;</button></div>
+    <div class="ix-dialog-body"><div class="ix-sub">Nashik has not acted on it yet. It will be withdrawn and not printed.</div></div>
+    <div class="ix-dialog-foot">
+      <button type="button" class="ix-btn ghost" (click)="cancelTarget = null">Keep</button>
+      <button type="button" class="ix-btn red" (click)="confirmCancel()">Cancel indent</button>
+    </div>
+  </div>
+}
+
+<app-indent-detail [indentNo]="viewNo" (closed)="viewNo = null"></app-indent-detail>

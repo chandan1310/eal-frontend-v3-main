@@ -1,0 +1,526 @@
+import pdfMake from 'pdfmake/build/pdfmake';
+import pdfFonts from 'pdfmake/build/vfs_fonts';
+(pdfMake as any).vfs = pdfFonts.pdfMake.vfs;
+
+
+  downloadPermit() {
+    console.log('Download PDF');
+    let data = {
+      permitNo: 147,
+      date: '08-Jan-25',
+      applicant: 'Welcome Distilleries Pvt Ltd',
+      address: 'Cherkabandha, Kargi Road, Kota, Bilaspur, 495113',
+      authorisedPerson: 'Mahesh Kushwaha / Pankaj Tripathi',
+      totalEalFig: '27,00,000',
+      totalEalWords: 'Twenty Seven Lacs',
+      dateAndTimeOfDispatch: '08-01-2025',
+      route: 'New Raipur-Simga-Bilaspur-Cherkabandha',
+      validityOfPermit: '8 Hours',
+    };
+
+    const docDefinition = {
+      content: [
+        // Header
+        {
+          text: 'Permit for Transportation of Excise Adhesive Labels',
+          style: 'header',
+          alignment: 'center',
+        },
+
+        // Permit Number and Date in One Row (50% Width Each)
+        {
+          columns: [
+            {
+              text: `Permit No. CL/FL/HR/: ${data.permitNo}`,
+              style: 'subheader',
+            },
+            {
+              text: `Date: ${data.date}`,
+              style: 'subheader',
+              alignment: 'right',
+            },
+          ],
+          margin: [0, 10, 0, 10],
+        },
+
+        // Applicant Details (8 Rows)
+        {
+          table: {
+            widths: ['30%', '1%', '69%'],
+            body: [
+              [
+                { text: 'Applicant', bold: true, fontSize: 14 },
+                { text: ':', alignment: 'center' },
+                { text: `${data.applicant}`, bold: true, fontSize: 14 },
+              ],
+              [
+                'Address',
+                { text: ':', alignment: 'center' },
+                `${data.address}`,
+              ],
+              [
+                'Authorized Person',
+                { text: ':', alignment: 'center' },
+                `${data.authorisedPerson}`,
+              ],
+              [
+                'Total No. of EAL (in Fig.)',
+                { text: ':', alignment: 'center' },
+                `${data.totalEalFig}`,
+              ],
+              [
+                'Total No. of EAL (in Words)',
+                { text: ':', alignment: 'center' },
+                `${data.totalEalWords}`,
+              ],
+              [
+                'Date & Time of Dispatch',
+                { text: ':', alignment: 'center' },
+                `${data.dateAndTimeOfDispatch}`,
+              ],
+              ['Route', { text: ':', alignment: 'center' }, `${data.route}`],
+              [
+                'Validity of Permit',
+                { text: ':', alignment: 'center' },
+                `${data.validityOfPermit}`,
+              ],
+            ],
+          },
+          layout: 'noBorders',
+          margin: [0, 10, 0, 10],
+        },
+
+        // Title for Table
+        {
+          text: 'Description of EAL',
+          style: 'subheader',
+          alignment: 'center',
+          margin: [0, 10, 0, 10],
+        },
+
+        // Table for EAL Description
+        {
+          table: {
+            widths: ['29%', '1%', '10%', '20%', '20%', '20%'],
+            body: [
+              [
+                { text: 'Type', colSpan: 2, alignment: 'center', bold: true },
+                {},
+                { text: 'Code', alignment: 'center', bold: true },
+                { text: 'Start No', alignment: 'center', bold: true },
+                { text: 'End No', alignment: 'center', bold: true },
+                { text: 'Total', alignment: 'center', bold: true },
+              ],
+              [
+                'Foreign Liquor (Spirit)',
+                ':',
+                { text: 'ST', alignment: 'center' },
+                '',
+                '',
+                '',
+              ],
+              [
+                'Foreign Liquor (Beer)',
+                ':',
+                { text: 'BR', alignment: 'center' },
+                '',
+                '',
+                '',
+              ],
+              [
+                'Country Liquor (Plain)',
+                ':',
+                { text: 'PL', alignment: 'center' },
+                { text: '36120001', alignment: 'right' },
+                { text: '38100000', alignment: 'right' },
+                { text: '19,80,000', alignment: 'right' },
+              ],
+              [
+                'Country Liquor (Masala)',
+                ':',
+                { text: 'ML', alignment: 'center' },
+                { text: '31070001', alignment: 'right' },
+                { text: '31790000', alignment: 'right' },
+                { text: '7,20,000', alignment: 'right' },
+              ],
+              [
+                'Hotel/Bar',
+                ':',
+                { text: 'HB', alignment: 'center' },
+                '',
+                '',
+                '',
+              ],
+              [
+                { text: 'Total', colSpan: 4, alignment: 'center', bold: true },
+                {},
+                {},
+                {},
+                {},
+                { text: '27,00,000', alignment: 'right' },
+              ],
+            ],
+          },
+          margin: [0, 0, 0, 10],
+        },
+
+        // Right Aligned Authorised Signatory Section
+        {
+          columns: [
+            { text: '', width: '*' },
+            {
+              stack: [
+                { text: 'Authorised Signatory', bold: true },
+                { text: 'Office of The Excise Commissioner', bold: true },
+                { text: 'Chhattisgarh, Sector 19, Nava Raipur', bold: true },
+              ],
+              alignment: 'right',
+            },
+          ],
+          margin: [0, 50, 0, 10],
+        },
+
+        // Note Section
+        {
+          text: 'Note: This permit is to be issued in Triplicate. First copy will be kept for record. Second has to be provided to the transporter. Third has to be provided to the Warehouse/CSBCL',
+          margin: [0, 10, 0, 10],
+        },
+
+        // Box for Receipt Section
+        {
+          table: {
+            widths: ['*'],
+            body: [
+              [{ text: 'Receipt', alignment: 'center', bold: true }],
+              [
+                {
+                  text: 'Checked and Received following quantity of EALs-',
+                  alignment: 'center',
+                },
+              ],
+              [
+                {
+                  columns: [
+                    { text: 'Quantity: 27,00,000', width: '50%', bold: true },
+                    {
+                      text: 'Date: 08 Jan 2025',
+                      width: '50%',
+                      alignment: 'right',
+                      bold: true,
+                    },
+                  ],
+                },
+              ],
+              [{}],
+              [{}],
+              [{}],
+              [{ text: 'Name: Mahesh Kushwaha / Pankaj Tripathi' }],
+              [{}],
+              [{}],
+              [{}],
+              [{ text: 'Sign:' }],
+              [{}],
+              [{}],
+              [{}],
+            ],
+          },
+          layout: {
+            hLineWidth: (i: any, node: any) =>
+              i === 0 || i === node.table.body.length ? 1 : 0,
+            vLineWidth: (i: any, node: any) =>
+              i === 0 || i === node.table.widths.length ? 1 : 0,
+          },
+          margin: [100, 20, 0, 10], // Moves the table to the right
+        },
+      ],
+
+      // Styles
+      styles: {
+        header: {
+          fontSize: 20,
+          bold: true,
+        },
+        subheader: {
+          fontSize: 12,
+          bold: true,
+        },
+      },
+    };
+
+    const applicantName = data.applicant.split(' ').slice(0, 2).join('_');
+    pdfMake
+      .createPdf(docDefinition)
+      .download(`permit_${data.permitNo}_${applicantName}.pdf`);
+  }
+
+  downloadApplication() {
+    console.log('Download Application PDF');
+    let data = {
+      applicationNo: '231/AEBPL/BILASPUR',
+      date: '03/01/2025',
+      companyName: 'M/S AEGIS BEVERAGES PVT LTD.',
+      address: 'Plot no-41 sector-b sirgitti industrual growth',
+      district: 'Bilaspur',
+      state: 'Chhattisgarh',
+      pin: 495004,
+      modeOfTransport: 'By Road',
+      route: 'Raipur-Simga Nandghat-Bilaspur',
+      authorisedPersonName: 'Bindeshwar Mahato',
+      authorisedPersonAddress: 'Sirgitti Bilaspur',
+      authorisedPersonPhone: '6265853224',
+      challanNo: 'EX0501250000776',
+      challanDate: '03/01/2025',
+      challanAmount: 535500,
+      challanBank: 'AXIS Bank Raipur',
+    };
+
+    const docDefinition = {
+      content: [
+        {
+          text: 'APPLICATION FOR EXCISE ADHESIVE LABEL',
+          style: 'headerOne',
+          alignment: 'center',
+        },
+        {
+          text: 'DISTILLERY/BREWERY/WINERY/BOTTLING UNIT/BONDER',
+          style: 'headerTwo',
+          alignment: 'center',
+        },
+        {
+          columns: [
+            {
+              text: `Application No. CL/FL/HR/: ${data.applicationNo}`,
+              style: 'subheader',
+              width: '70%',
+            },
+            {
+              text: `Date: ${data.date}`,
+              style: 'subheader',
+              alignment: 'right',
+              width: '30%',
+            },
+          ],
+          margin: [0, 10, 0, 5],
+        },
+        {
+          table: {
+            widths: ['15%', '35%', '5%', '45%'],
+            body: [
+              [
+                { text: 'COMPANY DETAILS', rowSpan: 7, alignment: 'center' },
+                { text: 'NAME OF COMPANY/FIRM' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.companyName}`, alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'COMPLETE ADDRESS' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.address}`, alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'DISTRICT' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.district}`, alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'STATE' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.state}`, alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'PIN' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.pin}`, alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'MODE OF TRANSPORT' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.modeOfTransport}`, alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'ROUTE' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.route}`, alignment: 'center' },
+              ],
+              [
+                { text: 'AUTHORISED PERSON', rowSpan: 3, alignment: 'center' },
+                { text: 'NAME' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.authorisedPersonName}`, alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'ADDRESS' },
+                { text: ':', alignment: 'center' },
+                {
+                  text: `${data.authorisedPersonAddress}`,
+                  alignment: 'center',
+                },
+              ],
+              [
+                {},
+                { text: 'PHONE' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.authorisedPersonPhone}`, alignment: 'center' },
+              ],
+              [
+                { text: 'CHALLAN DETAILS', rowSpan: 4, alignment: 'center' },
+                { text: 'CHALLAN NO.' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.challanNo}`, alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'CHALLAN DATE' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.challanBank}`, alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'CHALLAN AMOUNT' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.challanAmount}`, alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'BANK' },
+                { text: ':', alignment: 'center' },
+                { text: `${data.challanBank}`, alignment: 'center' },
+              ],
+              [
+                { text: 'DEMAND', rowSpan: 6, alignment: 'center' },
+                { text: 'LIQUOR TYPE', bold: true },
+                { text: 'CD', alignment: 'center', bold: true },
+                { text: 'QTY', alignment: 'center', bold: true },
+              ],
+              [
+                {},
+                { text: 'FOREIGN LIQUOR (SPIRIT)' },
+                { text: 'ST', alignment: 'center' },
+                { text: '1190000', alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'FOREIGN LIQUOR (MALT)' },
+                { text: 'BR', alignment: 'center' },
+                { text: '0', alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'COUNTRY LIQUOR (PLAIN)' },
+                { text: 'PL', alignment: 'center' },
+                { text: '0', alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'COUNTRY LIQUOR (MASALA)' },
+                { text: 'ML', alignment: 'center' },
+                { text: '0', alignment: 'center' },
+              ],
+              [
+                {},
+                { text: 'TOTAL', colSpan: 2 },
+                {},
+                { text: '1190000', alignment: 'center' },
+              ],
+            ],
+          },
+          margin: [0, 0, 0, 0],
+        },
+        {
+          columns: [
+            {
+              stack: [{ text: 'RECOMMENDATION WITH SEAL' }],
+              alignment: 'left',
+            },
+            {
+              stack: [{ text: 'SIGNATURE WITH SEAL' }],
+              alignment: 'right',
+            },
+          ],
+          margin: [0, 40, 0, 0],
+        },
+        {
+          table: {
+            widths: ['60%', '5%', '35%'],
+            body: [
+              [
+                { text: 'FOR OFFICE USE :-', colSpan: 3, alignment: 'center' },
+                {},
+                {},
+              ],
+              [
+                { text: 'ISSUED VIDE PERMIT NUMBER', alignment: 'center' },
+                { text: ':', alignment: 'center' },
+                { text: '147', alignment: 'center' },
+              ],
+              [
+                { text: 'BALANCE', alignment: 'center' },
+                { text: ':', alignment: 'center' },
+                { text: '', alignment: 'center' },
+              ],
+            ],
+          },
+          margin: [0, 10, 0, 0],
+        },
+        {
+          text: 'DECLARATION',
+          margin: [0, 30, 0, 10],
+          alignment: 'center',
+          bold: true
+        },
+        {
+          text: [
+            "I, ",
+            { text: `${data.authorisedPersonName}`, bold: true },
+            ", representing ",
+            { text: `${data.companyName}`, bold: true },
+            ", confirm that the required seal and signature process has been completed through self-attestation via the online declaration. I take full responsibility for its accuracy."
+          ],
+          margin: [0, 0, 0, 10]
+        },
+        {
+          columns: [
+            {
+              stack: [
+                { text: `Date: ${data.date}`, bold: true },
+              ],
+              alignment: 'left',
+            },
+            {
+              stack: [
+                { text: `Place: ${data.district}`, bold: true },
+              ],
+              alignment: 'right',
+            },
+          ],
+        },
+      ],
+
+      // Styles
+      styles: {
+        headerOne: {
+          fontSize: 14,
+          bold: true,
+        },
+        headerTwo: {
+          fontSize: 14,
+        },
+        subheader: {
+          fontSize: 12,
+          bold: true,
+        },
+      },
+    };
+
+    const applicantName = data.companyName.split(' ').slice(0, 2).join('_');
+    pdfMake
+      .createPdf(docDefinition)
+      .download(`application_${data.applicationNo}_${applicantName}.pdf`);
+  }

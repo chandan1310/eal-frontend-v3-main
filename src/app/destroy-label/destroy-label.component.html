@@ -1,0 +1,118 @@
+<div class="d-flex flex-row">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="main-content flex-grow-1">
+    <div class="card shadow-sm">
+      <div class="card-header classic-header d-flex justify-content-between align-items-center">
+        <h5 class="mb-0">Destroy Master Records</h5>
+      </div>
+
+      <div class="card-body">
+        <div class="mb-3 d-flex gap-2">
+          <input type="text" [(ngModel)]="wastageIdFilter" placeholder="Filter by Wastage ID" class="form-control w-auto" />
+          <input type="text" [(ngModel)]="boxNoFilter" placeholder="Filter by Box No" class="form-control w-auto" />
+          <button class="btn btn-primary" (click)="loadDestroyMaster()">Search</button>
+          <button class="btn btn-secondary" (click)="resetFilters()">Reset</button>
+        </div>
+
+        @if (loading) {
+          <div class="text-center text-muted py-3">
+            <div class="spinner-border spinner-border-sm me-2"></div>
+            Loading records...
+          </div>
+        }
+
+        @if (errorMessage) {
+          <div class="alert alert-danger">
+            {{ errorMessage }}
+          </div>
+        }
+
+        @if (destroyEntries.length > 0) {
+          <div class="table-responsive" style="max-height:700px; overflow-y:auto;">
+            <table class="table table-bordered table-hover table-striped classic-table">
+              <thead class="table-primary sticky-top">
+                <tr>
+                  <th>Wastage ID</th>
+                  <th>Box No</th>
+                  <th>Liquor</th>
+                  <th>Company</th>
+                  <th>Damage Start</th>
+                  <th>Damage End</th>
+                  <th>Total Damage</th>
+                  <th>Financial Year</th>
+                  <th>Created Date</th>
+                  <th>Created By</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (entry of destroyEntries; track entry) {
+                  <tr>
+                    <td>{{ entry.WastageId }}</td>
+                    <td class="fw-semibold">{{ entry.BoxNo }}</td>
+                    <td>
+                      <div class="fw-medium">{{ entry.LiquorType }}</div>
+                      <div class="text-muted small">{{ entry.LiquorName }}</div>
+                    </td>
+                    <td>
+                      <div class="fw-medium">{{ entry.CompanyName }}</div>
+                      <div class="text-muted small">{{ entry.CompanyAddress }}</div>
+                    </td>
+                    <td>{{ entry.DamageStart }}</td>
+                    <td>{{ entry.DamageEnd }}</td>
+                    <td>{{ entry.DamageEnd && entry.DamageStart ? (entry.DamageEnd - entry.DamageStart + 1) : 0 }}</td>
+                    <td>{{ entry.FinancialYear }}</td>
+                    <td>{{ entry.CreatedDate | date:'dd-MMM-yyyy' }}</td>
+                    <td>{{ entry.CreatedBy }}</td>
+                    <td>
+                      <button class="btn btn-sm btn-outline-primary" (click)="editEntry(entry)">Edit</button>
+                    </td>
+                  </tr>
+                  @if (selectedEntry && selectedEntry.WastageId === entry.WastageId) {
+                    <tr>
+                      <td colspan="11">
+                        <div class="p-3 border rounded bg-light">
+                          <div class="row g-3">
+                            <div class="col-md-6">
+                              <label class="form-label">Name</label>
+                              <input type="text" [(ngModel)]="selectedEntry.name" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-label">Designation</label>
+                              <input type="text" [(ngModel)]="selectedEntry.designation" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-label">Upload Panchnama</label>
+                              <input type="file" (change)="onPanchnamaUpload($event)" class="form-control" />
+                            </div>
+                            <div class="col-md-6">
+                              <label class="form-label">Upload Video</label>
+                              <input type="file" (change)="onVideoUpload($event)" accept="video/*" class="form-control" />
+                            </div>
+                          </div>
+                          <div class="d-flex flex-wrap gap-2 mt-3">
+                            <button class="btn btn-success btn-sm" (click)="saveEntry()">Save</button>
+                            <button class="btn btn-secondary btn-sm" (click)="cancelEdit()">Cancel</button>
+                          </div>
+                        </div>
+                      </td>
+                    </tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        @if (!loading && destroyEntries.length === 0) {
+          <div class="text-center text-muted py-4">
+            No records found
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,45 @@
+/* Subtitle Soft Palette Badges Background Matrix Color Fallbacks */
+.bg-success-subtle {
+  background-color: #e2f6ec !important;
+  color: #0f5132 !important;
+}
+.bg-danger-subtle {
+  background-color: #fde8e8 !important;
+}
+.bg-warning-subtle {
+  background-color: #fff8e1 !important;
+  color: #b58100 !important;
+}
+
+/* Custom Scrollbars for the Cards Area Window Container Box */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f5f9;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb {
+  background: #cbd5e1;
+  border-radius: 8px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #94a3b8;
+}
+
+/* Dynamic Divider Layout Partition lines configuration matching screen thresholds */
+@media (min-width: 768px) {
+  .border-end-md {
+    border-right: 1px solid #edf2f7 !important;
+  }
+}
+
+/* Card Hover Elevation Lift Effect Utilities */
+.card {
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+.card:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.03) !important;
+}

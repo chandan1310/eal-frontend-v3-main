@@ -1,0 +1,184 @@
+<div style="display: flex;flex-direction: row;">
+
+  <!-- --------------------------------------------------------------- -->
+
+  <div class="containerSide" >
+    <app-sidebar></app-sidebar>
+    <!-- <app-sidebar1></app-sidebar1> -->
+  </div>
+  <!-- -------------------------------------------------------------------- -->
+  <!-- <div style="display: flex;flex-direction: column;gap: 10px;" style="overflow: hidden;"> -->
+  <div class="container-fluid px-3 py-5 mx-auto" style="overflow: hidden;" >
+    <div class="row d-flex "  >
+      <div class="col-xl-11 text-center" >
+        <!-- <h3>Request a Demo</h3>       justify-content-center-->
+        <!-- <p class="blue-text">Just answer a few questions<br> so that we can personalize the right experience for you.</p> -->
+        <div class="card app-wrapper" style="margin-bottom: 10px;"  >
+          <h5 class="text-center mb-4">Print Excise Adhesive Labels Application Documents</h5>
+          <form class="form-card" onsubmit="event.preventDefault()">
+            <div class="row justify-content-between text-left">
+
+              <div class="form-group col-sm-3 flex-column d-flex">
+                <label class="form-control-label px-3">Financial year<span class="text-danger"> *</span></label>
+                <!-- <input type="text" id="srTo" name="mob" class="form-control" placeholder="" onblur="validate(4)"> -->
+                <select id="financial-year" class="form-select form-select-md  ">
+                  <option selected="true" >Select</option>
+                  @for (year of financialYears; track year) {
+                    <option [value]="year">
+                      {{ year }}
+                    </option>
+                  }
+                </select>
+              </div>
+
+              <div class="form-group col-sm-3 flex-column d-flex">
+                <label class="form-control-label px-3">Month<span class="text-danger"> *</span></label>
+                <!-- <input type="text" id="srTo" name="mob" class="form-control" placeholder="" onblur="validate(4)"> -->
+                <select class="form-select form-select-md  " >
+                  <option selected>Select Month</option>
+                  <option value="1">January</option>
+                  <option value="2">February</option>
+                  <option value="3">March</option>
+                </select>
+              </div>
+
+              <div class="form-group col-sm-3 flex-column d-flex">
+                <label class="form-control-label px-3">District<span class="text-danger"> *</span></label>
+                <!-- <input type="text" id="fname" name="fname"  class="form-control" placeholder="Enter your company name" onblur="validate(1)">  -->
+                <select class="form-select form-select-md  " >
+                  <option selected>Select District</option>
+                  <option value="1">Raipur</option>
+                  <option value="2">Bilaspur</option>
+                  <option value="3">Durg</option>
+                </select>
+              </div>
+
+            </div>
+
+            <br>
+              <div class="row justify-content-between">
+                <div class="form-group col-sm-3 flex-column d-flex">
+                  <label class="form-control-label px-3">Application Number<span class="text-danger"> *</span></label>
+                  <input type="text" id="MLqty" name="mob" class="form-control form-input-md" placeholder="" onblur="validate(6)">
+                </div>
+
+                <div class="form-group col-sm-1 flex-row d-flex">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                  <label class="form-check-label " for="inlineRadio1">Permit</label>
+                </div>
+
+                <div class="form-group col-sm-1 flex-row d-flex">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio1" value="option1">
+                  <label class="form-check-label" for="inlineRadio1">Application</label>
+                </div>
+
+                <div class="form-group col-sm-1 flex-row d-flex">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">
+                  <label class="form-check-label" for="inlineRadio3">Statement</label>
+                </div>
+
+                <div class="form-group col-sm-1 flex-row d-flex">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">
+                  <label class="form-check-label" for="inlineRadio3">Stocking Order</label>
+                </div>
+
+                <div class="form-group col-sm-1 flex-row d-flex">
+                  <input class="form-check-input" type="radio" name="inlineRadioOptions" id="inlineRadio3" value="option3">
+                  <label class="form-check-label" for="inlineRadio3">Challan Copy</label>
+                </div>
+
+              </div>
+
+              <br>
+
+                <div class="row justify-content-center">
+                  <div class="form-group col-sm-2"> <button type="submit"  class="btn btn-primary" >Print</button> </div>
+                </div>
+
+
+              </form>
+
+            </div>
+          </div>
+        </div>
+      </div>
+
+
+
+
+      <!-- ---------------------------------------------------------------------------------------------------------------------- -->
+      <div class="container-fluid px-1 py-2 mx-auto" *ngif="remove" >
+        <div class="row d-flex " style="width: 170rem;height: auto;" >
+          <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center" >
+            <!-- <h3>Request a Demo</h3>       justify-content-center-->
+            <!-- <p class="blue-text">Just answer a few questions<br> so that we can personalize the right experience for you.</p> -->
+            <div class="card app-wrapper" style="margin-top: 10px;"  >
+              <!-- <h5 class="text-center mb-4">Application</h5> -->
+              <form class="form-card" onsubmit="event.preventDefault()">
+                <div class="row  text-left" style="overflow-y: scroll;height: 50vh;">
+
+                  <!-- <button (click)="addRow2()">Add Row</button> -->
+                  <table class="table table-bordered"  >
+                    <thead>
+                      <tr class="table-active">
+                        <th scope="col">S.No.</th>
+                        <th scope="col">Application Number</th>
+                        <th scope="col">Company Name</th>
+                        <th scope="col">Applied PL</th>
+                        <th scope="col">Applied ML</th>
+                        <th scope="col">Applied FL</th>
+                        <th scope="col">Applied CL</th>
+                        <th scope="col">Applied HB</th>
+
+
+                      </tr>
+                    </thead>
+                    <tbody>
+                      <!-- <tr>
+                      <td scope="row">Select EAL Type</td>
+                      <td>Enter Quantity</td>
+                      <td>Action</td>
+
+                    </tr> -->
+
+
+
+
+                    <!--
+                    <tr *ngFor="let row of rows1; let i = index">
+
+
+                      <td>
+                        <select [(ngModel)]="row.col1" class="form-select form-select-lg mb-3" aria-label=".form-select-md example" >
+                          <option selected>Select EAL Type</option>
+                          <option *ngFor="let option of dropdownOptions">{{ option }}</option>
+                        </select>
+                      </td>
+
+                      <td><input [(ngModel)]="row.col2" placeholder="Enter value"></td>
+                      <td><button (click)="saveRow(i)" class="btn btn-success">Save</button>&nbsp;
+                      <button (click)="deleteRow(i)" class="btn btn-danger">Delete</button></td>
+                    </tr> -->
+
+
+
+                  </tbody>
+                </table>
+
+
+              </div>
+
+              <!-- <div class="row justify-content-center">
+              <div class="form-group col-sm-2"> <button type="submit"  class="btn btn-primary" (click)="saveStock()">Submit</button> </div>
+            </div> -->
+          </form>
+
+        </div>
+      </div>
+    </div>
+  </div>
+
+<!-- </div> -->
+<!-- ------------------------------------------------------------------------------------------------ -->
+
+</div>

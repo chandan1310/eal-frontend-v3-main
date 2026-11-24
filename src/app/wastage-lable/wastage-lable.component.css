@@ -1,0 +1,72 @@
+/* Wastage Label + Wastage Review share these styles (review imports this file too). */
+.wl-page { background: #f4f6fa; }
+.wl-title { color: #0f2c59; font-weight: 700; }
+.xs { font-size: 0.74rem; }
+.mono { font-family: ui-monospace, SFMono-Regular, Menlo, Consolas, monospace; }
+
+.wl-stat { background: #fff; border-radius: 12px; padding: 14px 16px; border-left: 4px solid #1f4f8b; box-shadow: 0 1px 2px rgba(15, 44, 89, .06); }
+.wl-stat span { display: block; font-size: .76rem; color: #6b7280; }
+.wl-stat b { font-size: 1.5rem; color: #0f2c59; }
+.wl-stat.amber { border-left-color: #d97706; }
+.wl-stat.green { border-left-color: #15803d; }
+.wl-stat.red { border-left-color: #b91c1c; }
+
+.wl-card { border-radius: 14px; box-shadow: 0 1px 3px rgba(15, 44, 89, .08); overflow: hidden; }
+.wl-head { display: flex; flex-wrap: wrap; gap: 12px; justify-content: space-between; align-items: center; padding: 12px 16px; border-bottom: 1px solid #e5e7eb; }
+.wl-tabs { display: flex; gap: 4px; background: #eef2f8; padding: 4px; border-radius: 10px; }
+.wl-tabs button { border: 0; background: transparent; padding: 6px 14px; border-radius: 8px; font-size: .85rem; color: #475569; font-weight: 600; }
+.wl-tabs button.active { background: #fff; color: #0f2c59; box-shadow: 0 1px 2px rgba(0, 0, 0, .08); }
+.wl-count { background: #dbe4f3; color: #0f2c59; border-radius: 10px; padding: 0 7px; font-size: .72rem; margin-left: 4px; }
+.wl-filter { display: flex; gap: 8px; align-items: center; }
+.wl-filter select.form-control { width: 130px; }
+.wl-filter input.form-control { width: 200px; }
+
+.wl-btn { background: #1f4f8b; color: #fff; border: 0; }
+.wl-btn:hover:not(:disabled) { background: #0f2c59; color: #fff; }
+.wl-btn:disabled { background: #94a3b8; color: #fff; }
+.wl-btn-outline { border: 1px solid #1f4f8b; color: #1f4f8b; background: #fff; }
+.wl-btn-outline:hover { background: #1f4f8b; color: #fff; }
+
+.wl-table thead th { background: #f8fafc; font-size: .74rem; text-transform: uppercase; letter-spacing: .4px; color: #64748b; font-weight: 600; border-bottom: 1px solid #e5e7eb; padding: 10px 12px; }
+.wl-table td { font-size: .84rem; padding: 10px 12px; border-color: #f1f5f9; }
+.wl-table tr.sel td { background: #eef4ff; }
+
+.wl-pill { display: inline-block; padding: 2px 10px; border-radius: 12px; font-size: .74rem; font-weight: 600; background: #e0ecff; color: #1f4f8b; }
+.wl-pill.cl { background: #fef3c7; color: #92400e; }
+.wl-pill.hb { background: #ede9fe; color: #5b21b6; }
+
+.wl-chips { display: flex; gap: 8px; flex-wrap: wrap; }
+.wl-chips button { border: 1px solid #d6dde8; background: #fff; border-radius: 16px; padding: 3px 12px; font-size: .8rem; color: #475569; }
+.wl-chips button span { color: #94a3b8; margin-left: 4px; }
+.wl-chips button.active { background: #0f2c59; border-color: #0f2c59; color: #fff; }
+.wl-chips button.active span { color: #c7d2fe; }
+
+.wl-status { display: inline-block; padding: 3px 10px; border-radius: 12px; font-size: .74rem; font-weight: 600; }
+.st-pending { background: #fef3c7; color: #92400e; }
+.st-approved { background: #dcfce7; color: #166534; }
+.st-rejected { background: #fee2e2; color: #991b1b; }
+
+.wl-backdrop { position: fixed; inset: 0; background: rgba(15, 23, 42, .35); z-index: 1040; }
+.wl-panel { position: fixed; top: 0; right: 0; bottom: 0; width: 440px; max-width: 100vw; background: #fff; z-index: 1050; display: flex; flex-direction: column; box-shadow: -8px 0 24px rgba(0, 0, 0, .15); }
+.wl-panel-head { background: linear-gradient(135deg, #0f2c59 0%, #1f4f8b 100%); color: #fff; padding: 16px 18px; display: flex; justify-content: space-between; align-items: center; }
+.wl-panel-body { padding: 18px; overflow-y: auto; flex: 1; }
+.wl-panel-foot { padding: 12px 18px; border-top: 1px solid #e5e7eb; display: flex; justify-content: flex-end; gap: 8px; }
+.wl-range { display: flex; gap: 12px; }
+.wl-range > div { flex: 1; background: #f4f6fa; border-radius: 10px; padding: 10px 12px; }
+.wl-range span { display: block; font-size: .72rem; color: #6b7280; }
+.wl-range b { font-size: .95rem; color: #0f2c59; }
+
+.wl-toast { position: fixed; bottom: 24px; right: 24px; background: #166534; color: #fff; padding: 12px 18px; border-radius: 10px; z-index: 1060; box-shadow: 0 6px 18px rgba(0, 0, 0, .2); font-size: .9rem; }
+
+/* ---- the app loads Bootstrap 4 (src/Include/css): small helpers for Bootstrap-5-style class names used here ---- */
+.fw-bold { font-weight: 700; } .fw-semibold { font-weight: 600; } .fw-normal { font-weight: 400; }
+.text-end { text-align: right !important; }
+.me-1 { margin-right: .25rem; } .me-2 { margin-right: .5rem; }
+.rounded-3 { border-radius: .5rem; }
+.row.g-3 { margin-left: -.5rem; margin-right: -.5rem; } .row.g-3 > [class*="col"] { padding: 0 .5rem; margin-bottom: .5rem; }
+.form-label { display: block; margin-bottom: .3rem; }
+.wl-gap { gap: .5rem; }
+.wl-x { background: none; border: 0; color: #fff; font-size: 1.6rem; line-height: 1; opacity: .85; cursor: pointer; }
+.wl-x:hover { opacity: 1; }
+.wl-ok-box { background: #dcfce7; } .wl-bad-box { background: #fee2e2; }
+.wl-filter .form-control-sm, .wl-head .form-control-sm { height: 31px; }

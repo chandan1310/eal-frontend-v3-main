@@ -1,0 +1,19 @@
+.supplier-card {
+  transition: all 0.3s ease;
+  border: 1px solid #eef2f6 !important;
+}
+
+.supplier-card:hover {
+  transform: translateY(-5px);
+  box-shadow: 0 12px 25px rgba(20, 51, 102, 0.08) !important;
+  border-color: #143366 !important;
+}
+
+.view-btn {
+  transition: all 0.2s ease-in-out;
+}
+
+.view-btn:hover {
+  background-color: #1e4d8c !important;
+  transform: scale(1.02);
+}

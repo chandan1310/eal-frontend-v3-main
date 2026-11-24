@@ -1,0 +1,454 @@
+<div class="d-flex flex-row main-dashboard">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="container-fluid px-2 px-sm-3 px-lg-4 py-3 py-lg-4 mx-auto main-content">
+
+    <!-- Filter Card -->
+    <div class="card glass-card mb-4">
+      <div class="card-body">
+        <h6 class="section-header">Check Excise Adhesive Labels Application</h6>
+        <form class="row g-3 mt-2 align-items-end">
+
+          <!-- Financial Year -->
+          <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
+            <label class="label-small">Financial year</label>
+            <select class="form-select" id="financialYear" [(ngModel)]="currentFinancialYear" name="financialYear"
+              [ngModelOptions]="{ standalone: true }">
+              <option [value]="currentFinancialYear" [selected]="true">
+                {{ currentFinancialYear }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Month -->
+          <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
+            <label class="label-small">Month</label>
+            <select class="form-select soft-input" [(ngModel)]="filters.Month" [ngModelOptions]="{ standalone: true }">
+              <option [value]="null" disabled selected>Select Month</option>
+              @for (month of allMonths; track month) {
+              <option [value]="month.month_id">{{ month.month_name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Single Date Filter -->
+          <div class="col-12 col-sm-6 col-lg-4 col-xl-2">
+            <label class="label-small">Day & Date</label>
+            <input type="date" class="form-control soft-input" [(ngModel)]="filters.DateFrom"
+              [ngModelOptions]="{ standalone: true }">
+          </div>
+
+          <!-- Liquor Type -->
+          <div class="col-12 col-sm-6 col-lg-6 col-xl-3">
+            <label class="label-small">Liquor Type</label>
+            <select class="form-select soft-input" [(ngModel)]="filters.userType" (ngModelChange)="onUserTypeChange()"
+              [ngModelOptions]="{ standalone: true }">
+              <option value="" disabled>Select Type</option>
+              @for (d of userTypeList; track d) {
+              <option [value]="d.id">{{ d.name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Actions -->
+          <div class="col-12 col-lg-6 col-xl-3 d-flex gap-2">
+            <button class="btn btn-filter-primary flex-grow-1" (click)="refreshList()">
+              <i class="fa fa-filter"></i> Filter
+            </button>
+            <button class="btn btn-reset-outline" (click)="resetFilters()">Reset</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- Metric Cards: Stock Entries -->
+    <h6 class="section-header mb-3">Total Stock Entries</h6>
+    <div class="row g-3 mb-4 row-cols-1 row-cols-sm-2 row-cols-lg-3 row-cols-xxl-5 metric-row">
+
+      <div class="col">
+        <div class="metric-card dark-blue">
+          <span class="metric-label">Foreign Liquor - Spirit</span>
+          <h4 class="metric-value">{{ availableLiquorQuantity.SPIRIT || 0 }}</h4>
+          <div class="progress-mini">
+            <div class="fill" style="width: 70%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="metric-card navy-blue">
+          <span class="metric-label">Foreign Liquor - Malt</span>
+          <h4 class="metric-value">{{ availableLiquorQuantity.MALT || 0 }}</h4>
+          <div class="progress-mini">
+            <div class="fill" style="width: 45%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="metric-card white-card">
+          <span class="metric-label">Country Liquor - Plain</span>
+          <h4 class="metric-value-dark">{{ availableLiquorQuantity.PLAIN || 0 }}</h4>
+          <div class="progress-mini-grey">
+            <div class="fill-blue" style="width: 60%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="metric-card white-card">
+          <span class="metric-label">Country Liquor - Masala</span>
+          <h4 class="metric-value-dark">{{ availableLiquorQuantity.MASALA || 0 }}</h4>
+          <div class="progress-mini-grey">
+            <div class="fill-blue" style="width: 50%"></div>
+          </div>
+        </div>
+      </div>
+
+      <div class="col">
+        <div class="metric-card white-card">
+          <span class="metric-label">Hotel/Bar - HB</span>
+          <h4 class="metric-value-dark">{{ availableLiquorQuantity['HOTEL/BAR'] || 0 }}</h4>
+          <div class="progress-mini-grey">
+            <div class="fill-blue" style="width: 30%"></div>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    @if (workflowEnabled) {
+    <!-- ================= APPROVAL WORKFLOW: tabs generated from the user's approval level(s) ================= -->
+    @if (myLevels.length === 0) {
+    <div class="alert alert-warning d-flex align-items-center gap-2 mb-4">
+      <i class="fa fa-lock"></i>
+      You are not mapped to any active approval level of Check Demand Raise. Please contact the administrator.
+    </div>
+    } @else {
+    @if (myLevels.length > 1) {
+    <div class="wf-stage-strip mb-3">
+      @for (lvl of myLevels; track lvl.LevelId) {
+      <button type="button" class="wf-stage-pill" [class.active]="lvl.LevelId === activeLevelId" (click)="selectLevel(lvl.LevelId)">
+        <span class="wf-stage-seq">{{ lvl.Position }}</span> {{ lvl.LevelName }}
+      </button>
+      }
+    </div>
+    } @else {
+    <h6 class="section-header mb-3 wf-my-level"><i class="fa fa-sitemap me-1"></i> {{ activeLevel?.LevelName }}</h6>
+    }
+    <div class="tab-modern-container mb-4">
+      @for (tab of tabsForLevel(); track tab) {
+      <button class="tab-modern" [class.active]="activeTab === tab" (click)="selectTab(tab)">{{ tabLabels[tab] }}</button>
+      }
+    </div>
+    }
+    } @else {
+      <!-- TABS NAVIGATION: Pending (1), Approved (5), Completed (6), Issued (14), Rejected (4) -->
+      <div class="tab-modern-container mb-4">
+        <button class="tab-modern" [class.active]="filters.Status == 1" (click)="fetchAllApplications(1)">
+          Pending
+        </button>
+        <button class="tab-modern" [class.active]="filters.Status == 5" (click)="fetchAllApplications(5)">
+          Permit Generate
+        </button>
+        <button class="tab-modern" [class.active]="filters.Status == 6" (click)="fetchAllApplications(6)">
+          Completed
+        </button>
+        <button class="tab-modern" [class.active]="filters.Status == 14" (click)="fetchAllApplications(14)">
+          Issued
+        </button>
+        <button class="tab-modern" [class.active]="filters.Status == 4" (click)="fetchAllApplications(4)">
+          Rejected
+        </button>
+      </div>
+    }
+
+    <!-- Applications Table Card -->
+    <div class="card table-card border-standard shadow-sm">
+      <div class="table-responsive-scroll">
+        <table class="table table-bordered-custom mb-0">
+          <thead>
+            <tr>
+              <th>S.NO.</th>
+              <th>APPLIED DATE</th>
+              <th>APP NUMBER</th>
+              <th>COMPANY NAME</th>
+              @if (selectedUserType == 'FL') {
+              <th>FL SPIRIT</th>
+              <th>FL MALT</th>
+              }
+              @if (selectedUserType == 'CL') {
+              <th>CL PLAIN</th>
+              <th>CL MASALA</th>
+              }
+              @if (workflowEnabled && activeTab === 'Pending') {
+              <th>RECEIVED FROM</th>
+              }
+              @if (workflowEnabled && (activeTab === 'Approved' || activeTab === 'Rejected')) {
+              <th>{{ activeTab === 'Approved' ? 'APPROVED' : 'REJECTED' }} ON / BY</th>
+              @if (activeTab === 'Rejected') {
+              <th>REJECTION REMARKS</th>
+              }
+              <th>CURRENT STATUS</th>
+              }
+              @if (workflowEnabled && activeTab === 'PermitDsc') {
+              <th>FINAL APPROVAL ON / BY</th>
+              <th>STAGE STATUS</th>
+              }
+              @if (workflowEnabled && activeTab === 'Issued') {
+              <th>PERMIT NO</th>
+              <th>ISSUED ON</th>
+              <th>SIGNED BY</th>
+              }
+              <th class="text-center">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (app of applications; track app; let i = $index) {
+            <tr>
+              <td class="text-center text-muted fw-bold">{{ i + 1 }}</td>
+              <td>{{ app.CreateDate | date : "dd/MM/yyyy" }}</td>
+              <td><span class="app-number-tag">{{ app.EalApplicationNo }}</span></td>
+              <td class="fw-bold text-dark text-uppercase">{{ app.Company_name }}</td>
+
+              @if (selectedUserType == 'FL') {
+              <td>{{ app.groupedData?.req_fl_spirit_qty || 0 }}</td>
+              <td>{{ app.groupedData?.req_fl_malt_qty || 0 }}</td>
+              }
+              @if (selectedUserType == 'CL') {
+              <td>{{ app.groupedData?.req_cl_plain_qty || 0 }}</td>
+              <td>{{ app.groupedData?.req_cl_masala_qty || 0 }}</td>
+              }
+
+              @if (workflowEnabled && activeTab === 'Pending') {
+              <td>
+                @if (previousLevelName) {
+                <span class="badge bg-light text-dark border">{{ previousLevelName }}</span>
+                } @else {
+                <span class="text-muted small">Applicant</span>
+                }
+              </td>
+              }
+              @if (workflowEnabled && (activeTab === 'Approved' || activeTab === 'Rejected')) {
+              <td>
+                <div>{{ app.Workflow?.LastActionAtLevel | date : 'dd/MM/yyyy HH:mm' }}</div>
+                <div class="small text-muted">{{ app.Workflow?.ActionByName }}</div>
+              </td>
+              @if (activeTab === 'Rejected') {
+              <td class="small">{{ app.Workflow?.ActionRemarks || '-' }}</td>
+              }
+              <td><span class="badge" [ngClass]="workflowStatusBadge(app).css">{{ workflowStatusBadge(app).text }}</span></td>
+              }
+              @if (workflowEnabled && activeTab === 'PermitDsc') {
+              <td>
+                <div>{{ app.Workflow?.FinalApprovedDate | date : 'dd/MM/yyyy HH:mm' }}</div>
+                <div class="small text-muted">{{ app.Workflow?.FinalApprovedBy }}</div>
+              </td>
+              <td><span class="badge" [ngClass]="workflowStatusBadge(app).css">{{ workflowStatusBadge(app).text }}</span></td>
+              }
+              @if (workflowEnabled && activeTab === 'Issued') {
+              <td><span class="app-number-tag">{{ app.Workflow?.IssuePermitNo || app.IssuePermitNo || '-' }}</span></td>
+              <td>{{ (app.Workflow?.PermitCreateDate || app.Workflow?.DscSignedDate || app.PermitCreateDate) | date : 'dd/MM/yyyy HH:mm' }}</td>
+              <td>
+                <div>{{ app.Workflow?.DscSignerName || app.DscSignerName || '-' }}</div>
+                @if (app.Workflow?.DscSignedDate) {
+                <div class="small text-muted">{{ app.Workflow?.DscSignedDate | date : 'dd/MM/yyyy HH:mm' }}</div>
+                }
+              </td>
+              }
+
+              <!-- Actions Column -->
+              <td class="text-center">
+                @if (workflowEnabled) {
+                @if (activeTab === 'Issued') {
+                <!-- Issued (final level): read-only – details, permit preview / print / download -->
+                <div class="d-inline-flex align-items-center gap-2">
+                  <button class="action-edit-btn" title="View Details (read-only)" (click)="onActionClick(app)">
+                    <i class="fa fa-file-text-o"></i>
+                  </button>
+                  <button class="btn btn-sm btn-outline-primary py-1 px-2 d-inline-flex align-items-center gap-1"
+                    title="Preview Permit" (click)="previewPermit(app)">
+                    <i class="fa fa-eye"></i> Preview
+                  </button>
+                  <button class="btn btn-sm btn-outline-dark py-1 px-2 d-inline-flex align-items-center gap-1"
+                    title="Print Final Document" (click)="printPermit(app)">
+                    <i class="fa fa-print"></i> Print
+                  </button>
+                  <button class="btn btn-sm btn-success py-1 px-2 d-inline-flex align-items-center gap-1"
+                    title="Download PDF" (click)="downloadPermit(app)">
+                    <i class="fa fa-download"></i> PDF
+                  </button>
+                  @if (isHandoverVerified(app)) {
+                  <span class="badge bg-success py-2 px-2 d-inline-flex align-items-center" title="Handover Completed">
+                    <i class="fa fa-check-circle me-1"></i> OTP Verified
+                  </span>
+                  } @else {
+                  <span class="badge py-2 px-2 text-white d-inline-flex align-items-center"
+                    style="background-color: rgb(177 139 53) !important;" title="Pending Handover OTP">
+                    <i class="fa fa-clock-o me-1"></i> Pending Verification
+                  </span>
+                  }
+                </div>
+                } @else {
+                <button class="action-edit-btn" [title]="activeTab === 'Pending' || activeTab === 'PermitDsc' ? 'View / Process Application' : 'View Details'"
+                  (click)="onActionClick(app)">
+                  <i class="fa" [ngClass]="activeTab === 'Pending' || activeTab === 'PermitDsc' ? 'fa-edit' : 'fa-eye'"></i>
+                </button>
+                }
+                } @else {
+
+                <!-- 1. COMPLETED TAB (Status 6) -->
+                @if (filters.Status == 6) {
+                <div class="d-inline-flex align-items-center gap-1">
+                  <button class="action-edit-btn" title="View / Process Application" (click)="onActionClick(app)">
+                    <i class="fa fa-edit"></i>
+                  </button>
+                  @if (app.Status == 14 || app.IsDscSigned || (app.IssuePermitNo && app.IssuePermitNo !== '-')) {
+                  <span class="badge bg-success small py-1 px-2" title="Digitally Signed">
+                    <i class="fa fa-check-circle me-1"></i> Signed
+                  </span>
+                  }
+                </div>
+                }
+
+                <!-- @if (filters.Status == 14) {
+                <div class="d-inline-flex align-items-center gap-1">
+                  <button class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1"
+                    title="Preview Document" (click)="previewPermit(app)">
+                    <i class="fa fa-eye"></i> Preview
+                  </button>
+                  <button class="btn btn-sm btn-outline-dark d-inline-flex align-items-center gap-1"
+                    title="Print Final Document" (click)="printPermit(app)">
+                    <i class="fa fa-print"></i> Print
+                  </button>
+                  <button class="btn btn-sm btn-success d-inline-flex align-items-center gap-1" title="Download PDF"
+                    (click)="downloadPermit(app)">
+                    <i class="fa fa-download"></i> PDF
+                  </button>
+
+                  @if (isHandoverVerified(app)) {
+                  <span class="badge bg-success small py-1 px-2" title="Handover Completed">
+                    <i class="fa fa-check-circle me-1"></i> OTP Verified
+                  </span>
+                  } @else {
+                  <button class="btn btn-sm btn-warning d-inline-flex align-items-center gap-1 fw-bold text-dark"
+                    title="Physical Handover & Receiving OTP" (click)="openHandoverOtpModal(app)">
+                    <i class="fa fa-shield"></i> Receiving OTP
+                  </button>
+                  }
+                </div>
+                } -->
+
+                @if (filters.Status == 14) {
+                <div class="d-inline-flex align-items-center gap-2">
+                  <button class="btn btn-sm btn-outline-primary py-1 px-2 d-inline-flex align-items-center gap-1"
+                    title="Preview Document" (click)="previewPermit(app)">
+                    <i class="fa fa-eye"></i> Preview
+                  </button>
+                  <button class="btn btn-sm btn-outline-dark py-1 px-2 d-inline-flex align-items-center gap-1"
+                    title="Print Final Document" (click)="printPermit(app)">
+                    <i class="fa fa-print"></i> Print
+                  </button>
+                  <button class="btn btn-sm btn-success py-1 px-2 d-inline-flex align-items-center gap-1"
+                    title="Download PDF" (click)="downloadPermit(app)">
+                    <i class="fa fa-download"></i> PDF
+                  </button>
+
+                  @if (isHandoverVerified(app)) {
+                  <span class="badge bg-success py-2 px-2 d-inline-flex align-items-center" title="Handover Completed">
+                    <i class="fa fa-check-circle me-1"></i> OTP Verified
+                  </span>
+                  } @else {
+                  <span class="badge py-2 px-2 text-white d-inline-flex align-items-center"
+                    style="background-color: rgb(177 139 53) !important;" title="Pending Handover OTP">
+                    <i class="fa fa-clock-o me-1"></i> Pending Verification
+                  </span>
+                  }
+                </div>
+                }
+
+                <!-- 3. PENDING (1) & APPROVED (5) TABS -->
+                @if (filters.Status == 1 || filters.Status == 5) {
+                <button class="action-edit-btn" title="View / Process Application" (click)="onActionClick(app)">
+                  <i class="fa fa-edit"></i>
+                </button>
+                }
+
+                <!-- 4. REJECTED TAB (4) -->
+                @if (filters.Status == 4) {
+                <button class="action-edit-btn" title="View Details" (click)="onActionClick(app)">
+                  <i class="fa fa-eye"></i>
+                </button>
+                }
+                }
+
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="10" class="text-center py-4 text-muted">
+                <i class="fa fa-folder-open-o fs-3 d-block mb-1"></i>
+                No applications found in this category.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+  </div>
+</div>
+
+<!-- ================= PHYSICAL HANDOVER & RECEIVING OTP MODAL ================= -->
+<div class="modal fade" id="handoverOtpModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 550px;">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 8px;">
+
+      <div class="modal-header bg-success text-white py-2 px-3">
+        <h6 class="modal-title fw-bold d-flex align-items-center gap-2 mb-0">
+          <i class="fa fa-shield fs-5"></i> Physical EAL Handover & Receiving OTP Verification
+        </h6>
+        <button type="button" class="btn-close btn-close-white" (click)="closeHandoverOtpModal()"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <p class="text-muted small mb-3">
+          Application No: <strong class="text-dark">{{ selectedAppForOtp?.EalApplicationNo }}</strong><br>
+          Send verification code to the authorized representative's registered mobile number before physical handover.
+        </p>
+
+        <!-- Send OTP Section -->
+        <div class="mb-3">
+          <button class="btn btn-outline-success btn-sm w-100" (click)="sendReceivingOtpModal()">
+            <i class="fa fa-paper-plane me-1"></i> Send Receiving OTP
+          </button>
+        </div>
+
+        <!-- Enter OTP & Verify Section -->
+        <div class="mb-2">
+          <label class="form-label text-muted small fw-bold mb-1">ENTER 6-DIGIT OTP</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="fa fa-lock text-success"></i></span>
+            <input type="text" class="form-control" placeholder="Enter 6-digit OTP" [(ngModel)]="enteredReceivingOtp"
+              maxlength="6">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer bg-light py-2 px-3 border-top d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-secondary px-3" (click)="closeHandoverOtpModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-success px-4 d-inline-flex align-items-center gap-1"
+          (click)="verifyReceivingOtpModal()">
+          <i class="fa fa-check-circle me-1"></i> Verify & Complete Handover
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

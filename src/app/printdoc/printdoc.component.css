@@ -1,0 +1,86 @@
+body{
+    color: #000;
+    overflow-x: hidden;
+    height: 100%;
+    background-image: url("https://i.imgur.com/GMmCQHC.png");
+    background-repeat: no-repeat;
+    background-size: 100% 100%}.card{padding: 30px 40px;
+        margin-top: 60px;
+        margin-bottom: 60px;
+        border: none !important;
+        box-shadow: 0 6px 12px 0 rgba(0,0,0,0.2)}.blue-text{color: #00BCD4}.form-control-label{margin-bottom: 0}input, textarea, button{padding: 8px 15px;
+            border-radius: 5px !important;
+            margin: 5px 0px;box-sizing: border-box;
+            border: 1px solid #ccc;
+            font-size: 18px !important;
+            font-weight: 300
+        }
+            input:focus, textarea:focus{-moz-box-shadow: none !important;
+                -webkit-box-shadow: none !important;
+                box-shadow: none !important;
+                border: 1px solid #00BCD4;
+                outline-width: 0.1;
+                font-weight: 400}.btn-block{text-transform: uppercase;
+                    font-size: 15px !important;
+                    font-weight: 400;
+                    height: 43px;
+                    cursor: pointer}.btn-block:hover{color: #fff !important}button:focus{-moz-box-shadow: none !important;
+                        -webkit-box-shadow: none !important;
+                        box-shadow: none !important;
+                        outline-width: 0
+                    }
+
+                    input.form-control:focus {
+                        border-color: #4d90fe !important; /* Blue border on focus */
+                        box-shadow: none; /* Remove the default box-shadow */
+                        outline: none; /* Remove outline */
+                      }
+
+
+
+
+
+
+
+                      select:focus, textarea:focus{-moz-box-shadow: none !important;
+                        -webkit-box-shadow: none !important;
+                        box-shadow: none !important;
+                        border: 1px solid #00BCD4;
+                        outline-width: 0.1;
+                        font-weight: 400}.btn-block{text-transform: uppercase;
+                            font-size: 15px !important;
+                            font-weight: 400;
+                            height: 45px;
+                            cursor: pointer}.btn-block:hover{color: #fff !important}button:focus{-moz-box-shadow: none !important;
+                                -webkit-box-shadow: none !important;
+                                box-shadow: none !important;
+                                outline-width: 0
+                            }
+        
+                            select.form-control:focus {
+                                border-color: #4d90fe !important; /* Blue border on focus */
+                                box-shadow: none; /* Remove the default box-shadow */
+                                outline: none; /* Remove outline */
+                              }
+
+                              .form-input-md {
+                                width: 100%;
+                                height: 46%;
+                                padding: 10px 15px;
+                                font-size: 1rem;
+                                border: 1px solid #ccc;
+                                border-radius: 4px;
+                                box-sizing: border-box; /* Ensure padding and border don't affect width */
+                                transition: border-color 0.3s ease;
+                              }
+
+                              .input-md {
+                                width: 90%;
+                                height: 4vh;
+                                padding: 10px 15px;
+                                font-size: 1rem;
+                                border: 1px solid #ccc;
+                                border-radius: 4px;
+                                box-sizing: border-box; /* Ensure padding and border don't affect width */
+                                transition: border-color 0.3s ease;
+                              }

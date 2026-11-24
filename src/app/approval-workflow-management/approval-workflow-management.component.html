@@ -1,0 +1,266 @@
+<div class="d-flex flex-row main-dashboard">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="container-fluid mx-auto main-content">
+
+    <!-- ================= 1. Header: workflow ON / OFF ================= -->
+    <div class="card glass-card mb-4">
+      <div class="card-body">
+        <div class="d-flex flex-wrap justify-content-between align-items-start gap-3">
+          <div>
+            <h6 class="section-header mb-1"><i class="fa fa-sitemap me-2"></i>Approval Workflow</h6>
+            <div class="text-muted small">Check Demand Raise – who approves, in which order</div>
+          </div>
+
+          @if (config) {
+          <div class="wf-switch-box" [class.on]="workflowOn">
+            <div class="form-check form-switch m-0">
+              <input class="form-check-input" type="checkbox" id="wfOn" [(ngModel)]="workflowOn" [disabled]="saving">
+              <label class="form-check-label fw-bold" for="wfOn">Workflow {{ workflowOn ? 'ON' : 'OFF' }}</label>
+            </div>
+            <div class="d-flex flex-wrap align-items-center gap-2 mt-2">
+              <span class="small text-muted">For:</span>
+              @for (t of userTypeOptions; track t) {
+              <div class="form-check form-check-inline m-0">
+                <input class="form-check-input" type="checkbox" [id]="'ut_' + t" [checked]="userTypes.includes(t)"
+                  (change)="toggleUserType(t, $any($event.target).checked)" [disabled]="saving">
+                <label class="form-check-label small" [for]="'ut_' + t">{{ t }}</label>
+              </div>
+              }
+              @if (settingsChanged) {
+              <button class="btn btn-filter-primary btn-sm px-3 py-1" (click)="saveWorkflowSettings()" [disabled]="saving">
+                <i class="fa fa-save me-1"></i> Save
+              </button>
+              }
+            </div>
+          </div>
+          }
+        </div>
+
+        @if (config) {
+        <div class="wf-flow mt-3">
+          @for (step of flowPreview; track $index; let last = $last; let i = $index) {
+          <span class="wf-flow-node" [class.wf-flow-final]="i >= activeLevels.length">{{ step }}</span>
+          @if (!last) { <i class="fa fa-long-arrow-right wf-flow-arrow"></i> }
+          }
+        </div>
+        <div class="small text-muted mt-2">
+          @if (config.IsActive) {
+          <i class="fa fa-check-circle text-success me-1"></i>ON – applications follow the levels below. Each user sees only their own level.
+          } @else {
+          <i class="fa fa-pause-circle me-1"></i>OFF – Check Demand Raise works the old way (single Approve / Reject).
+          }
+        </div>
+        @if (levelsWithoutUsers.length) {
+        <div class="text-danger small mt-1">
+          <i class="fa fa-exclamation-circle me-1"></i>No user added yet for: <strong>{{ levelsWithoutUsersText }}</strong>
+        </div>
+        }
+        }
+      </div>
+    </div>
+
+    @if (accessDenied) {
+    <div class="alert alert-danger"><i class="fa fa-lock me-2"></i>{{ accessDenied }}</div>
+    } @else {
+
+    @if (loading && !config) {
+    <div class="text-center text-muted py-4"><i class="fa fa-spinner fa-spin me-2"></i>Loading…</div>
+    }
+
+    <!-- ================= Add / edit level ================= -->
+    @if (showLevelForm) {
+    <div class="card glass-card mb-4 wf-form-card">
+      <div class="card-body">
+        <h6 class="section-header mb-3">{{ levelForm.LevelId ? 'Edit level' : 'Add level' }}</h6>
+        <div class="row g-3 align-items-end">
+          <div class="col-12 col-md-6 col-lg-5">
+            <label class="label-small">Level name *</label>
+            <input class="form-control soft-input" [(ngModel)]="levelForm.LevelName" maxlength="100" placeholder="e.g. Section, DEO, ADE">
+          </div>
+          <div class="col-6 col-md-3 col-lg-2">
+            <label class="label-small">Position</label>
+            <select class="form-select soft-input" [(ngModel)]="levelForm.Sequence" [disabled]="!!levelForm.LevelId && levelForm.Sequence === null">
+              @for (p of positionOptions(); track p) {
+              <option [ngValue]="p">{{ p }}</option>
+              }
+            </select>
+          </div>
+          <div class="col-12 col-lg-5">
+            <div class="form-check">
+              <input class="form-check-input" type="checkbox" id="lvlDistrict" [(ngModel)]="levelForm.IsDistrictScoped">
+              <label class="form-check-label small" for="lvlDistrict">Users of this level see only their own district</label>
+            </div>
+          </div>
+        </div>
+        <div class="d-flex flex-wrap gap-2 justify-content-end mt-3">
+          <button class="btn btn-reset-outline" (click)="showLevelForm = false" [disabled]="saving">Cancel</button>
+          <button class="btn btn-filter-primary px-4" (click)="saveLevel()" [disabled]="saving">
+            <i class="fa fa-save me-1"></i> Save
+          </button>
+        </div>
+      </div>
+    </div>
+    }
+
+    <!-- ================= Pending applications must move before pausing ================= -->
+    @if (deactivatePrompt) {
+    <div class="alert alert-warning">
+      <div class="fw-bold mb-2">
+        <i class="fa fa-exclamation-triangle me-1"></i>
+        {{ deactivatePrompt.pendingCount }} application(s) are pending at {{ deactivatePrompt.level.LevelName }}. Where should they go?
+      </div>
+      <div class="d-flex flex-wrap gap-2 align-items-center">
+        <select class="form-select form-select-sm w-auto" [(ngModel)]="deactivatePrompt.moveToLevelId">
+          <option [ngValue]="null">-- select level --</option>
+          @for (t of moveTargets(deactivatePrompt.level); track t.LevelId) {
+          <option [ngValue]="t.LevelId">{{ t.Sequence }}. {{ t.LevelName }}</option>
+          }
+        </select>
+        <button class="btn btn-sm btn-warning" (click)="confirmDeactivateWithMove()" [disabled]="saving">Move &amp; Pause</button>
+        <button class="btn btn-sm btn-outline-secondary" (click)="deactivatePrompt = null">Cancel</button>
+      </div>
+    </div>
+    }
+
+    <!-- ================= 2 + 3. Levels in order, with their users ================= -->
+    @if (config) {
+    <div class="card table-card border-standard shadow-sm">
+      <div class="d-flex flex-wrap gap-2 justify-content-between align-items-center p-3 border-bottom">
+        <span class="fw-bold text-dark">Approval levels <span class="small text-muted fw-normal">(top to bottom = order of approval)</span></span>
+        <button class="btn btn-filter-primary btn-sm px-3" (click)="openAddLevel()" [disabled]="saving">
+          <i class="fa fa-plus me-1"></i> Add level
+        </button>
+      </div>
+      <div class="table-responsive-scroll">
+        <table class="table table-bordered-custom mb-0 wf-levels-table">
+          <thead>
+            <tr>
+              <th class="text-center" style="width: 70px;">#</th>
+              <th>LEVEL</th>
+              <th>WORK</th>
+              <th>USERS</th>
+              <th class="text-center">PENDING</th>
+              <th class="text-center">ACTIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (l of activeLevels; track l.LevelId; let first = $first; let last = $last) {
+            <tr>
+              <td class="text-center">
+                <div class="wf-order">
+                  <button class="wf-order-btn" title="Move up" (click)="move(l, -1)" [disabled]="first || saving"><i class="fa fa-chevron-up"></i></button>
+                  <span class="wf-seq-num">{{ l.Sequence }}</span>
+                  <button class="wf-order-btn" title="Move down" (click)="move(l, 1)" [disabled]="last || saving"><i class="fa fa-chevron-down"></i></button>
+                </div>
+              </td>
+              <td>
+                <div class="fw-bold text-dark">{{ l.LevelName }}</div>
+                @if (l.IsDistrictScoped) { <div class="small text-muted"><i class="fa fa-map-marker me-1"></i>own district only</div> }
+              </td>
+              <td class="small">
+                @switch (responsibilityOf(l)) {
+                @case ('FIRST') { <span class="badge bg-info text-dark">Assign Labels + Accept / Reject</span> }
+                @case ('FINAL') { <span class="badge bg-success">Final Accept / Reject + Digital Sign + Permit</span> }
+                @default { <span class="badge bg-light text-dark border">Review + Accept / Reject</span> }
+                }
+              </td>
+              <td class="wf-users-cell">
+                <div class="d-flex flex-wrap gap-1 mb-2">
+                  @for (o of officersOf(l); track $index) {
+                  <span class="wf-user-chip" [title]="o.Source === 'Role' ? 'Added through the user\'s role' : ''">
+                    <i class="fa fa-user-circle-o"></i>
+                    {{ o.FullName || o.Username }}<span class="text-muted">&nbsp;({{ o.Username }})</span>
+                    @if (o.Source === 'Mapping') {
+                    <button class="wf-chip-x" title="Remove from this level" (click)="removeUser(o)" [disabled]="saving">&times;</button>
+                    } @else {
+                    <span class="badge bg-light text-muted border ms-1">role</span>
+                    }
+                  </span>
+                  } @empty {
+                  <span class="text-danger small"><i class="fa fa-exclamation-circle me-1"></i>No user – add one</span>
+                  }
+                </div>
+                <div class="d-flex gap-1 wf-add-user">
+                  <select class="form-select form-select-sm soft-input" [(ngModel)]="userToAdd[l.LevelId]" [disabled]="saving">
+                    <option [ngValue]="null">+ Add user…</option>
+                    @for (u of candidatesFor(l); track u.userId) {
+                    <option [ngValue]="u.userId">{{ u.label }}</option>
+                    }
+                  </select>
+                  <button class="btn btn-sm btn-filter-primary px-3" (click)="addUser(l)" [disabled]="saving || !userToAdd[l.LevelId]">Add</button>
+                </div>
+              </td>
+              <td class="text-center">{{ l.PendingCount || 0 }}</td>
+              <td class="text-center text-nowrap">
+                @if (deleteConfirmId === l.LevelId) {
+                <span class="small me-1">Delete?</span>
+                <button class="btn btn-sm btn-danger py-0 px-2" (click)="confirmDelete(l)" [disabled]="saving">Yes</button>
+                <button class="btn btn-sm btn-outline-secondary py-0 px-2 ms-1" (click)="deleteConfirmId = null">No</button>
+                } @else {
+                <button class="action-edit-btn me-1" title="Rename / move" (click)="openEditLevel(l)" [disabled]="saving"><i class="fa fa-edit"></i></button>
+                <button class="action-edit-btn me-1" [title]="canRemoveActiveLevel ? 'Pause (stop using this level)' : 'At least ' + minimumActiveLevels + ' levels are needed'"
+                  (click)="requestDeactivate(l)" [disabled]="saving || !canRemoveActiveLevel">
+                  <i class="fa fa-pause text-warning"></i>
+                </button>
+                <button class="action-edit-btn" title="Delete (only if never used)" (click)="deleteConfirmId = l.LevelId"
+                  [disabled]="saving || !canRemoveActiveLevel">
+                  <i class="fa fa-trash text-danger"></i>
+                </button>
+                }
+              </td>
+            </tr>
+            } @empty {
+            <tr><td colspan="6" class="text-center text-muted py-4">No levels yet. Click “Add level”.</td></tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- ================= Paused levels ================= -->
+    @if (inactiveLevels.length) {
+    <div class="mt-3">
+      <button class="btn btn-link btn-sm p-0 text-decoration-none" (click)="showInactive = !showInactive">
+        <i class="fa me-1" [ngClass]="showInactive ? 'fa-chevron-down' : 'fa-chevron-right'"></i>
+        Paused levels ({{ inactiveLevels.length }})
+      </button>
+      @if (showInactive) {
+      <div class="card glass-card mt-2">
+        <div class="card-body py-2">
+          @for (l of inactiveLevels; track l.LevelId) {
+          <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 py-2 border-bottom wf-paused-row">
+            <span class="fw-semibold text-muted">{{ l.LevelName }}</span>
+            <span class="text-nowrap">
+              @if (deleteConfirmId === l.LevelId) {
+              <span class="small me-1">Delete?</span>
+              <button class="btn btn-sm btn-danger py-0 px-2" (click)="confirmDelete(l)" [disabled]="saving">Yes</button>
+              <button class="btn btn-sm btn-outline-secondary py-0 px-2 ms-1" (click)="deleteConfirmId = null">No</button>
+              } @else {
+              <button class="btn btn-sm btn-outline-success py-0 px-2 me-1" (click)="activate(l)" [disabled]="saving">
+                <i class="fa fa-play me-1"></i>Use again
+              </button>
+              <button class="btn btn-sm btn-outline-danger py-0 px-2" (click)="deleteConfirmId = l.LevelId" [disabled]="saving">
+                <i class="fa fa-trash"></i>
+              </button>
+              }
+            </span>
+          </div>
+          }
+        </div>
+      </div>
+      }
+    </div>
+    }
+
+    <!-- ================= Help ================= -->
+    <div class="wf-help small text-muted mt-3">
+      <div><strong>How it works:</strong> the first level assigns labels, every level in between reviews, and the last level gives the final approval, then Digital Sign → Generate Permit → Issued. Move a level up or down and its work changes automatically.</div>
+      <div>A user can belong to <strong>one</strong> level only – adding them to a level removes them from their old one. A level that has history cannot be deleted; pause it instead.</div>
+    </div>
+    }
+    }
+  </div>
+</div>

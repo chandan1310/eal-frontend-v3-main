@@ -1,0 +1,90 @@
+<div style="display: flex;flex-direction: row;">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+
+  <div class="container-fluid px-1 py-5 mx-auto" style="overflow: hidden;">
+    <div class="row d-flex " style="width: 170rem;height: auto;">
+      <div class="col-xl-7 col-lg-8 col-md-9 col-11 text-center">
+
+        <div class="card app-wrapper">
+          <h5 class="text-center mb-4">Create User</h5>
+          <form class="form-card" onsubmit="event.preventDefault()">
+
+            <div class="row justify-content-between text-left">
+
+              <div class="form-group col-sm-3 flex-column d-flex">
+                <label class="form-control-label px-3">First Name<span class="text-danger"> *</span></label>
+                <input type="text" id="PLqty" name="job" class="form-control form-input-md" placeholder=""
+                  onblur="validate(5)">
+              </div>
+
+              <div class="form-group col-sm-3 flex-column d-flex">
+                <label class="form-control-label px-3">Last Name<span class="text-danger"> *</span></label>
+                <input type="text" id="MLqty" name="mob" class="form-control form-input-md" placeholder=""
+                  onblur="validate(6)">
+              </div>
+
+
+              <div class="form-group col-sm-3 flex-column d-flex">
+                <label class="form-control-label px-3">Mobile Number<span class="text-danger"> *</span></label>
+                <input type="text" id="STqty" name="job" class="form-control form-input-md" placeholder=""
+                  onblur="validate(5)">
+              </div>
+
+              <div class="form-group col-sm-3 flex-column d-flex">
+                <label class="form-control-label px-3">Email ID<span class="text-danger"> *</span></label>
+                <input type="text" id="BRqty" name="mob" class="form-control form-input-md" placeholder=""
+                  onblur="validate(4)">
+              </div>
+            </div>
+
+
+
+            <div class="row  text-left">
+
+              <div class="form-group col-sm-3 flex-column d-flex">
+                <label class="form-control-label px-3">Address<span class="text-danger"> *</span></label>
+                <input type="text" id="HBqty" name="job" class="form-control form-input-md" placeholder=""
+                  onblur="validate(5)">
+              </div>
+
+
+              <div class="form-group col-sm-3 flex-column d-flex">
+                <label class="form-control-label px-3">User Name<span class="text-danger"> *</span></label>
+                <input type="text" id="HBqty" name="job" class="form-control form-input-md" placeholder=""
+                  onblur="validate(5)">
+              </div>
+
+              <div class="form-group col-sm-3 flex-column d-flex">
+                <label class="form-control-label px-3">Password<span class="text-danger"> *</span></label>
+                <input type="text" id="HBqty" name="job" class="form-control form-input-md" placeholder=""
+                  onblur="validate(5)">
+              </div>
+
+              <div class="form-group col-xl-3 flex-column d-flex">
+                <label class="form-control-label px-3">Role<span class="text-danger"> *</span></label>
+
+                <select class="form-select form-select-md mb-3" aria-label=".form-select-lg example">
+                  <option selected>Select Role</option>
+                  <option value="1">Admin</option>
+                  <option value="2">User</option>
+                  <option value="3">Nashik Admin</option>
+                  <option value="4">District</option>
+                  <option value="5">Staff</option>
+
+                </select>
+
+              </div>
+            </div>
+            <br>
+            <div class="row justify-content-center">
+              <div class="form-group col-sm-2"> <button type="submit" class="btn btn-primary">Create</button> </div>
+            </div>
+          </form>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

@@ -1,0 +1,185 @@
+<div class="container-fluid p-0 wl-page min-vh-100">
+  <div class="d-flex flex-nowrap m-0 p-0">
+    <div class="sidebar-container bg-white shadow-sm flex-shrink-0" style="width: 260px; min-width: 260px;">
+      <app-sidebar></app-sidebar>
+    </div>
+
+    <div class="flex-grow-1 px-4 py-4" style="min-width: 0;">
+      <!-- title -->
+      <div class="d-flex justify-content-between align-items-end mb-3">
+        <div>
+          <h4 class="wl-title mb-1"><i class="fa fa-recycle me-2"></i>Wastage Label</h4>
+          <div class="text-muted small">Report damaged labels of issued spools. Each entry is reviewed before the labels go for destruction.</div>
+        </div>
+      </div>
+
+      <!-- stats -->
+      <div class="row g-3 mb-3">
+        <div class="col-md-3"><div class="wl-stat"><span>Issued spools</span><b>{{ spools.length }}</b></div></div>
+        <div class="col-md-3"><div class="wl-stat amber"><span>Waiting for review</span><b>{{ countMine('Submitted') }}</b></div></div>
+        <div class="col-md-3"><div class="wl-stat green"><span>Approved labels</span><b>{{ approvedLabels | number }}</b></div></div>
+        <div class="col-md-3"><div class="wl-stat red"><span>Rejected</span><b>{{ countMine('Rejected') }}</b></div></div>
+      </div>
+
+      <div class="card wl-card border-0">
+        <!-- tabs + filter -->
+        <div class="wl-head">
+          <div class="wl-tabs">
+            <button type="button" [class.active]="tab === 'report'" (click)="tab = 'report'">Report Wastage</button>
+            <button type="button" [class.active]="tab === 'mine'" (click)="tab = 'mine'">
+              My Submissions <span class="wl-count">{{ mine.length }}</span>
+            </button>
+          </div>
+          <form class="wl-filter" (ngSubmit)="applyFilter()">
+            <select class="form-control form-control-sm" [(ngModel)]="fy" name="fy">
+              @for (f of fyOptions; track f) { <option [value]="f">{{ f }}</option> }
+            </select>
+            <select class="form-control form-control-sm" [(ngModel)]="monthId" name="month">
+              <option value="">All months</option>
+              @for (m of months; track m; let i = $index) { <option [value]="i + 1">{{ m }}</option> }
+            </select>
+            <input type="search" class="form-control form-control-sm" placeholder="Application / Box no." [(ngModel)]="search" name="search" />
+            <button class="btn btn-sm wl-btn" type="submit"><i class="fa fa-search me-1"></i>Search</button>
+          </form>
+        </div>
+
+        @if (error) { <div class="alert alert-danger m-3 py-2 small">{{ error }}</div> }
+
+        <!-- ============ report tab ============ -->
+        @if (tab === 'report') {
+          <div class="table-responsive">
+            <table class="table wl-table align-middle mb-0">
+              <thead>
+                <tr>
+                  <th>Application</th><th>Liquor</th><th>Box / Spool</th><th>Label range</th>
+                  <th class="text-end">Labels</th><th class="text-end">Already reported</th><th class="text-end"></th>
+                </tr>
+              </thead>
+              <tbody>
+                @if (loadingSpools) {
+                  <tr><td colspan="7" class="text-center text-muted py-5">Loading…</td></tr>
+                } @else {
+                  @for (s of spools; track s.spoolId) {
+                    <tr>
+                      <td><div class="fw-semibold">{{ s.ealApplicationNo }}</div><div class="text-muted xs">{{ s.monthName }} {{ s.financialYear }}</div></td>
+                      <td><span class="wl-pill" [class.cl]="s.liquorType === 'CL'" [class.hb]="s.liquorType === 'HB'">{{ s.liquorName }}</span></td>
+                      <td><div>{{ s.boxNo }}</div><div class="text-muted xs">Spool #{{ s.spoolId }}</div></td>
+                      <td class="mono">{{ s.startNo }} – {{ s.endNo }}</td>
+                      <td class="text-end">{{ s.total | number }}</td>
+                      <td class="text-end">
+                        @if (s.reported > 0) { <b>{{ s.reported | number }}</b> } @else { <span class="text-muted">–</span> }
+                        @if (s.pending > 0) { <div class="xs text-warning">{{ s.pending }} pending</div> }
+                      </td>
+                      <td class="text-end"><button class="btn btn-sm wl-btn-outline" type="button" (click)="open(s)">Report</button></td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="7" class="text-center text-muted py-5">
+                      No issued spools for this period. Spools appear here after labels are issued to your application.
+                    </td></tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+
+        <!-- ============ my submissions tab ============ -->
+        @if (tab === 'mine') {
+          <div class="wl-chips px-3 pt-3">
+            @for (st of ['All', 'Submitted', 'Approved', 'Rejected']; track st) {
+              <button type="button" [class.active]="mineStatus === st" (click)="mineStatus = st">
+                {{ st === 'Submitted' ? 'Waiting' : st }} <span>{{ st === 'All' ? mine.length : countMine(st) }}</span>
+              </button>
+            }
+          </div>
+          <div class="table-responsive">
+            <table class="table wl-table align-middle mb-0">
+              <thead>
+                <tr><th>Submitted</th><th>Application / Spool</th><th>Damaged numbers</th><th class="text-end">Labels</th>
+                    <th>Reason</th><th>Files</th><th>Status</th></tr>
+              </thead>
+              <tbody>
+                @if (loadingMine) {
+                  <tr><td colspan="7" class="text-center text-muted py-5">Loading…</td></tr>
+                } @else {
+                  @for (m of mineFiltered; track m.id) {
+                    <tr>
+                      <td class="xs">{{ m.createdDate | date: 'dd MMM yyyy' }}<div class="text-muted">{{ m.createdDate | date: 'h:mm a' }}</div></td>
+                      <td><div class="fw-semibold">{{ m.ealApplicationNo }}</div><div class="text-muted xs">{{ m.boxNo }} · Spool #{{ m.spoolId }}</div></td>
+                      <td class="mono small">{{ m.damageNumbers }}</td>
+                      <td class="text-end fw-semibold">{{ m.damageCount | number }}</td>
+                      <td class="small">{{ m.reason || '–' }}</td>
+                      <td class="text-nowrap">
+                        @if (m.hasPanchnama) { <button class="btn btn-link btn-sm p-0 me-2" (click)="view(m, 'panchnama')"><i class="fa fa-file-text-o"></i> Panchnama</button> }
+                        @if (m.hasVideo) { <button class="btn btn-link btn-sm p-0" (click)="view(m, 'video')"><i class="fa fa-video-camera"></i> Video</button> }
+                      </td>
+                      <td>
+                        <span class="wl-status" [ngClass]="badge(m.status)">{{ m.status === 'Submitted' ? 'Waiting for review' : m.status }}</span>
+                        @if (m.reviewRemark) { <div class="xs text-muted mt-1">"{{ m.reviewRemark }}"</div> }
+                      </td>
+                    </tr>
+                  } @empty {
+                    <tr><td colspan="7" class="text-center text-muted py-5">Nothing here yet.</td></tr>
+                  }
+                }
+              </tbody>
+            </table>
+          </div>
+        }
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- ============ report panel ============ -->
+@if (selected) {
+  <div class="wl-backdrop" (click)="close()"></div>
+  <aside class="wl-panel">
+    <div class="wl-panel-head">
+      <div>
+        <div class="fw-bold">Report damaged labels</div>
+        <div class="xs text-white-50">{{ selected.ealApplicationNo }} · {{ selected.boxNo }} · Spool #{{ selected.spoolId }}</div>
+      </div>
+      <button type="button" class="wl-x" (click)="close()" aria-label="Close">&times;</button>
+    </div>
+
+    <div class="wl-panel-body">
+      <div class="wl-range">
+        <div><span>Spool range</span><b class="mono">{{ selected.startNo }} – {{ selected.endNo }}</b></div>
+        <div><span>Already reported</span><b>{{ selected.reported | number }}</b></div>
+      </div>
+
+      <label class="form-label fw-semibold small mt-3">Damaged label numbers <span class="text-danger">*</span></label>
+      <textarea class="form-control mono" rows="3" [(ngModel)]="numbers" placeholder="e.g. 1001-1010, 1015, 1020-1022"></textarea>
+      <div class="xs mt-1" [class.text-danger]="parsed.error" [class.text-success]="!parsed.error && parsed.count">
+        @if (parsed.error) { {{ parsed.error }} }
+        @else if (parsed.count) { {{ parsed.count | number }} label(s) in {{ parsed.ranges.length }} range(s) }
+        @else { <span class="text-muted">Single numbers or ranges, separated by commas.</span> }
+      </div>
+
+      <label class="form-label fw-semibold small mt-3">Reason <span class="text-danger">*</span></label>
+      <select class="form-control" [(ngModel)]="reason">
+        @for (r of reasons; track r) { <option [value]="r">{{ r }}</option> }
+      </select>
+      <input class="form-control mt-2" [(ngModel)]="reasonText" maxlength="200"
+             [placeholder]="reason === 'Other' ? 'Write the reason' : 'Details (optional)'" />
+
+      <label class="form-label fw-semibold small mt-3">Panchnama <span class="text-danger">*</span> <span class="text-muted fw-normal">PDF / JPG / PNG, max 5 MB</span></label>
+      <input type="file" class="form-control" accept=".pdf,.jpg,.jpeg,.png" (change)="onFile($event, 'panchnama')" />
+
+      <label class="form-label fw-semibold small mt-3">Video <span class="text-muted fw-normal">optional · MP4 / WEBM, max 50 MB</span></label>
+      <input type="file" class="form-control" accept=".mp4,.webm" (change)="onFile($event, 'video')" />
+
+      @if (formError) { <div class="alert alert-danger py-2 small mt-3 mb-0">{{ formError }}</div> }
+    </div>
+
+    <div class="wl-panel-foot">
+      <button type="button" class="btn btn-light" (click)="close()" [disabled]="saving">Cancel</button>
+      <button type="button" class="btn wl-btn" (click)="submit()" [disabled]="!canSubmit">
+        {{ saving ? 'Submitting…' : 'Submit for review' }}
+      </button>
+    </div>
+  </aside>
+}
+
+@if (toast) { <div class="wl-toast"><i class="fa fa-check-circle me-2"></i>{{ toast }}</div> }

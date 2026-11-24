@@ -1,0 +1,145 @@
+/* Layout: fill the space next to the sidebar and shrink with it (flex child needs min-width: 0) */
+.detail-content { flex: 1 1 auto; min-width: 0; }
+.detail-col { padding: 0 0 0 120px; }
+.detail-card-body { max-height: 90vh; overflow-y: auto; }
+
+.detail-header {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    justify-content: space-between;
+    gap: 10px 16px;
+    width: 100%;
+}
+.detail-header h5 { font-size: 1.1rem; }
+
+/* tables never push the page sideways – they scroll inside their box */
+.detail-card-body .table-responsive { overflow-x: auto; -webkit-overflow-scrolling: touch; }
+.detail-card-body .table th { white-space: nowrap; }
+
+@media (max-width: 1399.98px) {
+    .detail-col { padding-left: 40px; }
+}
+@media (max-width: 1199.98px) {
+    .detail-col { padding-left: 0; }
+}
+@media (max-width: 767.98px) {
+    .detail-card-body { max-height: none; padding: 14px; }
+    .detail-header h5 { font-size: 0.95rem; }
+    .detail-header-actions { width: 100%; }
+    .detail-header-actions .btn { flex: 1 1 auto; }
+    .detail-card-body p { margin-bottom: 0.4rem; word-break: break-word; }
+    .detail-actions .btn { flex: 1 1 140px; }
+}
+.modal-body {
+    max-height: 60vh !important; /* Adjust height if needed */
+    overflow-y: auto !important; /* Enable scrolling */
+}
+  
+.table-scroll {
+  max-height: 200px; 
+  overflow-y: auto;
+  display: block; 
+}
+.table-scroll::-webkit-scrollbar {
+  width: 8px;
+}
+
+.table-scroll::-webkit-scrollbar-thumb {
+  background-color: #0d6efd;
+  border-radius: 10px;
+}
+
+@media print {
+  app-sidebar,
+  .containerSide,
+  .btn,
+  button,
+  .modal,
+  .modal-backdrop {
+    display: none !important;
+  }
+
+  /* Expand content full width */
+  .print-area {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Remove card shadows/borders */
+  .card, .card-body {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Remove table hover colors */
+  .table-hover tbody tr:hover {
+    background-color: transparent !important;
+  }
+
+  /* Fix Bootstrap table colors in print */
+  .table-primary th {
+    background-color: #e0e0e0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove scrollbars */
+  .card-body {
+    overflow: visible !important;
+    max-height: unset !important;
+  }
+
+  /* Ensure text prints properly */
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: white !important;
+  }
+}
+
+/* ==================== Dynamic approval workflow ==================== */
+.wf-progress {
+  display: flex;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 6px;
+  padding: 12px 14px;
+  background: #f8fafc;
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+}
+.wf-step { display: inline-flex; align-items: center; gap: 6px; font-size: 0.82rem; font-weight: 600; color: #94a3b8; }
+.wf-dot {
+  width: 26px; height: 26px; border-radius: 50%;
+  display: inline-flex; align-items: center; justify-content: center;
+  font-size: 0.75rem; background: #e2e8f0; color: #64748b;
+}
+.wf-step-line { flex: 0 0 22px; height: 2px; background: #cbd5e1; }
+.wf-step-done { color: #15803d; }
+.wf-step-done .wf-dot { background: #16a34a; color: #fff; }
+.wf-step-current { color: #4318ff; }
+.wf-step-current .wf-dot { background: #4318ff; color: #fff; box-shadow: 0 0 0 4px rgba(67, 24, 255, 0.15); }
+.wf-step-rejected { color: #b91c1c; }
+.wf-step-rejected .wf-dot { background: #dc2626; color: #fff; }
+.wf-action-panel {
+  border: 1px solid #e2e8f0;
+  border-radius: 12px;
+  padding: 16px;
+  background: #fbfcfe;
+}
+
+/* Permit Generate & Digital Sign step panel */
+.wf-step-table .wf-step-name { width: 34%; }
+.wf-step-table .wf-step-action { width: 220px; }
+@media (max-width: 767.98px) {
+  .wf-progress { padding: 10px; gap: 4px; }
+  .wf-step { font-size: 0.75rem; }
+  .wf-step-line { flex-basis: 12px; }
+  /* stack each step row: name / status / button */
+  .wf-step-table tr { display: flex; flex-wrap: wrap; border-bottom: 1px solid #dee2e6; }
+  .wf-step-table td { display: block; width: 100% !important; border: none; text-align: left !important; padding: 6px 10px; }
+  .wf-step-table .wf-step-action:empty { display: none; }
+  .wf-step-table .wf-step-action .btn { width: 100%; }
+}

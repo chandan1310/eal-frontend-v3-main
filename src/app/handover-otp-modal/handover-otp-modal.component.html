@@ -1,0 +1,223 @@
+<div class="d-flex flex-row main-dashboard">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="container-fluid px-4 py-4 mx-auto main-content">
+
+    <!-- Filter Card -->
+    <div class="card glass-card mb-4">
+      <div class="card-body">
+        <h6 class="section-header">Check Excise Adhesive Labels Application</h6>
+        <form class="row g-3 mt-2 align-items-end">
+
+          <!-- Financial Year -->
+          <div class="col-md-2">
+            <label class="label-small">Financial year</label>
+            <select class="form-select" id="financialYear" [(ngModel)]="currentFinancialYear" name="financialYear"
+              [ngModelOptions]="{ standalone: true }">
+              <option [value]="currentFinancialYear" [selected]="true">
+                {{ currentFinancialYear }}
+              </option>
+            </select>
+          </div>
+
+          <!-- Month -->
+          <div class="col-md-2">
+            <label class="label-small">Month</label>
+            <select class="form-select soft-input" [(ngModel)]="filters.Month" [ngModelOptions]="{ standalone: true }" name="month">
+              <option [value]="null" disabled selected>Select Month</option>
+              @for (month of allMonths; track month) {
+              <option [value]="month.month_id">{{ month.month_name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Single Date Filter -->
+          <div class="col-md-2">
+            <label class="label-small">Day & Date</label>
+            <input type="date" class="form-control soft-input" [(ngModel)]="filters.DateFrom"
+              [ngModelOptions]="{ standalone: true }" name="dateFrom">
+          </div>
+
+          <!-- Liquor Type -->
+          <div class="col-md-3">
+            <label class="label-small">Liquor Type</label>
+            <select class="form-select soft-input" [(ngModel)]="filters.userType"
+              [ngModelOptions]="{ standalone: true }" name="userType">
+              <option value="" disabled>Select Type</option>
+              @for (d of userTypeList; track d) {
+              <option [value]="d.id">{{ d.name }}</option>
+              }
+            </select>
+          </div>
+
+          <!-- Actions -->
+          <div class="col-md-3 d-flex gap-2">
+            <button class="btn btn-filter-primary flex-grow-1" type="button" (click)="fetchIssuedApplications()">
+              <i class="fa fa-filter"></i> Filter
+            </button>
+            <button class="btn btn-reset-outline" type="button" (click)="resetFilters()">Reset</button>
+          </div>
+
+        </form>
+      </div>
+    </div>
+
+    <!-- Applications Table Card -->
+    <div class="card table-card border-standard shadow-sm mb-3">
+      <div class="table-responsive-scroll">
+        <table class="table table-bordered-custom mb-0">
+          <thead>
+            <tr>
+              <th>S.NO.</th>
+              <th>APPLIED DATE</th>
+              <th>APP NUMBER</th>
+              <th>COMPANY NAME</th>
+              @if (filters.userType == 'FL') {
+              <th>FL SPIRIT</th>
+              <th>FL MALT</th>
+              }
+              @if (filters.userType == 'CL') {
+              <th>CL PLAIN</th>
+              <th>CL MASALA</th>
+              }
+              <th class="text-center">ACTION</th>
+            </tr>
+          </thead>
+          <tbody>
+            @for (app of paginatedApplications; track app; let i = $index) {
+            <tr>
+              <td class="text-center text-muted fw-bold">{{ (currentPage - 1) * pageSize + i + 1 }}</td>
+              <td>{{ app.CreateDate | date : "dd/MM/yyyy" }}</td>
+              <td><span class="app-number-tag">{{ app.EalApplicationNo }}</span></td>
+              <td class="fw-bold text-dark text-uppercase">{{ app.Company_name }}</td>
+
+              @if (filters.userType == 'FL') {
+              <td>{{ app.groupedData?.req_fl_spirit_qty || 0 }}</td>
+              <td>{{ app.groupedData?.req_fl_malt_qty || 0 }}</td>
+              }
+              @if (filters.userType == 'CL') {
+              <td>{{ app.groupedData?.req_cl_plain_qty || 0 }}</td>
+              <td>{{ app.groupedData?.req_cl_masala_qty || 0 }}</td>
+              }
+
+              <!-- Actions Column -->
+              <td class="text-center">
+                <div class="d-inline-flex align-items-center gap-1">
+                  <!-- Direct Server Signed PDF View -->
+                  <button class="btn btn-sm btn-outline-primary d-inline-flex align-items-center gap-1"
+                    title="Preview Document" (click)="previewPermit(app)">
+                    <i class="fa fa-eye"></i> Preview
+                  </button>
+                  <button class="btn btn-sm btn-outline-dark d-inline-flex align-items-center gap-1"
+                    title="Print Final Document" (click)="printPermit(app)">
+                    <i class="fa fa-print"></i> Print
+                  </button>
+                  <button class="btn btn-sm btn-success d-inline-flex align-items-center gap-1" title="Download PDF"
+                    (click)="downloadPermit(app)">
+                    <i class="fa fa-download"></i> PDF
+                  </button>
+
+                  @if (isHandoverVerified(app)) {
+                  <span class="badge bg-success small py-1 px-2" title="Handover Completed">
+                    <i class="fa fa-check-circle me-1"></i> OTP Verified
+                  </span>
+                  } @else {
+                  <button class="btn btn-sm btn-warning d-inline-flex align-items-center gap-1 fw-bold text-dark"
+                    title="Physical Handover & Receiving OTP" (click)="openHandoverOtpModal(app)">
+                    <i class="fa fa-shield"></i> Receiving OTP
+                  </button>
+                  }
+                </div>
+              </td>
+            </tr>
+            } @empty {
+            <tr>
+              <td colspan="7" class="text-center py-4 text-muted">
+                <i class="fa fa-folder-open-o fs-3 d-block mb-1"></i>
+                No issued applications found.
+              </td>
+            </tr>
+            }
+          </tbody>
+        </table>
+      </div>
+    </div>
+
+    <!-- Pagination Footer Controls -->
+    @if (applications.length > 0) {
+    <div class="d-flex justify-content-between align-items-center px-2">
+      <div class="text-muted small">
+        Showing <strong>{{ (currentPage - 1) * pageSize + 1 }}</strong> to <strong>{{ currentPage * pageSize > applications.length ? applications.length : currentPage * pageSize }}</strong> of <strong>{{ applications.length }}</strong> entries
+      </div>
+      <nav>
+        <ul class="pagination pagination-sm mb-0">
+          <li class="page-item" [class.disabled]="currentPage === 1">
+            <button class="page-link" (click)="changePage(currentPage - 1)">Previous</button>
+          </li>
+          @for (p of [].constructor(totalPages); track $index; let idx = $index) {
+          <li class="page-item" [class.active]="currentPage === idx + 1">
+            <button class="page-link" (click)="changePage(idx + 1)">{{ idx + 1 }}</button>
+          </li>
+          }
+          <li class="page-item" [class.disabled]="currentPage === totalPages">
+            <button class="page-link" (click)="changePage(currentPage + 1)">Next</button>
+          </li>
+        </ul>
+      </nav>
+    </div>
+    }
+
+  </div>
+</div>
+
+<!-- ================= PHYSICAL HANDOVER & RECEIVING OTP MODAL ================= -->
+<div class="modal fade" id="handoverOtpModal" tabindex="-1" aria-hidden="true" data-bs-backdrop="static">
+  <div class="modal-dialog modal-dialog-centered" style="max-width: 550px;">
+    <div class="modal-content border-0 shadow-lg" style="border-radius: 8px;">
+
+      <div class="modal-header bg-success text-white py-2 px-3">
+        <h6 class="modal-title fw-bold d-flex align-items-center gap-2 mb-0">
+          <i class="fa fa-shield fs-5"></i> Physical EAL Handover & Receiving OTP Verification
+        </h6>
+        <button type="button" class="btn-close btn-close-white" (click)="closeHandoverOtpModal()"></button>
+      </div>
+
+      <div class="modal-body p-4">
+        <p class="text-muted small mb-3">
+          Application No: <strong class="text-dark">{{ selectedAppForOtp?.EalApplicationNo }}</strong><br>
+          Send verification code to the authorized representative's registered mobile number before physical handover.
+        </p>
+
+        <!-- Send OTP Section -->
+        <div class="mb-3">
+          <button class="btn btn-outline-success btn-sm w-100" (click)="sendReceivingOtpModal()">
+            <i class="fa fa-paper-plane me-1"></i> Send Receiving OTP
+          </button>
+        </div>
+
+        <!-- Enter OTP & Verify Section -->
+        <div class="mb-2">
+          <label class="form-label text-muted small fw-bold mb-1">ENTER 6-DIGIT OTP</label>
+          <div class="input-group">
+            <span class="input-group-text bg-white"><i class="fa fa-lock text-success"></i></span>
+            <input type="text" class="form-control" placeholder="Enter 6-digit OTP" [(ngModel)]="enteredReceivingOtp"
+              maxlength="6">
+          </div>
+        </div>
+      </div>
+
+      <div class="modal-footer bg-light py-2 px-3 border-top d-flex justify-content-end gap-2">
+        <button type="button" class="btn btn-outline-secondary px-3" (click)="closeHandoverOtpModal()">
+          Cancel
+        </button>
+        <button type="button" class="btn btn-success px-4 d-inline-flex align-items-center gap-1"
+          (click)="verifyReceivingOtpModal()">
+          <i class="fa fa-check-circle me-1"></i> Verify & Complete Handover
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>

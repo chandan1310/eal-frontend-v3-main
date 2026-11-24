@@ -1,0 +1,52 @@
+.col-xl-10.col-lg-12.col-md-12.col-12 {
+    padding: 0 0 0 146px;
+}
+/* Hide sidebar and non-print things */
+@media print {
+  app-sidebar,
+  .containerSide,
+  .btn,
+  button,
+  .modal,
+  .modal-backdrop {
+    display: none !important;
+  }
+
+  /* Expand content full width */
+  .print-area {
+    margin: 0 !important;
+    padding: 0 !important;
+    width: 100% !important;
+  }
+
+  /* Remove card shadows/borders */
+  .card, .card-body {
+    border: none !important;
+    box-shadow: none !important;
+  }
+
+  /* Remove table hover colors */
+  .table-hover tbody tr:hover {
+    background-color: transparent !important;
+  }
+
+  /* Fix Bootstrap table colors in print */
+  .table-primary th {
+    background-color: #e0e0e0 !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  /* Remove scrollbars */
+  .card-body {
+    overflow: visible !important;
+    max-height: unset !important;
+  }
+
+  /* Ensure text prints properly */
+  body {
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+    background: white !important;
+  }
+}

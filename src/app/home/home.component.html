@@ -1,0 +1,248 @@
+<div class="dashboard-wrapper">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  @if (isAdminView) {
+    <main class="main-content">
+      <div class="filter-header-bar">
+        <div class="filter-group">
+          <div class="select-box">
+            <i class="fa fa-calendar-check-o"></i>
+            <span>Financial Year</span>
+            <select [(ngModel)]="selectedYear" (change)="loadCounts()">
+              <option value="">All Years</option>
+              @for (year of availableYears; track year) {
+                <option [value]="year">{{ year }}</option>
+              }
+            </select>
+          </div>
+          <div class="select-box">
+            <i class="fa fa-cubes"></i>
+            <span>Pack Size</span>
+            <select [(ngModel)]="selectedPackSize" (change)="loadCounts()">
+              <option value="">All Pack Sizes</option>
+              @for (p of packSizes; track p) {
+                <option [value]="p.packsizeType">{{ p.packsizeType }}</option>
+              }
+            </select>
+          </div>
+        </div>
+        <div class="active-filter-label">
+          User: <strong style="font-weight: 700; text-transform: none !important;">{{ userName }}</strong> | FY {{ selectedYear || 'All' }}
+        </div>
+      </div>
+
+      <!-- Received / Issued / Balance: same layout, one card per EALType row -->
+      <ng-template #stockBox let-title="title" let-headCss="headCss" let-headStyle="headStyle" let-icon="icon"
+        let-iconCss="iconCss" let-iconStyle="iconStyle" let-totalLabel="totalLabel" let-total="total" let-kind="kind">
+        <section class="parent-section-card h-100">
+          <div class="section-top-header" [ngClass]="headCss" [attr.style]="headStyle">{{ title }}</div>
+          <div class="section-inner-padding">
+            <div class="hero-metric-display">
+              <div class="hero-icon-bg" [ngClass]="iconCss" [attr.style]="iconStyle"><i class="fa" [ngClass]="icon"></i></div>
+              <div class="hero-text">
+                <label>{{ totalLabel }}</label>
+                <h2 [title]="full(total)">{{ short(total) }}</h2>
+              </div>
+            </div>
+            <div class="mini-cards-layout">
+              @for (t of typeCards; track t.key) {
+                @let v = kind === 'received' ? received(t.key) : kind === 'issued' ? issued(t.key) : balance(t.key);
+                <div class="sub-card" [title]="t.label + (t.group ? ' (' + t.group + ')' : '') + ': ' + full(v)">
+                  <i class="fa" [ngClass]="[t.icon, t.css]"></i>
+                  <label>{{ t.label }}</label>
+                  @if (t.group) { <small class="sub-group">{{ t.group }}</small> }
+                  <div class="sub-val">{{ short(v) }}</div>
+                </div>
+              }
+            </div>
+          </div>
+        </section>
+      </ng-template>
+
+      <div class="row g-4 mb-4">
+        <div class="col-xl-4 col-lg-4 col-md-12">
+          <ng-container *ngTemplateOutlet="stockBox; context: { title: 'Stock Received', headCss: 'received-gradient', icon: 'fa-ship', totalLabel: 'Total Stock Received', total: stockEntriesCount, kind: 'received' }"></ng-container>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-12">
+          <ng-container *ngTemplateOutlet="stockBox; context: { title: 'Stock Issued', headCss: 'issued-gradient', icon: 'fa-truck', iconCss: 'issued-bg', totalLabel: 'Total Stock Issued', total: stockIssuedCount, kind: 'issued' }"></ng-container>
+        </div>
+        <div class="col-xl-4 col-lg-4 col-md-12">
+          <ng-container *ngTemplateOutlet="stockBox; context: { title: 'Stock Balance', headStyle: 'background: linear-gradient(135deg, #059669 0%, #047857 100%); color: #fff;', icon: 'fa-balance-scale', iconStyle: 'background-color: #ecfdf5; color: #059669;', totalLabel: 'Total Balance Stock', total: balanceTotal, kind: 'balance' }"></ng-container>
+        </div>
+      </div>
+
+      <!-- Nashik Admin (label printer) works on stock only: no application tracking -->
+      @if (role !== 'Nashik Admin') {
+      <section class="parent-section-card full-width-card">
+        <div class="section-top-header header-light">Applications Tracking</div>
+        <div class="application-row">
+          <div class="app-mini-card">
+            <i class="fa fa-list-alt app-blue"></i>
+            <div>
+              <label>Total Submissions</label>
+              <div class="app-count" [title]="full(totalApplications)">{{ short(totalApplications) }}</div>
+            </div>
+          </div>
+          <div class="app-mini-card">
+            <i class="fa fa-history app-orange"></i>
+            <div>
+              <label>Pending Review</label>
+              <div class="app-count" [title]="full(pendingApplications)">{{ short(pendingApplications) }}</div>
+            </div>
+          </div>
+          <div class="app-mini-card">
+            <i class="fa fa-vcard-o app-green"></i>
+            <div>
+              <label>Permits Generated</label>
+              <div class="app-count" [title]="full(totalPermitIssued)">{{ short(totalPermitIssued) }}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+      }
+    </main>
+  }
+
+  @if (isPressView) {
+    <main class="main-content">
+      <app-nashik-home></app-nashik-home>
+    </main>
+  }
+
+  @if (!isAdminView && !isPressView) {
+    <main class="main-content">
+      <div class="filter-header-bar">
+        <h2 class="section-heading mb-0">My Dashboard</h2>
+        <div class="active-filter-label">
+          User Profile: <strong>{{ userName }}</strong> | Active FY 2026-2027
+        </div>
+      </div>
+      <section class="parent-section-card full-width-card">
+        <div class="section-top-header received-gradient">Applications & Label Statistics</div>
+        <div class="application-row">
+          <div class="app-mini-card user-card" (click)="openDetailsModal('Total Applications')">
+            <i class="fa fa-wpforms app-blue"></i>
+            <div>
+              <label>Total Applications</label>
+              <div class="app-count">{{ totalUserApp }}</div>
+            </div>
+          </div>
+          <div class="app-mini-card user-card" (click)="openDetailsModal('Pending Applications')">
+            <i class="fa fa-hourglass-2 app-orange"></i>
+            <div>
+              <label>Pending Applications</label>
+              <div class="app-count">{{ totalUserPend }}</div>
+            </div>
+          </div>
+          <div class="app-mini-card user-card" (click)="openDetailsModal('Issued Applications')">
+            <i class="fa fa-check-circle app-green"></i>
+            <div>
+              <label>Issued Applications</label>
+              <div class="app-count">{{ totalUserIssued }}</div>
+            </div>
+          </div>
+        </div>
+      </section>
+    </main>
+
+    <!-- Centered Bootstrap Modal Overlay -->
+    @if (isModalOpen) {
+      <div class="modal fade show d-block" tabindex="-1" style="background-color: rgba(0, 0, 0, 0.6); z-index: 1050;">
+        <div class="modal-dialog modal-dialog-centered modal-lg">
+          <div class="modal-content border-0 shadow-lg rounded-3 overflow-hidden">
+            
+            <div class="modal-header text-white py-3 px-4" style="background-color: #143366 !important;">
+              <h5 class="modal-title fw-bold">
+                <i class="fa fa-list-alt me-2"></i> {{ modalTitle }} Details
+              </h5>
+              <button type="button" class="btn-close btn-close-white" aria-label="Close" (click)="closeModal()"></button>
+            </div>
+
+            <div class="modal-body bg-light border-bottom py-3 px-4">
+              <div class="row g-3 align-items-end">
+                <div class="col-md-3">
+                  <label class="form-label fw-bold small text-secondary mb-1">Financial Year</label>
+                  <select class="form-select form-select-sm" [(ngModel)]="modalFilterFinancialYear" (change)="applyModalFilter()">
+                    <option value="">All FY</option>
+                    @for (fy of availableFinancialYears; track fy) {
+                      <option [value]="fy">{{ fy }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-3">
+                  <label class="form-label fw-bold small text-secondary mb-1">Month Wise</label>
+                  <select class="form-select form-select-sm" [(ngModel)]="modalFilterMonth" (change)="applyModalFilter()">
+                    <option value="">All Months</option>
+                    @for (m of availableMonths; track m) {
+                      <option [value]="m">{{ m }}</option>
+                    }
+                  </select>
+                </div>
+                <div class="col-md-4">
+                  <label class="form-label fw-bold small text-secondary mb-1">Application Search</label>
+                  <input type="text" class="form-control form-control-sm" placeholder="Search App No..." [(ngModel)]="modalFilterAppSearch" (input)="applyModalFilter()">
+                </div>
+                <div class="col-md-2 text-end">
+                  <button type="button" class="btn btn-outline-secondary btn-sm w-100" (click)="resetModalFilter()">
+                    <i class="fa fa-refresh me-1"></i> Reset
+                  </button>
+                </div>
+              </div>
+            </div>
+
+            <div class="modal-body p-4" style="max-height: 55vh; overflow-y: auto;">
+              @if (modalLoader) {
+                <div class="d-flex justify-content-center align-items-center py-5">
+                  <div class="spinner-border text-primary" role="status">
+                    <span class="visually-hidden">Loading...</span>
+                  </div>
+                </div>
+              } @else {
+                <div class="table-responsive">
+                  <table class="table table-bordered table-striped align-middle mb-0" *ngIf="filteredModalData.length > 0; else noData">
+                    <thead class="table-light text-uppercase fs-7">
+                      <tr>
+                        <th style="width: 40%;">Pack Wise</th>
+                        <th style="width: 30%;">Application Wise</th>
+                        <th style="width: 30%;">Label Wise</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (item of filteredModalData; track item) {
+                        <tr>
+                          <td>{{ item.packSize }}</td>
+                          <td><span class="badge bg-light text-dark border">{{ item.applicationNo }}</span></td>
+                          <td>
+                            <span class="badge" [ngClass]="item.labelNo === 'Pending / Not Issued' ? 'bg-warning-subtle text-warning border border-warning' : 'bg-success-subtle text-success border border-success'">
+                              {{ item.labelNo }}
+                            </span>
+                          </td>
+                        </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              }
+
+              <ng-template #noData>
+                @if (!modalLoader) {
+                  <div class="text-center py-5">
+                    <i class="fa fa-folder-open-o fa-2x text-muted mb-2"></i>
+                    <p class="text-muted m-0">No records found matching the filter criteria.</p>
+                  </div>
+                }
+              </ng-template>
+            </div>
+
+            <div class="modal-footer bg-light py-2 px-4">
+              <button type="button" class="btn btn-secondary btn-sm px-4" (click)="closeModal()">Close</button>
+            </div>
+
+          </div>
+        </div>
+      </div>
+    }
+  }
+</div>

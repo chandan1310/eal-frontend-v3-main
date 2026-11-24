@@ -1,0 +1,639 @@
+<div class="d-flex flex-row" style="background-color: #f4f6f9; min-height: 100vh;">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="container-fluid px-4 py-4 flex-grow-1" style="max-width: calc(100% - 15px);">
+
+    <!-- Page Header Card -->
+    <div class="row mb-4 mt-2">
+      <div class="col-12">
+        <div class="card border-0 shadow-sm rounded-4 overflow-hidden">
+          <div class="card-body py-3 px-4 text-white d-flex flex-wrap justify-content-between align-items-center"
+            style="background: linear-gradient(135deg, #143366 0%, #1e4d8c 100%);">
+            <div>
+              <h3 class="fw-bold mb-1" style="font-size: 1.5rem; letter-spacing: 0.5px;">
+                <i class="fa fa-shield me-2"></i> Dynamic Role, Menu & User Access Control
+              </h3>
+              <p class="text-white-50 small mb-0 text-uppercase tracking-wider"
+                style="font-size: 0.72rem; font-weight: 600;">
+                Manage security permissions, navigation menus, and enterprise user accounts
+              </p>
+            </div>
+            @if (currentFinancialYear) {
+            <span class="badge bg-white text-primary px-3 py-2 rounded-pill fw-bold shadow-sm"
+              style="font-size: 0.85rem;">
+              <i class="fa fa-calendar me-1"></i> FY: {{ currentFinancialYear }}
+            </span>
+            }
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Main Content Card -->
+    <div class="card border-0 shadow-sm rounded-4 overflow-hidden bg-white">
+
+      <!-- Modern Navigation Tabs -->
+      <div class="card-header bg-white pt-4 pb-0 px-4 border-bottom-0">
+        <ul class="nav nav-pills gap-2 pb-3 border-bottom">
+          <li class="nav-item">
+            <button class="nav-link px-4 py-2.5 rounded-pill fw-semibold d-flex align-items-center gap-2"
+              [class.active]="activeTab === 'matrix'"
+              [ngClass]="activeTab === 'matrix' ? 'bg-primary text-white shadow-sm' : 'text-secondary bg-light'"
+              (click)="activeTab = 'matrix'" style="font-size: 0.88rem; transition: all 0.2s;">
+              <i class="fa fa-check-square-o"></i> 1. Role-Page Permissions
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link px-4 py-2.5 rounded-pill fw-semibold d-flex align-items-center gap-2"
+              [class.active]="activeTab === 'masters'"
+              [ngClass]="activeTab === 'masters' ? 'bg-primary text-white shadow-sm' : 'text-secondary bg-light'"
+              (click)="activeTab = 'masters'" style="font-size: 0.88rem; transition: all 0.2s;">
+              <i class="fa fa-cogs"></i> 2. Manage Roles & Pages
+            </button>
+          </li>
+          <li class="nav-item">
+            <button class="nav-link px-4 py-2.5 rounded-pill fw-semibold d-flex align-items-center gap-2"
+              [class.active]="activeTab === 'users'"
+              [ngClass]="activeTab === 'users' ? 'bg-primary text-white shadow-sm' : 'text-secondary bg-light'"
+              (click)="activeTab = 'users'" style="font-size: 0.88rem; transition: all 0.2s;">
+              <i class="fa fa-users"></i> 3. Users & Suppliers Management
+            </button>
+          </li>
+        </ul>
+      </div>
+
+      <div class="card-body p-4">
+
+        <!-- TAB 1: ROLE-PAGE PERMISSION MATRIX -->
+        @if (activeTab === 'matrix') {
+        <div class="fade-in">
+
+          <!-- Configuration Toolbar with Copy Permissions Feature -->
+          <div class="row align-items-end mb-4 bg-light p-4 rounded-4 border shadow-sm g-3">
+            <div class="col-md-5">
+              <label class="form-label fw-bold small text-uppercase text-secondary mb-1">Select Role to Configure
+                Menus</label>
+              <select class="form-select form-select-md rounded-3 border shadow-sm fw-semibold text-dark bg-white"
+                [(ngModel)]="selectedRoleId" (change)="onRoleSelectForMatrix()">
+                @for (r of roles; track r.RoleId) {
+                <option [value]="r.RoleId">{{ r.RoleName }} {{ r.Remarks ? '(' + r.Remarks + ')' : '' }}</option>
+                }
+              </select>
+            </div>
+
+            <div class="col-md-4">
+              <label class="form-label fw-bold small text-uppercase text-secondary mb-1">
+                <i class="fa fa-clone text-primary me-1"></i> Copy Permissions From
+              </label>
+              <select class="form-select form-select-md rounded-3 border shadow-sm fw-semibold text-dark bg-white"
+                [(ngModel)]="copySourceRoleId" (change)="applyCopiedPermissions()">
+                @if (roles.length > 0) {
+                <option [value]="0">-- Select Role to Copy From --</option>
+                @for (r of roles; track r.RoleId) {
+                <option [value]="r.RoleId">{{ r.RoleName }}</option>
+                }
+                }
+              </select>
+            </div>
+
+            <div class="col-md-3 text-md-end">
+              <button
+                class="btn btn-success px-4 py-2.5 rounded-pill fw-bold shadow-sm w-100 d-flex align-items-center justify-content-center gap-2"
+                (click)="saveMatrixPermissions()" [disabled]="savingMatrix" style="font-size: 0.88rem;">
+                <i class="fa fa-save"></i> {{ savingMatrix ? 'Saving...' : 'Save Permissions' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Section Title & Description -->
+          <div class="d-flex justify-content-between align-items-center mb-3 px-1">
+            <div>
+              <h5 class="fw-bold text-dark mb-0" style="font-size: 1.15rem;">
+                Assign Menu Permissions
+              </h5>
+              <p class="text-muted small mb-0">Check the modules below to grant access rights for the selected user
+                role.</p>
+            </div>
+            <span class="badge bg-secondary bg-opacity-15 text-dark px-3 py-2 rounded-pill fw-semibold"
+              style="font-size: 0.78rem;">
+              Total Modules: {{ pages.length }}
+            </span>
+          </div>
+
+          <!-- Side-menu order: drag a row, or use the arrows. Top row = first menu item (after Home). -->
+          @if (menuOrder.length > 0) {
+          <div class="card border rounded-4 p-3 mb-4 bg-white shadow-sm">
+            <div class="d-flex flex-wrap align-items-center justify-content-between gap-2 mb-2">
+              <h6 class="fw-bold text-dark mb-0" style="font-size: 0.95rem;">
+                <i class="fa fa-sort text-primary me-2"></i> Side Menu Order
+              </h6>
+              <small class="text-muted">Drag a row or use ▲ / ▼. Top = first in the menu. Click <b>Save Permissions</b> to apply.</small>
+            </div>
+            <div class="d-flex flex-column gap-2">
+              @for (id of menuOrder; track id; let i = $index; let first = $first; let last = $last) {
+              <div class="d-flex align-items-center gap-2 border rounded-3 px-3 py-2"
+                [ngClass]="dragIndex === i ? 'border-primary bg-primary bg-opacity-10' : 'bg-light border-light-subtle'"
+                draggable="true" style="cursor: grab;"
+                (dragstart)="onMenuDragStart(i)" (dragover)="onMenuDragOver($event)" (drop)="onMenuDrop(i)" (dragend)="dragIndex = null">
+                <i class="fa fa-bars text-secondary"></i>
+                <span class="badge bg-primary rounded-pill" style="min-width: 28px;">{{ i + 1 }}</span>
+                <i class="fa {{ pageById(id).Icon_Class || 'fa-file-text-o' }} text-primary" style="width: 18px;"></i>
+                <span class="fw-semibold text-dark flex-grow-1" style="font-size: 0.9rem;">{{ pageById(id).Page_Name }}</span>
+                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" title="Move up"
+                  [disabled]="first" (click)="moveMenu(i, -1)">▲</button>
+                <button type="button" class="btn btn-sm btn-outline-secondary py-0 px-2" title="Move down"
+                  [disabled]="last" (click)="moveMenu(i, 1)">▼</button>
+              </div>
+              }
+            </div>
+          </div>
+          }
+
+          <!-- Modern Grid Cards for Menu Permissions -->
+          <div class="row g-3">
+            @for (page of pages; track page.Page_Id) {
+            <div class="col-md-6 col-lg-4 col-xl-3">
+              <div class="card border rounded-4 p-3 h-100 shadow-sm position-relative transition-all"
+                [ngClass]="assignedPageIds.has(page.Page_Id) ? 'border-primary bg-primary bg-opacity-10 shadow' : 'bg-white border-light-subtle'"
+                style="cursor: pointer; transition: all 0.2s ease-in-out;"
+                (click)="togglePageCheckboxCard(page.Page_Id)">
+
+                <div class="d-flex align-items-center justify-content-between">
+                  <div class="d-flex align-items-center gap-3">
+                    <div class="rounded-3 p-2.5 d-flex align-items-center justify-content-center shadow-sm"
+                      [ngClass]="assignedPageIds.has(page.Page_Id) ? 'bg-primary text-white' : 'bg-light text-primary'"
+                      style="width: 42px; height: 42px;">
+                      <i class="fa {{ page.Icon_Class || 'fa-file-text-o' }}" style="font-size: 1.1rem;"></i>
+                    </div>
+                    <div>
+                      <h6 class="fw-bold text-dark mb-0" style="font-size: 0.92rem;">{{ page.Page_Name }}</h6>
+                      <small class="text-muted" style="font-size: 0.72rem;">ID: {{ page.Page_Id }}</small>
+                    </div>
+                  </div>
+
+                  <div class="form-check m-0" (click)="$event.stopPropagation()">
+                    <input type="checkbox" class="form-check-input shadow-sm cursor-pointer"
+                      style="width: 22px; height: 22px;" [checked]="assignedPageIds.has(page.Page_Id)"
+                      (change)="togglePageCheckbox(page.Page_Id, $event)" />
+                  </div>
+                </div>
+
+              </div>
+            </div>
+            }
+          </div>
+        </div>
+        }
+
+        <!-- TAB 2: MANAGE ROLES & PAGES -->
+        @if (activeTab === 'masters') {
+        <div class="row g-4">
+
+          <!-- Role Management Card -->
+          <div class="col-lg-5">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-light">
+              <div class="card-header bg-white py-3 px-4 border-bottom rounded-top-4">
+                <h6 class="fw-bold text-dark mb-0"><i class="fa fa-id-badge text-primary me-2"></i> Add / Edit Role</h6>
+              </div>
+              <div class="card-body p-4 bg-white rounded-bottom-4">
+                <div class="mb-3">
+                  <label class="form-label small fw-bold text-secondary">Role Name <span
+                      class="text-danger">*</span></label>
+                  <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="roleForm.RoleName"
+                    placeholder="Enter role name" />
+                </div>
+                <div class="mb-3">
+                  <label class="form-label small fw-bold text-secondary">Remarks / Description</label>
+                  <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="roleForm.Remarks"
+                    placeholder="Enter description" />
+                </div>
+                <div class="d-flex gap-2 mb-4">
+                  <button class="btn btn-primary px-4 rounded-pill fw-semibold shadow-sm" (click)="submitRole()">
+                    <i class="fa fa-check me-1"></i> {{ roleForm.RoleId === 0 ? 'Add Role' : 'Update Role' }}
+                  </button>
+                  @if (roleForm.RoleId !== 0) {
+                  <button class="btn btn-outline-secondary px-3 rounded-pill fw-semibold"
+                    (click)="roleForm = { RoleId: 0, RoleName: '', Remarks: '', FinancialYear: currentFinancialYear }">Cancel</button>
+                  }
+                </div>
+
+                <div class="table-responsive rounded-3 border mt-3">
+                  <table class="table table-sm table-hover align-middle mb-0">
+                    <thead class="table-light fs-7 text-uppercase text-secondary" style="font-size: 0.72rem;">
+                      <tr>
+                        <th class="py-2.5 ps-3">ID</th>
+                        <th class="py-2.5">Role Name</th>
+                        <th style="width: 90px;" class="py-2.5 text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (r of roles; track r.RoleId) {
+                      <tr>
+                        <td class="ps-3 text-muted fw-semibold">{{ r.RoleId }}</td>
+                        <td><strong>{{ r.RoleName }}</strong><br><small class="text-muted"
+                            style="font-size: 0.75rem;">{{ r.Remarks }}</small></td>
+                        <td class="text-center">
+                          <button class="btn btn-sm btn-outline-primary rounded-circle p-1 me-1"
+                            style="width: 28px; height: 28px;" title="Edit Role" (click)="editRole(r)"><i
+                              class="fa fa-edit"></i></button>
+                          <button class="btn btn-sm btn-outline-danger rounded-circle p-1"
+                            style="width: 28px; height: 28px;" title="Delete Role" (click)="deleteRole(r)"><i
+                              class="fa fa-trash"></i></button>
+                        </td>
+                      </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <!-- Page Management Card -->
+          <div class="col-lg-7">
+            <div class="card border-0 shadow-sm rounded-4 h-100 bg-light">
+              <div class="card-header bg-white py-3 px-4 border-bottom rounded-top-4">
+                <h6 class="fw-bold text-dark mb-0"><i class="fa fa-file-text text-primary me-2"></i> Add / Edit Menu
+                  Page</h6>
+              </div>
+              <div class="card-body p-4 bg-white rounded-bottom-4">
+                <div class="row g-3 mb-3">
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold text-secondary">Display Name <span
+                        class="text-danger">*</span></label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="pageForm.Page_Name"
+                      placeholder="Display name" />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold text-secondary">Route URL <span
+                        class="text-danger">*</span></label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="pageForm.Page_Url"
+                      placeholder="Route path" />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold text-secondary">FA Icon Class</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="pageForm.Icon_Class"
+                      placeholder="fa-icon-name" />
+                  </div>
+                </div>
+                <div class="d-flex gap-2 mb-4">
+                  <button class="btn btn-primary px-4 rounded-pill fw-semibold shadow-sm" (click)="submitPage()">
+                    <i class="fa fa-check me-1"></i> {{ pageForm.Page_Id === 0 ? 'Add Page' : 'Update Page' }}
+                  </button>
+                  @if (pageForm.Page_Id !== 0) {
+                  <button class="btn btn-outline-secondary px-3 rounded-pill fw-semibold"
+                    (click)="pageForm = { Page_Id: 0, Page_Url: '', Page_Name: '', Icon_Class: '' }">Cancel</button>
+                  }
+                </div>
+
+                <div class="table-responsive rounded-3 border mt-3" style="max-height: 380px; overflow-y: auto;">
+                  <table class="table table-sm table-hover align-middle mb-0">
+                    <thead class="table-light fs-7 text-uppercase text-secondary sticky-top"
+                      style="font-size: 0.72rem;">
+                      <tr>
+                        <th class="py-2.5 ps-3">Menu Name</th>
+                        <th class="py-2.5">Route URL</th>
+                        <th class="py-2.5">Icon</th>
+                        <th style="width: 90px;" class="py-2.5 text-center">Actions</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      @for (p of pages; track p.Page_Id) {
+                      <tr>
+                        <td class="ps-3 fw-semibold text-dark">{{ p.Page_Name }}</td>
+                        <td><code class="text-primary bg-light px-2 py-0.5 rounded">{{ p.Page_Url }}</code></td>
+                        <td>
+                          <span class="p-1.5 bg-light rounded-2 text-primary">
+                            <i class="fa {{ p.Icon_Class }}"></i>
+                          </span>
+                        </td>
+                        <td class="text-center">
+                          <button class="btn btn-sm btn-outline-primary rounded-circle p-1 me-1"
+                            style="width: 28px; height: 28px;" title="Edit Page" (click)="editPage(p)"><i
+                              class="fa fa-edit"></i></button>
+                          <button class="btn btn-sm btn-outline-danger rounded-circle p-1"
+                            style="width: 28px; height: 28px;" title="Delete Page" (click)="deletePage(p)"><i
+                              class="fa fa-trash"></i></button>
+                        </td>
+                      </tr>
+                      }
+                    </tbody>
+                  </table>
+                </div>
+              </div>
+            </div>
+          </div>
+
+        </div>
+        }
+
+        <!-- TAB 3: USERS & SUPPLIERS MANAGEMENT -->
+        @if (activeTab === 'users') {
+        <div class="fade-in">
+          <!-- Top Action Bar -->
+          <div
+            class="d-flex justify-content-between align-items-center mb-4 flex-wrap gap-3 bg-light p-3 rounded-4 border">
+            <div class="input-group shadow-sm rounded-pill overflow-hidden bg-white"
+              style="max-width: 400px; border: 1px solid #ced4da;">
+              <span class="input-group-text bg-white border-0 ps-3"><i class="fa fa-search text-muted"></i></span>
+              <input type="search" class="form-control border-0 shadow-none ps-2" name="search_user_filter"
+                autocomplete="off" [(ngModel)]="userSearch" placeholder="Search username, name, role, company..." />
+              @if (userSearch) {
+              <button class="btn btn-link text-secondary border-0 pe-3" type="button" (click)="userSearch = ''"><i
+                  class="fa fa-times"></i></button>
+              }
+            </div>
+
+            <div class="d-flex flex-wrap gap-2">
+              <button
+                class="btn btn-outline-primary px-3 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-2"
+                (click)="openCreateDepartmentUser()" style="font-size: 0.85rem;">
+                <i class="fa fa-id-card-o"></i> + Add Department User (Officer)
+              </button>
+
+              <button class="btn btn-primary px-4 py-2 rounded-pill fw-bold shadow-sm d-flex align-items-center gap-2"
+                (click)="toggleCreateSupplierForm()" style="font-size: 0.88rem;">
+                <i class="fa" [ngClass]="showCreateForm ? 'fa-times' : 'fa-user-plus'"></i>
+                {{ showCreateForm ? 'Close Form' : '+ Add New Supplier & User' }}
+              </button>
+            </div>
+          </div>
+
+          <!-- Dynamic Datalists from Database -->
+          <datalist id="dynamicDistricts">
+            @for (d of districts; track d) {
+            <option [value]="d"></option>
+            }
+          </datalist>
+          <datalist id="dynamicUserTypes">
+            @for (t of userTypes; track t) {
+            <option [value]="t"></option>
+            }
+          </datalist>
+
+          <!-- Unified Supplier + User Creation Card -->
+          @if (showCreateForm) {
+          <div class="card border-0 shadow rounded-4 mb-4 overflow-hidden border-top border-primary border-4">
+            <div
+              class="card-header bg-white py-3 px-4 border-bottom d-flex justify-content-between align-items-center flex-wrap gap-2">
+              <h5 class="fw-bold text-primary mb-0" style="font-size: 1.05rem;">
+                <i class="fa fa-user-circle-o me-2"></i>
+                {{ linkToSupplier ? 'Create Supplier & User Account (Supplier_Master + UserMaster)' : 'Create Department
+                / Office User Account (UserMaster Only)' }}
+              </h5>
+              <div class="form-check form-switch m-0 ps-5">
+                <input class="form-check-input shadow-sm" type="checkbox" role="switch" id="linkSupplierToggle"
+                  [(ngModel)]="linkToSupplier" (change)="onSupplierToggleChange()" style="width: 40px; height: 20px;">
+                <label class="form-check-label fw-bold small text-dark ms-2" for="linkSupplierToggle">
+                  {{ linkToSupplier ? 'Include Supplier Master' : 'Department User (No Supplier)' }}
+                </label>
+              </div>
+            </div>
+
+            <div class="card-body p-4 bg-light">
+              <!-- SECTION 1: SUPPLIER_MASTER -->
+              @if (linkToSupplier) {
+              <div class="p-4 mb-3 bg-white border-0 shadow-sm rounded-4">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                  <span class="fw-bold text-primary" style="font-size: 0.9rem;">
+                    <i class="fa fa-building me-1"></i> 1. Company / Supplier Details (`Supplier_Master`)
+                  </span>
+                  <div class="btn-group btn-group-sm shadow-sm rounded-pill overflow-hidden border">
+                    <button type="button" class="btn px-3 fw-semibold"
+                      [ngClass]="isNewCompany ? 'btn-primary' : 'btn-white text-dark'" (click)="isNewCompany = true">
+                      + New Supplier
+                    </button>
+                    <button type="button" class="btn px-3 fw-semibold"
+                      [ngClass]="!isNewCompany ? 'btn-primary' : 'btn-white text-dark'" (click)="isNewCompany = false">
+                      Existing Supplier
+                    </button>
+                  </div>
+                </div>
+
+                @if (isNewCompany) {
+                <div class="row g-3">
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold text-secondary">Supplier / Company Name <span
+                        class="text-danger">*</span></label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" autocomplete="off"
+                      [(ngModel)]="newUserForm.SupplierName" placeholder="Company / Unit Name" />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">Registration / License No</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm"
+                      [(ngModel)]="newUserForm.SupplierRegistrationNo" placeholder="License / Reg No" />
+                  </div>
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">District / City</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" list="dynamicDistricts"
+                      [(ngModel)]="newUserForm.District" placeholder="Select or type" />
+                  </div>
+                  <div class="col-md-2">
+                    <label class="form-label small fw-bold text-secondary">PIN Code</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="newUserForm.PIN"
+                      placeholder="PIN" />
+                  </div>
+                  <div class="col-md-8">
+                    <label class="form-label small fw-bold text-secondary">Complete Address</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm"
+                      [(ngModel)]="newUserForm.CompleteAddress" placeholder="Factory / Office Address" />
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold text-secondary">Route / Transport</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="newUserForm.Route"
+                      placeholder="Route details" />
+                  </div>
+                </div>
+                }
+
+                @if (!isNewCompany) {
+                <div class="row g-3">
+                  <div class="col-md-8">
+                    <label class="form-label small fw-bold text-secondary">Select Existing Supplier <span
+                        class="text-danger">*</span></label>
+                    <select class="form-select rounded-3 shadow-sm" [(ngModel)]="newUserForm.ExistingSupplierId">
+                      <option [value]="0" disabled>-- Choose Supplier from Supplier_Master --</option>
+                      @for (s of suppliers; track s.SupplierId) {
+                      <option [value]="s.SupplierId">{{ s.SupplierName }} {{ s.SupplierRegistrationNo ? '(' +
+                        s.SupplierRegistrationNo + ')' : '' }}</option>
+                      }
+                    </select>
+                  </div>
+                  <div class="col-md-4">
+                    <label class="form-label small fw-bold text-secondary">District</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" list="dynamicDistricts"
+                      [(ngModel)]="newUserForm.District" placeholder="Select or type" />
+                  </div>
+                </div>
+                }
+              </div>
+              }
+
+              <!-- SECTION 2: USERMASTER -->
+              <div class="p-4 bg-white border-0 shadow-sm rounded-4">
+                <span class="fw-bold text-success d-block mb-3" style="font-size: 0.9rem;">
+                  <i class="fa fa-user me-1"></i>
+                  {{ linkToSupplier ? '2. User Login & Person Details (`UserMaster`)' : 'User Login & Officer Details
+                  (`UserMaster`)' }}
+                </span>
+
+                <div class="row g-3">
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">Select Role <span
+                        class="text-danger">*</span></label>
+                    <select class="form-select rounded-3 shadow-sm border-primary" [(ngModel)]="newUserForm.RoleId"
+                      (change)="onNewUserRoleChange()">
+                      <option [value]="0" disabled>-- Choose Role --</option>
+                      @for (r of roles; track r.RoleId) {
+                      <option [value]="r.RoleId">{{ r.RoleName }}</option>
+                      }
+                    </select>
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">UserType</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" list="dynamicUserTypes"
+                      [(ngModel)]="newUserForm.UserType" placeholder=" Officer" />
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">Login Username <span
+                        class="text-danger">*</span></label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" autocomplete="new-password"
+                      [(ngModel)]="newUserForm.Username" placeholder="Unique username" />
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">Login Password <span
+                        class="text-danger">*</span></label>
+                    <input type="password" class="form-control rounded-3 shadow-sm" autocomplete="new-password"
+                      [(ngModel)]="newUserForm.Password" placeholder="Password" />
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">First Name</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="newUserForm.FirstName"
+                      placeholder="First Name" />
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">Last Name</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="newUserForm.LastName"
+                      placeholder="Last Name" />
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">Mobile No</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" [(ngModel)]="newUserForm.MobileNo"
+                      placeholder="Mobile No" />
+                  </div>
+
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">Email ID</label>
+                    <input type="email" class="form-control rounded-3 shadow-sm" [(ngModel)]="newUserForm.Email"
+                      placeholder="Email Address" />
+                  </div>
+
+                  @if (!linkToSupplier) {
+                  <div class="col-md-3">
+                    <label class="form-label small fw-bold text-secondary">District / Office</label>
+                    <input type="text" class="form-control rounded-3 shadow-sm" list="dynamicDistricts"
+                      [(ngModel)]="newUserForm.District" placeholder="Select or type" />
+                  </div>
+                  }
+                </div>
+              </div>
+
+              <div class="mt-4 text-end">
+                <button class="btn btn-success px-5 py-2.5 rounded-pill fw-bold shadow-sm" (click)="submitNewUser()"
+                  style="font-size: 0.9rem;">
+                  <i class="fa fa-save me-2"></i> {{ linkToSupplier ? 'Save Supplier & User Account' : 'Save Department
+                  User' }}
+                </button>
+              </div>
+            </div>
+          </div>
+          }
+
+          <!-- Users List Table -->
+          <div class="table-responsive rounded-4 border overflow-hidden shadow-sm">
+            <table class="table table-hover align-middle mb-0">
+              <thead class="text-white text-uppercase fs-7"
+                style="background-color: #143366; font-size: 0.78rem; letter-spacing: 0.5px;">
+                <tr>
+                  <th class="py-3 ps-3">ID</th>
+                  <th class="py-3">Username</th>
+                  <th class="py-3">Name</th>
+                  <th class="py-3">Supplier (`Supplier_Master`)</th>
+                  <th class="py-3">District</th>
+                  <th style="width: 230px;" class="py-3">Role</th>
+                  <th style="width: 150px;" class="py-3 text-center">Actions</th>
+                </tr>
+              </thead>
+              <tbody>
+                @for (u of filteredUsers; track u.UserId + '_' + $index) {
+                <tr>
+                  <td class="ps-3 text-muted fw-semibold">{{ u.UserId }}</td>
+                  <td><strong>{{ u.Username }}</strong></td>
+                  <td class="fw-medium text-dark">{{ u.FullName || '-' }}</td>
+                  <td>
+                    @if (u.SupplierName) {
+                    <span
+                      class="badge bg-primary bg-opacity-10 text-primary border border-primary border-opacity-25 px-2.5 py-1.5 rounded-pill fw-semibold">
+                      <i class="fa fa-building me-1"></i> {{ u.SupplierName }} (ID: {{ u.SupplierId }})
+                    </span>
+                    } @else {
+                    <span class="text-muted small fst-italic">Department / No Supplier</span>
+                    }
+                  </td>
+                  <td>{{ u.District || '-' }}</td>
+                  <td>
+                    <div class="input-group input-group-sm shadow-sm rounded-pill overflow-hidden border">
+                      <select class="form-select border-0 shadow-none ps-3 bg-white" [(ngModel)]="u.RoleId">
+                        <option [value]="0" disabled>Select Role</option>
+                        @for (r of roles; track r.RoleId) {
+                        <option [value]="r.RoleId">{{ r.RoleName }}</option>
+                        }
+                      </select>
+                      <button class="btn btn-success px-3 border-0" title="Save Role" (click)="changeUserRole(u)">
+                        <i class="fa fa-save"></i>
+                      </button>
+                    </div>
+                  </td>
+                  <td class="text-center">
+                    <button class="btn btn-sm btn-outline-warning rounded-circle p-1.5 me-1 shadow-sm"
+                      style="width: 32px; height: 32px;" title="Reset Password" (click)="promptResetPassword(u)">
+                      <i class="fa fa-key"></i>
+                    </button>
+                    <button class="btn btn-sm rounded-circle p-1.5 me-1 shadow-sm" style="width: 32px; height: 32px;"
+                      [ngClass]="u.IsActive ? 'btn-outline-success' : 'btn-outline-secondary'"
+                      [title]="u.IsActive ? 'Active (Click to Deactivate)' : 'Inactive (Click to Activate)'"
+                      (click)="toggleStatus(u)">
+                      <i class="fa" [ngClass]="u.IsActive ? 'fa-toggle-on' : 'fa-toggle-off'"></i>
+                    </button>
+                    <button class="btn btn-sm btn-outline-danger rounded-circle p-1.5 shadow-sm"
+                      style="width: 32px; height: 32px;" title="Delete User" (click)="deleteUser(u)">
+                      <i class="fa fa-trash"></i>
+                    </button>
+                  </td>
+                </tr>
+                }
+                @if (filteredUsers.length === 0) {
+                <tr>
+                  <td colspan="7" class="text-center text-muted py-4 fw-medium">No users found matching your criteria.
+                  </td>
+                </tr>
+                }
+              </tbody>
+            </table>
+          </div>
+        </div>
+        }
+
+      </div>
+    </div>
+
+  </div>
+</div>

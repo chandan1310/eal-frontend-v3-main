@@ -1,0 +1,337 @@
+/* Base look copied from officeapplication.component.css so this screen matches the existing EAL dashboard. */
+/* General Layout */
+.main-dashboard { background-color: #f0f2f5; min-height: 100vh; font-family: 'Inter', sans-serif; }
+.main-content { max-width: 1400px; padding: 2rem; flex: 1 1 auto; min-width: 0; }
+
+/* Section Headers */
+.section-header {
+    font-weight: 700;
+    color: #2b3674;
+    font-size: 1rem;
+    margin-bottom: 1.5rem;
+}
+
+/* Glass & Soft UI Cards */
+.glass-card {
+    background: #ffffff;
+    border: none;
+    border-radius: 16px;
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05);
+}
+
+/* Modern Tabs */
+.tab-modern-container {
+    display: flex;
+    background: #e9edf7;
+    padding: 6px;
+    border-radius: 14px;
+    gap: 5px;
+    margin-bottom: 20px;
+}
+.tab-modern {
+    flex: 1;
+    border: none;
+    background: transparent;
+    padding: 12px;
+    font-weight: 700;
+    color: #a3aed0;
+    border-radius: 10px;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+.tab-modern.active {
+    background: white;
+    color: #4318ff;
+    box-shadow: 0 4px 14px rgba(0,0,0,0.08);
+}
+
+/* --- TABLE & SCROLLBAR SECTION --- */
+
+.table-card { 
+    background: white;
+    border-radius: 16px; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.05); 
+    border: 1px solid #e2e8f0;
+    overflow: hidden; 
+}
+
+/* Scrollable Container */
+.table-responsive-scroll {
+    max-height: 435px; /* Adjust height as needed */
+    overflow-y: auto;
+    overflow-x: auto;
+}
+
+/* Custom Scrollbar Styling */
+.table-responsive-scroll::-webkit-scrollbar {
+    width: 8px; /* Vertical scrollbar width */
+    height: 8px; /* Horizontal scrollbar height */
+}
+
+.table-responsive-scroll::-webkit-scrollbar-track {
+    background: #f1f1f1;
+    border-radius: 10px;
+}
+
+.table-responsive-scroll::-webkit-scrollbar-thumb {
+    background: #cbd5e0; /* Scrollbar color */
+    border-radius: 10px;
+    border: 2px solid #f1f1f1; /* Creates padding effect */
+}
+
+.table-responsive-scroll::-webkit-scrollbar-thumb:hover {
+    background: #a0aec0; /* Hover state color */
+}
+
+/* Table Design */
+.table-bordered-custom {
+    border-collapse: collapse;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+/* Sticky Header Logic */
+.table-bordered-custom thead th {
+    position: sticky;
+    top: 0;
+    z-index: 10;
+    background-color: #f8fafc;
+    color: #94a3b8;
+    font-size: 0.75rem;
+    font-weight: 700;
+    padding: 16px;
+    text-transform: uppercase;
+    border-bottom: 2px solid #e2e8f0;
+    border-right: 1px solid #e2e8f0;
+}
+
+.table-bordered-custom tbody td {
+    padding: 16px;
+    font-size: 0.85rem;
+    color: #475569;
+    vertical-align: middle;
+    border-bottom: 1px solid #f1f5f9;
+    border-right: 1px solid #f1f5f9;
+}
+
+/* Cleanup borders */
+.table-bordered-custom thead th:last-child,
+.table-bordered-custom tbody td:last-child {
+    border-right: none;
+}
+
+.table-bordered-custom tbody tr:last-child td {
+    border-bottom: none;
+}
+
+/* Highlighting */
+.table-bordered-custom tbody td.fw-bold {
+    color: #1b2559;
+    font-weight: 700;
+}
+
+/* Elements */
+.app-number-tag {
+    background: #eef2ff;
+    color: #6366f1;
+    padding: 4px 12px;
+    border-radius: 6px;
+    font-family: 'Courier New', Courier, monospace;
+    font-weight: 700;
+    font-size: 0.8rem;
+    border: 1px solid #e0e7ff;
+}
+
+.action-edit-btn {
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #6366f1;
+    width: 32px;
+    height: 32px;
+    border-radius: 6px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    transition: all 0.2s;
+    cursor: pointer;
+}
+
+.action-edit-btn:hover {
+    background: #6366f1;
+    color: white;
+    box-shadow: 0 4px 10px rgba(99, 102, 241, 0.3);
+}
+/* Purple Filter Button */
+.btn-filter-primary {
+    background-color: #4318ff !important;
+    color: white !important;
+    border: none !important;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 600;
+    transition: all 0.2s ease;
+}
+
+.btn-filter-primary:hover {
+    background-color: #3311cc !important;
+    transform: translateY(-1px);
+}
+
+/* Grey/Blue Reset Button */
+.btn-reset-outline {
+    background-color: #f4f7fe !important;
+    color: #4318ff !important;
+    border: 1px solid #e0e5f2 !important;
+    border-radius: 10px;
+    padding: 10px 20px;
+    font-weight: 600;
+}
+
+.btn-reset-outline:hover {
+    background-color: #e2e8f0 !important;
+}
+
+.label-small {
+    font-size: 0.75rem;
+    font-weight: 700;
+    color: #64748b;
+    text-transform: uppercase;
+    margin-bottom: 5px;
+    display: block;
+}
+.soft-input {
+    border: 1px solid #cbd5e1;
+    border-radius: 8px;
+    padding: 8px 12px;
+    font-size: 0.875rem;
+    color: #334155;
+    background-color: #fff;
+}
+.soft-input:focus {
+    border-color: #6366f1;
+    box-shadow: 0 0 0 0.2rem rgba(99, 102, 241, 0.15);
+}
+.action-edit-btn:disabled { opacity: 0.4; cursor: not-allowed; }
+
+/* ==================== Approval workflow management ==================== */
+.wf-flow {
+    display: flex;
+    flex-wrap: wrap;
+    align-items: center;
+    gap: 8px;
+}
+.wf-flow-node {
+    background: #eef2ff;
+    color: #4318ff;
+    border: 1px solid #e0e7ff;
+    font-weight: 700;
+    font-size: 0.8rem;
+    padding: 6px 12px;
+    border-radius: 8px;
+}
+.wf-flow-node.wf-flow-final { background: #f0fdf4; color: #166534; border-color: #bbf7d0; }
+.wf-flow-arrow { color: #a3aed0; }
+
+.wf-form-card { border-left: 4px solid #4318ff; }
+.wf-inactive-row td { opacity: 0.6; }
+
+.wf-seq-list { max-width: 720px; }
+.wf-seq-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 12px 14px;
+    margin-bottom: 8px;
+    background: #ffffff;
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+}
+.wf-seq-item.wf-seq-fixed { background: #f0fdf4; border-color: #bbf7d0; color: #166534; }
+.wf-seq-num {
+    width: 30px;
+    height: 30px;
+    border-radius: 50%;
+    background: #4318ff;
+    color: #ffffff;
+    font-weight: 700;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+}
+.wf-seq-fixed .wf-seq-num { background: #16a34a; }
+
+.wf-activate-box {
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 14px 16px;
+    background: #f8fafc;
+}
+.wf-activate-box.on { border-style: solid; border-color: #86efac; background: #f0fdf4; }
+
+/* ==================== Simplified screen ==================== */
+.wf-switch-box {
+    border: 1px dashed #cbd5e1;
+    border-radius: 12px;
+    padding: 10px 14px;
+    background: #f8fafc;
+    min-width: 260px;
+}
+.wf-switch-box.on { border-style: solid; border-color: #86efac; background: #f0fdf4; }
+.wf-switch-box .form-check-input { cursor: pointer; }
+
+.wf-levels-table { min-width: 900px; }
+.table-bordered-custom thead th { white-space: nowrap; }
+
+.wf-order { display: inline-flex; flex-direction: column; align-items: center; gap: 4px; }
+.wf-order-btn {
+    border: 1px solid #e2e8f0;
+    background: #f8fafc;
+    color: #6366f1;
+    width: 26px; height: 22px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    line-height: 1;
+    padding: 0;
+}
+.wf-order-btn:hover:not(:disabled) { background: #6366f1; color: #fff; }
+.wf-order-btn:disabled { opacity: 0.3; cursor: not-allowed; }
+
+.wf-users-cell { min-width: 320px; }
+.wf-user-chip {
+    display: inline-flex;
+    align-items: center;
+    gap: 4px;
+    background: #eef2ff;
+    color: #1b2559;
+    border: 1px solid #e0e7ff;
+    border-radius: 999px;
+    padding: 3px 6px 3px 10px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+.wf-chip-x {
+    border: none;
+    background: transparent;
+    color: #94a3b8;
+    font-size: 1rem;
+    line-height: 1;
+    padding: 0 4px;
+    border-radius: 50%;
+}
+.wf-chip-x:hover:not(:disabled) { color: #dc2626; background: #fee2e2; }
+.wf-add-user .form-select { max-width: 320px; padding: 4px 30px 4px 10px; font-size: 0.82rem; }
+.wf-add-user .btn { padding-top: 4px; padding-bottom: 4px; }
+/* only a handful of levels – show them all, no inner vertical scroll */
+.table-card .table-responsive-scroll { max-height: none; }
+.wf-levels-table .badge { font-size: 0.75rem; white-space: normal; text-align: left; }
+.wf-paused-row:last-child { border-bottom: none !important; }
+.wf-help { background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 12px; padding: 12px 14px; line-height: 1.6; }
+
+/* ==================== Responsive ==================== */
+@media (max-width: 1199.98px) {
+    .main-content { padding: 1.25rem; }
+}
+@media (max-width: 767.98px) {
+    .main-content { padding: 0.75rem; }
+    .wf-switch-box { width: 100%; min-width: 0; }
+    .wf-add-user .form-select { max-width: none; }
+}

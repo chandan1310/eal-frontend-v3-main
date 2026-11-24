@@ -1,0 +1,96 @@
+<div class="d-flex flex-nowrap ix-page">
+  <div class="sidebar-container bg-white shadow-sm flex-shrink-0" style="width: 260px; min-width: 260px;">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div class="ix-main">
+    <h4 class="ix-title"><i class="fa fa-truck"></i> Indent Requests</h4>
+    <div class="ix-sub">Indents raised by Section. Approve the boxes you can supply, then dispatch them through Stock Entry.</div>
+
+    <div class="ix-flow">
+      <div class="ix-step"><b>1</b> Section raises indent</div><div class="ix-line"></div>
+      <div class="ix-step on"><b>2</b> You approve / reject</div><div class="ix-line"></div>
+      <div class="ix-step on"><b>3</b> You dispatch boxes</div><div class="ix-line"></div>
+      <div class="ix-step"><b>4</b> Stock received</div>
+    </div>
+
+    <div class="ix-stats">
+      <div class="ix-stat"><i class="fa fa-hourglass-half ix-i-amber"></i><div><span>Waiting for approval</span><strong>{{ pending }}</strong>
+        @if (urgentPending) { <span class="ix-urgent">{{ urgentPending }} URGENT</span> }</div></div>
+      <div class="ix-stat"><i class="fa fa-truck ix-i-blue"></i><div><span>Indents to dispatch</span><strong>{{ toDispatch }}</strong></div></div>
+      <div class="ix-stat"><i class="fa fa-cubes ix-i-indigo"></i><div><span>Boxes still to send</span><strong>{{ boxesToDispatch }}</strong></div></div>
+      <div class="ix-stat"><i class="fa fa-check-circle ix-i-green"></i><div><span>Fully dispatched</span><strong>{{ dispatched }}</strong></div></div>
+    </div>
+
+    <div class="ix-card">
+      <div class="ix-card-head"><h5>Indents</h5><span class="ix-xs">Click a row for details and dispatch history</span></div>
+      <div class="ix-card-body">
+        <app-indent-list [indents]="indents" [loading]="loading" mode="press" (action)="onListAction($event)"></app-indent-list>
+      </div>
+    </div>
+  </div>
+</div>
+
+@if (target) {
+  <div class="ix-backdrop" (click)="closeDialog()"></div>
+  <div class="ix-dialog">
+    <div class="ix-dialog-head">
+      <h6>{{ targetAction }} indent #{{ target.IndentNo }} @if (target.Priority === 'Urgent') { <span class="ix-urgent">URGENT</span> }</h6>
+      <button type="button" class="ix-x" (click)="closeDialog()">&times;</button>
+    </div>
+    <div class="ix-dialog-body">
+      <div class="ix-xs" style="margin-bottom:10px">
+        Raised {{ target.CreatedDate | date:'dd MMM yyyy' }} by {{ target.CreatedByName || 'Section' }} ·
+        period {{ target.StartDate | date:'dd MMM' }} – {{ target.EndDate | date:'dd MMM yyyy' }}
+      </div>
+      @if (target.Remark) { <div class="ix-note" style="margin-bottom:12px"><b>Section:</b> {{ target.Remark }}</div> }
+
+      @if (targetAction === 'Approve') {
+        <table class="ix-table">
+          <thead><tr><th>EAL type</th><th class="ix-right">Asked</th><th style="width:150px">Give (boxes)</th><th class="ix-right">Labels</th></tr></thead>
+          <tbody>
+            @for (x of target.Items; track x.IndentId) {
+              <tr>
+                <td><span class="ix-code">{{ x.ComponentCode }}</span>{{ x.ComponentName }}</td>
+                <td class="ix-right">{{ x.BoxQty }}</td>
+                <td>
+                  <div class="ix-stepper" [class.has]="give[x.IndentId] < x.BoxQty">
+                    <button type="button" (click)="setGive(x, give[x.IndentId] - 1)">−</button>
+                    <input type="number" min="0" [max]="x.BoxQty" [ngModel]="give[x.IndentId]" (ngModelChange)="setGive(x, $event)" />
+                    <button type="button" (click)="setGive(x, give[x.IndentId] + 1)">+</button>
+                  </div>
+                </td>
+                <td class="ix-right">{{ (give[x.IndentId] || 0) * labelsPerBox | number }}</td>
+              </tr>
+            }
+          </tbody>
+          <tfoot><tr><td>Total</td><td class="ix-right">{{ target.RequestedBoxes }}</td><td>{{ giveTotal }} box</td><td class="ix-right">{{ giveTotal * labelsPerBox | number }}</td></tr></tfoot>
+        </table>
+
+        <div class="ix-fields ix-mt" style="grid-template-columns: 200px 1fr;">
+          <div>
+            <label class="ix-label">Expected dispatch date</label>
+            <input type="date" class="form-control" [(ngModel)]="expectedDate" [min]="today" />
+          </div>
+          <div class="ix-hint">Section sees this date. Leave empty if not known.</div>
+        </div>
+      }
+
+      <label class="ix-label">
+        @if (targetAction === 'Reject') { Reason for rejection <span class="text-danger">*</span> }
+        @else if (reduced) { Why fewer boxes? <span class="text-danger">*</span> }
+        @else { Remark (optional) }
+      </label>
+      <textarea class="form-control" rows="2" maxlength="500" [(ngModel)]="remark"
+        [placeholder]="targetAction === 'Reject' ? 'e.g. Duplicate of indent #012' : reduced ? 'e.g. Masala paper short this month' : ''"></textarea>
+    </div>
+    <div class="ix-dialog-foot">
+      <button type="button" class="ix-btn ghost" (click)="closeDialog()" [disabled]="busy">Close</button>
+      <button type="button" class="ix-btn" [class.green]="targetAction === 'Approve'" [class.red]="targetAction === 'Reject'" [disabled]="busy" (click)="confirm()">
+        {{ busy ? 'Saving…' : targetAction === 'Approve' ? 'Approve ' + giveTotal + ' box' : 'Reject indent' }}
+      </button>
+    </div>
+  </div>
+}
+
+<app-indent-detail [indentNo]="viewNo" (closed)="viewNo = null"></app-indent-detail>

@@ -1,0 +1,41 @@
+/* Card tweaks */
+.card {
+  border-radius: 8px;
+  border: 1px solid #e3e6f0;
+}
+
+/* Preview box fixed size */
+.preview-box {
+  max-width: 50px;
+  height: 50px;
+  overflow: hidden;
+  text-align: center;
+}
+
+/* Ensure image covers the box */
+.preview-img {
+  max-width: 50%;
+  height: 50%;
+  object-fit: cover;
+}
+
+/* Small responsive spacing */
+@media (max-width: 576px) {
+  .preview-box {
+    width: 80px;
+    height: 80px;
+  }
+}
+
+/* Improve invalid control visibility */
+.form-control.ng-touched.ng-invalid,
+.form-select.ng-touched.ng-invalid {
+  border-color: #dc3545;
+  box-shadow: none;
+}
+
+/* Subtle spacing for error text */
+.text-danger.small {
+  display: block;
+  margin-top: 4px;
+}

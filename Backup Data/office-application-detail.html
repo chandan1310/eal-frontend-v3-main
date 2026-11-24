@@ -1,0 +1,526 @@
+<div class="d-flex flex-row">
+  <div class="containerSide">
+    <app-sidebar></app-sidebar>
+  </div>
+
+  <div *ngIf="!isEmptyObject(selectedOfficeSupplierApplication())" class="container-fluid px-3 py-5 mx-auto">
+    <div class="row d-flex justify-content-sm-start">
+      <div class="col-xl-10 col-lg-12 col-md-12 col-12">
+        <div class="card shadow-lg rounded-lg border-0">
+
+          <!-- Card Body -->
+          <div class="card-body" style="max-height: 90vh; overflow-y: auto">
+            <div class="d-flex justify-content-between w-100">
+              <h5 class="fw-semibold">Application No: <span class="text-primary">{{
+                  selectedOfficeSupplierApplication()['EalApplicationNo'] }}</span></h5>
+              <h5 class="fw-semibold">Date: <span class="text-primary">{{
+                  selectedOfficeSupplierApplication()['CreateDate'] | date: "dd-MM-yyyy" }}</span>
+              </h5>
+              <button class="btn btn-success me-2" (click)="printApplication()">
+                <i class="fa fa-print me-1"></i> Print Document
+              </button>
+              <!-- Back Button -->
+              <!-- <button class="btn btn-success me-2" (click)="goBack()">
+                ← Back
+              </button> -->
+            </div>
+            <hr>
+
+            <!-- Company Details -->
+            <h6 class="text-primary fw-bold mb-2"><i class="fa fa-building me-2"></i>Company Details</h6>
+            <div class="p-3 bg-light rounded">
+              <p><strong>Name:</strong> {{ selectedOfficeSupplierApplication()['Company_name'] }}</p>
+              <p><strong>Address:</strong> {{ selectedOfficeSupplierApplication()['Address'] }}</p>
+              <p><strong>District:</strong> {{ selectedOfficeSupplierApplication()['District'] }} |
+                <strong>State:</strong> {{ selectedOfficeSupplierApplication()['State'] }}
+              </p>
+              <p><strong>Pin:</strong> {{ selectedOfficeSupplierApplication()['Pin'] }} | <strong>Mode of
+                  Transport:</strong> {{ selectedOfficeSupplierApplication()['ModeOfTransport'] }} |
+                <strong>Route:</strong> {{ selectedOfficeSupplierApplication()['Route'] }}
+              </p>
+            </div>
+
+            <!-- Authorised Person Details -->
+            <h6 class="text-primary fw-bold mb-2">
+              <i class="fa fa-check-circle me-2"></i>Authorised Person
+            </h6>
+
+            <div class="p-3 bg-light rounded">
+              <p><strong>Name:</strong> {{ selectedOfficeSupplierApplication()['AuthPersonName'] }}</p>
+              <p><strong>Phone:</strong> {{ selectedOfficeSupplierApplication()['AuthPersonPhone'] }}</p>
+              <p><strong>Address:</strong> {{ selectedOfficeSupplierApplication()['AuthPersonAdd'] }}</p>
+            </div>
+
+            <!-- Purchase Orders -->
+            <h6 *ngIf="selectedOfficeSupplierApplication().Status == '1'" class="text-primary fw-bold mt-4">
+              <i class="fa fa-file-text me-2"></i> Purchase Orders
+            </h6>
+            <div *ngIf="selectedOfficeSupplierApplication().Status == '1'" class="table-responsive">
+              <table class="table table-hover table-bordered align-middle">
+                <thead class="table-primary">
+                  <tr>
+                    <th>Purchase Order Date</th>
+                    <th>Purchase Order Number</th>
+                    <th>Valid Upto</th>
+                    <th>Total Quantity</th>
+                    <th>Used Quantity</th>
+                    <th>Remaining Qty</th>
+                  </tr>
+                </thead>
+
+                <tbody *ngIf="selectedOfficeSupplierApplication()['UserType'] === 'FL'">
+                  <tr *ngFor="let po of selectedOfficeSupplierApplication()['EALPurchaseOrderFLs']">
+                    <td>{{ po.PODate | date: 'dd/MM/yyyy' }}</td>
+                    <!-- <td><strong><a href="./../../assets/004_WELCOME_DISTT..pdf" target="_blank">{{ po.PurchaseOrderNo
+                          }}</a></strong></td> -->
+                    <td><strong><a href="../../assets/004_WELCOME_DISTT..pdf" target="_blank">{{ po.PurchaseOrderNo
+                          }}</a></strong></td>
+                    <td>{{ po.CreatedAt | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ po.TotalQty | number }}</td>
+                    <td>{{ po.UsedQty || '-' }}</td>
+                    <td>{{ po.RemainingQty || '-' }}</td>
+                  </tr>
+                </tbody>
+
+                <tbody *ngIf="selectedOfficeSupplierApplication()['UserType'] === 'CL'">
+                  <tr *ngFor="let po of selectedOfficeSupplierApplication()['EALPurchaseOrderCLs']">
+                    <td>{{ po.PODate | date: 'dd/MM/yyyy' }}</td>
+                    <td><strong>{{ po.PurchaseOrderNo }}</strong></td>
+                    <td>₹ {{ po.POAmount | number: '1.2-2' }}</td>
+                    <td>{{ po.CreatedAt | date: 'dd/MM/yyyy' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+
+
+            <!-- Status: Approved & Completed -->
+            <h6
+              *ngIf="selectedOfficeSupplierApplication().Status == '5' || selectedOfficeSupplierApplication().Status =='6'"
+              class="text-primary fw-bold mt-4">
+              <i class="fa fa-file-text me-2"></i> Purchase Orders
+            </h6>
+            <div
+              *ngIf="selectedOfficeSupplierApplication().Status == '5' || selectedOfficeSupplierApplication().Status =='6'"
+              class="table-responsive">
+              <table class="table table-hover table-bordered align-middle">
+                <thead class="table-primary">
+                  <tr>
+                    <th>Purchase Order Date</th>
+                    <th>Purchase Order Number</th>
+                    <th>Valid Upto</th>
+                    <th>Total Quantity</th>
+                    <!-- <th>Applied Quantity</th> -->
+                    <th>Assign Qty</th>
+                  </tr>
+                </thead>
+
+                <tbody *ngIf="selectedOfficeSupplierApplication()['UserType'] === 'FL'">
+                  <tr *ngFor="let po of selectedOfficeSupplierApplication()['EALPurchaseOrderFLs']">
+                    <td>{{ po.PODate | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ po.PurchaseOrderNo }}</td>
+                    <td>{{ po.CreatedAt | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ po.TotalQty | number }}</td>
+                    <!-- <td>{{ po.RemainingQty || '-' }}</td> -->
+                    <td>{{ po.assignedQty ? (po.assignedQty | number) : '-' }}</td>
+                  </tr>
+                </tbody>
+
+                <tbody *ngIf="selectedOfficeSupplierApplication()['UserType'] === 'CL'">
+                  <tr *ngFor="let po of selectedOfficeSupplierApplication()['EALPurchaseOrderCLs']">
+                    <td>{{ po.PODate | date: 'dd/MM/yyyy' }}</td>
+                    <td><strong>{{ po.PurchaseOrderNo }}</strong></td>
+                    <td>₹ {{ po.POAmount | number: '1.2-2' }}</td>
+                    <td>{{ po.CreatedAt | date: 'dd/MM/yyyy' }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+
+            <!-- Challan Details -->
+            <h6 *ngIf="selectedOfficeSupplierApplication().Status == '1'" class="text-primary fw-bold mt-4">
+              <i class="fa fa-file me-2"></i> Challan Details
+            </h6>
+            <div *ngIf="selectedOfficeSupplierApplication().Status == '1'" class="table-responsive">
+              <table class="table table-hover table-bordered align-middle">
+                <thead class="table-primary">
+                  <tr>
+                    <th>Challan Date</th>
+                    <th>Challan Number</th>
+                    <th>Amount</th>
+                    <th>Used Amount</th>
+                    <th>Remaining Amount</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="selectedOfficeSupplierApplication()['UserType'] === 'FL'">
+                  <tr *ngFor="let ch of selectedOfficeSupplierApplication()['EALChallanFLs']">
+                    <td>{{ ch.ChallanDate | date: 'dd/MM/yyyy' }}</td>
+                    <td><a href="../../assets/004_WELCOME_DISTT..pdf" target="_blank">{{ ch.ChallanNo }}</a></td>
+                    <td>₹ {{ ch.ChallanAmount }}</td>
+
+                    <td>{{ch.UsedAmount ? '₹' + ch.UsedAmount : '-'}}</td>
+                    <td>{{ch.RemainingAmount ? '₹' + ch.RemainingAmount : '-'}}</td>
+                  </tr>
+                </tbody>
+
+                <tbody *ngIf="selectedOfficeSupplierApplication()['UserType'] === 'CL'">
+                  <tr *ngFor="let ch of selectedOfficeSupplierApplication()['EALChallanCLs']">
+                    <td>{{ ch.ChallanDate | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ ch.ChallanNo }}</td>
+                    <td>₹ {{ ch.ChallanAmount }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+
+
+            <!-- Status: Approved & Completed -->
+            <h6
+              *ngIf="selectedOfficeSupplierApplication().Status == '5' || selectedOfficeSupplierApplication().Status =='6'"
+              class="text-primary fw-bold mt-4">
+              <i class="fa fa-file me-2"></i> Challan Details
+            </h6>
+            <div
+              *ngIf="selectedOfficeSupplierApplication().Status == '5' || selectedOfficeSupplierApplication().Status =='6'"
+              class="table-responsive">
+              <table class="table table-hover table-bordered align-middle">
+                <thead class="table-primary">
+                  <tr>
+                    <th>Challan Date</th>
+                    <th>Challan Number</th>
+                    <th>Amount</th>
+                    <th>Used Amount</th>
+                  </tr>
+                </thead>
+                <tbody *ngIf="selectedOfficeSupplierApplication()['UserType'] === 'FL'">
+                  <tr *ngFor="let ch of selectedOfficeSupplierApplication()['EALChallanFLs']">
+                    <td>{{ ch.ChallanDate | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ ch.ChallanNo }}</td>
+                    <td>₹ {{ ch.ChallanAmount }}</td>
+                    <td>{{ch.assignedAmount ? '₹' + ch.assignedAmount : '-'}}</td>
+                  </tr>
+                </tbody>
+
+                <tbody *ngIf="selectedOfficeSupplierApplication()['UserType'] === 'CL'">
+                  <tr *ngFor="let ch of selectedOfficeSupplierApplication()['EALChallanCLs']">
+                    <td>{{ ch.ChallanDate | date: 'dd/MM/yyyy' }}</td>
+                    <td>{{ ch.ChallanNo }}</td>
+                    <td>₹ {{ ch.ChallanAmount }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+
+
+            <!-- Demand Details -->
+            <!-- <h6 class="text-primary fw-bold mt-4">
+              <i class="fa fa-list-alt me-2"></i> Demand Details
+            </h6>
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered align-middle">
+                <thead class="table-primary">
+                  <tr>
+                    <th>Liquor Type</th>
+                    <th>Applied Quantity</th>
+                    <th>Action</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr *ngFor="let demand of selectedOfficeSupplierApplication()['DemandDataObject']; let i = index">
+                    <td>{{ demand.type }}</td>
+                    <td>{{ demand.qty }}</td>
+
+                    <td *ngIf="i === 0" [attr.rowspan]="selectedOfficeSupplierApplication()['DemandDataObject'].length"
+                      class="text-center align-middle">
+                      <button
+                        *ngIf="selectedOfficeSupplierApplication().Status == '1' || selectedOfficeSupplierApplication().Status == '3'"
+                        class="btn btn btn-info text-white" (click)="openAssignModal('edit')">Assign Labels</button>
+                      <button
+                        *ngIf="selectedOfficeSupplierApplication().Status == '5' || selectedOfficeSupplierApplication().Status == '6'"
+                        class="btn btn btn-info text-white" (click)="openAssignModal('view')">View Assigned
+                        Label</button>
+                      <button type="button" *ngIf="selectedOfficeSupplierApplication().Status == '4'"
+                        class="btn btn-danger">Rejected</button>
+                    </td>
+                  </tr>
+                </tbody>
+              </table>
+            </div> -->
+
+            <h6 class="text-primary fw-bold mt-4">
+              <i class="fa fa-list-alt me-2"></i> Demand Details
+            </h6>
+            <div class="table-responsive">
+              <table class="table table-hover table-bordered align-middle">
+                <thead class="table-primary">
+                  <tr>
+                    <th>Liquor Type</th>
+                    <th>Label Applied Quantity</th>
+                    <th>Label Assigned Quantity</th>
+                    <th>Box No</th>
+                    <th>Start No - End No</th>
+                    <th>Total</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr
+                    *ngFor="let demand of selectedOfficeSupplierApplication()['DemandDataObjectViewMode']; let i = index">
+                    <td>{{ demand.type }}</td>
+                    <td>{{ demand.qty }}</td>
+                    <td>{{ demand.assignedQuantity > 0 ? demand.assignedQuantity : 0 }}</td>
+                    <td *ngIf="demand.numbering && demand.numbering.length > 0; else noNumbering">
+                      <ng-container *ngFor="let range of demand.numbering;">
+                        {{ range.BoxNo }}<br />
+                      </ng-container>
+                    </td>
+                    <td *ngIf="demand.numbering && demand.numbering.length > 0; else noNumbering">
+                      <ng-container *ngFor="let range of demand.numbering;">
+                        {{ range.start }} - {{ range.end }}<br />
+                      </ng-container>
+                    </td>
+                    <ng-template #noNumbering>
+                      <td>--</td>
+                    </ng-template>
+                    <td>{{ demand.assignedQuantity > 0 ? demand.assignedQuantity : 0 }}</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+
+            <div *ngIf="selectedOfficeSupplierApplication().Status == '5'" class="mt-4">
+              <label for="validityOfPermit" class="form-label fw-bold text-primary">
+                <i class="fa fa-calendar me-2"></i> Validity of Permit
+              </label>
+              <input type="text" id="validityOfPermit" class="form-control" [(ngModel)]="validityOfPermit" required
+                name="validityOfPermit" />
+            </div>
+
+            <h6 class="text-primary fw-bold mt-4">
+              <i class="fa fa-folder-open me-2"></i> Remarks
+            </h6>
+            <div class="table-responsive">
+              <form>
+                <textarea class="form-control" rows="3"></textarea>
+              </form>
+            </div>
+
+          </div>
+        </div>
+        <!-- Action Buttons -->
+        <div class="d-flex gap-2 mt-2 justify-content-center">
+          <button *ngFor="let action of filteredActions()" type="button" class="btn" [ngClass]="action.class"
+            (click)="onActionClick(action)">
+            {{ action.label }}
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+</div>
+
+
+<div class="modal fade bd-example-modal-lg" [id]="[globalStatus]" tabindex="-1" role="dialog"
+  aria-labelledby="ConfirmationModalTitle" aria-hidden="true">
+  <div class="modal-dialog modal-dialog-scrollable modal-lg" role="document">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="ConfirmationModalTitle">{{ getModalTitle(globalStatus) }}</h5>
+        <button type="button" class="close" data-dismiss="modal" (click)="cancelModalAction(globalStatus)"
+          aria-label="Close">
+          <span aria-hidden="true">&times;</span>
+        </button>
+      </div>
+      <div class="modal-body">
+        <p>{{ getModalMessage(globalStatus) }}</p>
+      </div>
+      <div class="modal-footer">
+        <button type="button" *ngIf="globalStatus === 'approved'" class="btn btn-success"
+          (click)="confirmModalAction(globalStatus)" data-dismiss="modal">
+          Yes, Approve
+        </button>
+
+        <button type="button" *ngIf="globalStatus === 'rejected'" class="btn btn-danger"
+          (click)="confirmModalAction(globalStatus)" data-dismiss="modal">
+          Yes, Reject
+        </button>
+
+        <button type="button" *ngIf="globalStatus === 'completed'" class="btn btn-dark"
+          (click)="confirmModalAction(globalStatus)" data-dismiss="modal">
+          Yes, Mark as Completed
+        </button>
+
+        <button type="button" class="btn btn-secondary" (click)="cancelModalAction(globalStatus)" data-dismiss="modal">
+          Cancel
+        </button>
+      </div>
+
+    </div>
+  </div>
+</div>
+
+<!-- Modal: Assign Label Edit Mode for the Status: 1, 3-->
+<!-- <div class="modal fade" id="assignModal" tabindex="-1"
+  *ngIf="selectedOfficeSupplierApplication().Status == '1' || selectedOfficeSupplierApplication().Status == '3'"
+  aria-labelledby="assignModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="assignModalLabel">Assign Labels</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <h6 class="text-primary fw-bold mt-4">
+          <i class="fa fa-list-alt me-2"></i> Demand Details
+        </h6>
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered align-middle">
+            <thead class="table-primary">
+              <tr>
+                <th></th>
+                <th>Liquor Type</th>
+                <th>Label Applied Quantity</th>
+                <th>Label Assigned Quantity</th>
+                <th>Start No - End No</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let demand of selectedOfficeSupplierApplication()['DemandDataObject']; let i = index">
+                <td>
+                  <input type="radio" name="demandSelection" [(ngModel)]="selectedLiquorType" [value]="demand.id">
+                </td>
+                <td>{{ demand.type }}</td>
+                <td>{{ demand.qty }}</td>
+                <td>{{ demand.assignedQuantity > 0 ? demand.assignedQuantity : 0 }}</td>
+                <td *ngIf="demand.numbering.length > 0; else noNumbering">
+                  <ng-container *ngFor="let range of demand.numbering;">
+                    {{ range.start }} - {{ range.end }}<br />
+                  </ng-container>
+                </td>
+                <ng-template #noNumbering>
+                  <td>--</td>
+                </ng-template>
+                <td>{{ demand.assignedQuantity > 0 ? demand.assignedQuantity : 0 }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="modal-body">
+        <div class="table-responsive" style="max-height: 50vh; overflow-y: auto">
+          <h5 class="modal-title" id="assignModalLabel">Available Stock Label</h5>
+
+          <ng-container *ngIf="hasMatchingStock; else noRecords">
+            <table class="table table-bordered">
+              <thead class="table-active">
+                <tr>
+                  <th scope="col" class="text-center" style="width: 5%;">Box</th>
+                  <th scope="col" class="text-center" style="width: 12%;">Box No</th>
+                  <th scope="col" class="text-center" style="width: 20%;">Liquor Type</th>
+                  <th scope="col" class="text-center" style="width: 5%;">Spool</th>
+                  <th scope="col" class="text-center">Start No</th>
+                  <th scope="col" class="text-center">End No</th>
+                  <th scope="col" class="text-center">Qty</th>
+                </tr>
+              </thead>
+              <tbody class="text-center">
+                <ng-container *ngFor="let box of filteredStockData">
+                  <tr *ngFor="let entry of box.Entries; let i = index">
+                    <td class="align-middle text-center" *ngIf="i === 0" [attr.rowspan]="box.Entries.length">
+                      <input type="checkbox" [(ngModel)]="box.selected" (change)="toggleBoxSelection(box)">
+                    </td>
+                    <td *ngIf="i === 0" [attr.rowspan]="box.Entries.length" class="align-middle text-center">
+                      <strong>{{ box.BoxNo }}</strong>
+                    </td>
+                    <td>{{ entry.ealTypeValue }}-{{ entry.ealTypeCode }}</td>
+                    <td class="align-middle text-center">
+                      <input type="checkbox" [(ngModel)]="entry.selected" (change)="updateSelection(box, entry)">
+                    </td>
+                    <td>{{ entry.ealLatestCode }}-{{ entry.StartNo }}</td>
+                    <td>{{ entry.ealLatestCode }}-{{ entry.EndNo }}</td>
+                    <td>{{ entry.total }}</td>
+                  </tr>
+                </ng-container>
+              </tbody>
+            </table>
+          </ng-container>
+
+          <ng-template #noRecords>
+            <div class="text-center text-danger fw-bold mt-3">Label Quantity Not Found</div>
+          </ng-template>
+
+        </div>
+      </div>
+
+      <div class="modal-footer">
+        <button type="button" class="btn btn-danger" data-bs-dismiss="modal"
+          (click)="labelAssignment('cancel')">Cancel</button>
+        <button type="button" class="btn btn-success" (click)="labelAssignment('confirmAssign')">Confirm
+          Assignment</button>
+      </div>
+    </div>
+  </div>
+</div> -->
+
+<!-- Modal: Assign Label View Mode for the Status: 5, 6-->
+<!-- <div class="modal fade" id="assignModal" tabindex="-1"
+  *ngIf="selectedOfficeSupplierApplication().Status == '5' || selectedOfficeSupplierApplication().Status == '6'"
+  aria-labelledby="assignModalLabel" aria-hidden="true">
+  <div class="modal-dialog modal-xl">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="assignModalLabel">Assign Labels</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+
+      <div class="modal-body">
+        <h6 class="text-primary fw-bold mt-4">
+          <i class="fa fa-list-alt me-2"></i> Demand Details
+        </h6>
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered align-middle">
+            <thead class="table-primary">
+              <tr>
+                <th>Liquor Type</th>
+                <th>Label Applied Quantity</th>
+                <th>Label Assigned Quantity</th>
+                <th>Box No</th>
+                <th>Start No - End No</th>
+                <th>Total</th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr *ngFor="let demand of selectedOfficeSupplierApplication()['DemandDataObjectViewMode']; let i = index">
+                <td>{{ demand.type }}</td>
+                <td>{{ demand.qty }}</td>
+                <td>{{ demand.assignedQuantity > 0 ? demand.assignedQuantity : 0 }}</td>
+                <td *ngIf="demand.numbering && demand.numbering.length > 0; else noNumbering">
+                  <ng-container *ngFor="let range of demand.numbering;">
+                    {{ range.BoxNo }}<br />
+                  </ng-container>
+                </td>
+                <td *ngIf="demand.numbering && demand.numbering.length > 0; else noNumbering">
+                  <ng-container *ngFor="let range of demand.numbering;">
+                    {{ range.start }} - {{ range.end }}<br />
+                  </ng-container>
+                </td>
+                <ng-template #noNumbering>
+                  <td>--</td>
+                </ng-template>
+                <td>{{ demand.assignedQuantity > 0 ? demand.assignedQuantity : 0 }}</td>
+              </tr>
+            </tbody>
+          </table>
+        </div>
+      </div>
+
+    </div>
+  </div>
+</div> -->

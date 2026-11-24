@@ -1,0 +1,163 @@
+<div style="display: flex;flex-direction: row;">
+
+
+
+    <div class="containerSide" >
+        <app-sidebar></app-sidebar>
+         <!-- <app-sidebar1></app-sidebar1> -->
+    </div>
+ 
+ 
+    <div class="container-fluid px-3 py-5 mx-auto" style="overflow: hidden;"  >
+
+      <div class="row d-flex "  >
+        <div class="col-xl-11 text-center" >
+
+      <div class="main-body">
+      
+            <br>
+            <!-- <nav aria-label="breadcrumb" class="main-breadcrumb">
+              <ol class="breadcrumb">
+                <li class="breadcrumb-item"><a href="index.html">Home</a></li>
+                <li class="breadcrumb-item"><a href="javascript:void(0)">User</a></li>
+                <li class="breadcrumb-item active" aria-current="page">User Profile</li>
+              </ol>
+            </nav> -->
+            
+      
+            <div class="row gutters-sm">
+            
+              <section id="tabs" class="project-tab">
+                <div class="container">
+                    <div class="row">
+                        <div class="col-md-12">
+                            <nav>
+                                <div class="nav nav-tabs nav-fill" id="nav-tab" role="tablist">
+                                    <a class="nav-item nav-link active" id="nav-home-tab" data-toggle="tab" href="#nav-home" role="tab" aria-controls="nav-home" aria-selected="true">EAL Type Master</a>
+                                    <a class="nav-item nav-link" id="nav-profile-tab" data-toggle="tab" href="#nav-profile" role="tab" aria-controls="nav-profile" aria-selected="false">EAL Type Code Master</a>
+                                    <a class="nav-item nav-link" id="nav-contact-tab" data-toggle="tab" href="#nav-contact" role="tab" aria-controls="nav-contact" aria-selected="false">Pack Size Master</a>
+                                </div>
+                            </nav>
+                            <div class="tab-content" id="nav-tabContent">
+                                <div class="tab-pane fade show active" id="nav-home" role="tabpanel" aria-labelledby="nav-home-tab">
+
+                                  <div class="col-md-12 mb-3">
+                                    <div class="card ">
+                                      <div class="card-body">
+                                        <div class="d-flex flex-column align-items-center text-center">
+                                          <img src='assets/images/logoMasterTbl-back.png' alt="Admin" class="rounded-circle" width="150">
+                                          <div class="mt-3">
+                                            <!-- <h4>EAL Type Master</h4> -->
+                                            <h5><p class="text-secondary mb-1">Enter new EAL Type to</p></h5>
+                                            <h5><p class="text-muted font-size-sm">EAL Master Table</p> </h5>
+
+                                            <select class="form-select form-select-md  " >
+                                              <option selected>Available EAL Type</option>
+                                              <option value="1">Spirit</option>
+                                              <option value="2">Malt</option>
+                                              <option value="3">Plain</option>
+                                            </select>
+                                            <br>
+                                            <input type="text" id="EalTypeName" name="email" class="form-control form-input-md" placeholder="Enter New EAL Type Name">
+                                            <br>
+                                            <input type="text" id="EalType" name="email" class="form-control form-input-md" placeholder="Enter EAL Type">
+                                            <br>
+                                            <!-- <button class="btn btn-primary">Follow</button>    data-toggle="modal" data-target="#changePasswordModal"                          -->
+                                             
+                                            <button class="btn btn-outline-primary" >Add</button>
+                                          </div>
+                                        </div>
+                                      </div>
+                                    </div>
+                                  </div>
+              
+                                </div>
+                                <div class="tab-pane fade" id="nav-profile" role="tabpanel" aria-labelledby="nav-profile-tab">
+
+                                  <div class="col-md-12 mb-3">
+                                    <div class="card ">
+                                        <div class="card-body">
+                                          <div class="d-flex flex-column align-items-center text-center">
+                                            <img src='assets/images/logoMasterTbl-back.png' alt="Admin" class="rounded-circle" width="150">
+                                            <div class="mt-3">
+                                              <!-- <h4>EAL Type Code Master</h4> -->
+                                              <h5><p class="text-secondary mb-1">Enter new EAL Type Code to</p></h5>
+                                              <h5><p class="text-muted font-size-sm">EAL Type Code Master Table</p> </h5>
+
+                                              <select class="form-select form-select-md  " >
+                                                <option selected>Available EAL Type Code</option>
+                                                <option value="1">ST</option>
+                                                <option value="2">PL</option>
+                                                <option value="3">ML</option>
+                                              </select>
+                                              <br>
+
+                                              <input type="text" id="EalType" name="email" class="form-control form-input-md" placeholder="Enter EAL Type Code">
+                                              <br>
+                                              <select class="form-select form-select-md  " >
+                                                <option selected>Select EAL Type</option>
+                                                <option value="1">Spirit</option>
+                                                <option value="2">Malt</option>
+                                                <option value="3">Plain</option>
+                                              </select>
+                                              <br>
+                                              <!-- <button class="btn btn-primary">Follow</button>    data-toggle="modal" data-target="#changePasswordModal"                          -->
+                                               
+                                              <button class="btn btn-outline-primary" >Add</button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                  </div>
+
+                                </div>
+                                <div class="tab-pane fade" id="nav-contact" role="tabpanel" aria-labelledby="nav-contact-tab">
+
+                                  <div class="col-md-12 mb-3">
+                                    <div class="card ">
+                                        <div class="card-body">
+                                          <div class="d-flex flex-column align-items-center text-center">
+                                            <img src='assets/images/logoMasterTbl-back.png' alt="Admin" class="rounded-circle" width="150">
+                                            <div class="mt-3">
+                                              <!-- <h4>Pack Size Master</h4> -->
+                                              <h5> <p class="text-secondary mb-1">Enter new Pack Size to</p></h5>
+                                                <h5> <p class="text-muted font-size-sm">Pack Size Master Table</p> <br></h5>
+
+                                                <select class="form-select form-select-md  " >
+                                                  <option selected>Available Pack Size</option>
+                                                  <option value="1">180ML</option>
+                                                  <option value="2">375ML</option>
+                                                  <option value="3">650ML</option>
+                                                </select>
+                                                <br>
+                                              <input type="text" id="EalType" name="email" class="form-control form-input-md" placeholder="Enter Pack Size">
+                                              <br><br>
+                                              <!-- <button class="btn btn-primary">Follow</button>    data-toggle="modal" data-target="#changePasswordModal"                          -->
+                                               
+                                              <button class="btn btn-outline-primary" >Add</button>
+                                            </div>
+                                          </div>
+                                        </div>
+                                      </div>
+                                  </div>
+
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+              </section>
+            
+            </div>
+
+          </div>
+
+
+
+
+
+        </div>
+        </div>
+      </div>
+
+      </div>

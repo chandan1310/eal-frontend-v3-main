@@ -1,0 +1,657 @@
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+/* =====================================================
+   PAGE BACKGROUND
+===================================================== */
+
+.page-container {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  position: relative;
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  font-family: "Segoe UI", sans-serif;
+
+  background:
+    linear-gradient(
+      135deg,
+      #0b1736 0%,
+      #1f3f8e 35%,
+      #4c74bf 70%,
+      #344766 100%
+    );
+}
+
+/* =====================================================
+   BACKGROUND GLOW
+===================================================== */
+
+.page-container::before {
+  content: "";
+
+  position: absolute;
+
+  width: 700px;
+  height: 700px;
+
+  right: -150px;
+  top: -150px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,0.18),
+      transparent 70%
+    );
+
+  z-index: 0;
+}
+
+.page-container::after {
+  content: "";
+
+  position: absolute;
+
+  width: 600px;
+  height: 600px;
+
+  bottom: -250px;
+  left: -200px;
+
+  border-radius: 50%;
+
+  background:
+    radial-gradient(
+      circle,
+      rgba(255,255,255,0.08),
+      transparent 70%
+    );
+
+  z-index: 0;
+}
+
+/* =====================================================
+   FLOATING GLASS BOXES
+===================================================== */
+
+.bg-shapes {
+  position: absolute;
+  inset: 0;
+
+  overflow: hidden;
+
+  z-index: 1;
+}
+
+.shape {
+  position: absolute;
+
+  background: rgba(255,255,255,0.10);
+
+  border-radius: 12px;
+
+  backdrop-filter: blur(4px);
+
+  box-shadow:
+    0 8px 25px rgba(0,0,0,0.05);
+
+  animation-timing-function: ease-in-out;
+  animation-iteration-count: infinite;
+}
+
+/* =====================================================
+   BOXES
+===================================================== */
+
+/* =====================================================
+   SHAPES - BALANCED SPEED
+===================================================== */
+
+.s1  { width: 130px; height: 130px; top: 6%;    left: 5%;   animation: float1 4s infinite; }
+.s2  { width: 75px;  height: 75px;  top: 12%;   right: 20%;  animation: float2 3s infinite; }
+.s3  { width: 170px; height: 170px; bottom: -2%; right: 3%;   animation: float3 4.5s infinite; }
+.s4  { width: 60px;  height: 60px;  bottom: 15%; left: 12%;  animation: float4 3.5s infinite; }
+.s5  { width: 90px;  height: 90px;  top: 48%;   left: 48%;  animation: float5 2.5s infinite; }
+.s6  { width: 45px;  height: 45px;  top: 30%;   left: 25%;  animation: float2 2s infinite; }
+.s7  { width: 120px; height: 120px; top: -2%;   right: 2%;   animation: float3 4s infinite; }
+.s8  { width: 70px;  height: 70px;  bottom: 30%; right: 30%;  animation: float4 5s infinite; }
+.s9  { width: 95px;  height: 95px;  top: 70%;   left: -2%;  animation: float5 8s infinite; }
+.s10 { width: 85px;  height: 85px;  bottom: 12%; right: 18%;  animation: float1 6s infinite; }
+.s11 { width: 55px;  height: 55px;  top: 42%;   right: 7%;   animation: float2 5.5s infinite; }
+.s12 { width: 110px; height: 110px; bottom: -2%; left: 35%;  animation: float3 7s infinite; }
+.s13 { width: 65px;  height: 65px;  top: 20%;   left: 40%;  animation: float1 5s infinite; }
+.s14 { width: 50px;  height: 50px;  bottom: 42%; right: 45%;  animation: float4 4.5s infinite; }
+.s15 { width: 140px; height: 140px; top: 15%;   right: -3%;  animation: float5 8s infinite; }
+.s16 { width: 100px; height: 100px; top: 10%;   left: 80%;  animation: float1 5.5s infinite; }
+.s17 { width: 45px;  height: 45px;  top: 85%;   left: 10%;  animation: float2 4s infinite; }
+.s18 { width: 120px; height: 120px; top: 55%;   right: 5%;   animation: float3 7.5s infinite; }
+.s19 { width: 70px;  height: 70px;  bottom: 5%;  left: 50%;  animation: float4 6s infinite; }
+.s20 { width: 150px; height: 150px; top: 25%;   left: 15%;  animation: float5 8s infinite; }
+.s21 { width: 55px;  height: 55px;  top: 5%;    left: 30%;  animation: float1 5s infinite; }
+.s22 { width: 90px;  height: 90px;  bottom: 20%; right: 10%;  animation: float2 6.5s infinite; }
+.s23 { width: 110px; height: 110px; top: 40%;   left: 40%;  animation: float3 8s infinite; }
+.s24 { width: 65px;  height: 65px;  top: 75%;   right: 25%;  animation: float4 5.5s infinite; }
+.s25 { width: 130px; height: 130px; bottom: 40%; left: 2%;   animation: float5 7s infinite; }
+.s26 { width: 40px;  height: 40px;  top: 60%;   left: 60%;  animation: float1 4s infinite; }
+.s27 { width: 85px;  height: 85px;  top: 2%;    right: 45%;  animation: float2 5s infinite; }
+.s28 { width: 105px; height: 105px; bottom: 10%; left: 20%;  animation: float3 7s infinite; }
+.s29 { width: 50px;  height: 50px;  top: 20%;   right: 15%;  animation: float4 4s infinite; }
+.s30 { width: 140px; height: 140px; bottom: 50%; left: 2%;   animation: float5 6s infinite; }
+
+/* =====================================================
+   ANIMATIONS
+===================================================== */
+
+@keyframes float1 {
+
+  0% {
+    transform: translateY(0px);
+  }
+
+  50% {
+    transform: translateY(-25px);
+  }
+
+  100% {
+    transform: translateY(0px);
+  }
+}
+
+@keyframes float2 {
+
+  0% {
+    transform: translateX(0px);
+  }
+
+  50% {
+    transform: translateX(20px);
+  }
+
+  100% {
+    transform: translateX(0px);
+  }
+}
+
+@keyframes float3 {
+
+  0% {
+    transform: translateY(0px) rotate(0deg);
+  }
+
+  50% {
+    transform: translateY(18px) rotate(4deg);
+  }
+
+  100% {
+    transform: translateY(0px) rotate(0deg);
+  }
+}
+
+@keyframes float4 {
+
+  0% {
+    transform: translateY(0px) translateX(0px);
+  }
+
+  50% {
+    transform: translateY(-15px) translateX(-12px);
+  }
+
+  100% {
+    transform: translateY(0px) translateX(0px);
+  }
+}
+
+@keyframes float5 {
+
+  0% {
+    transform: scale(1);
+  }
+
+  50% {
+    transform: scale(1.08);
+  }
+
+  100% {
+    transform: scale(1);
+  }
+}
+
+/* =====================================================
+   LOGIN CARD
+===================================================== */
+
+.login-card {
+  width: 1120px;
+  /* Reduced from 650px to fit the content more tightly */
+  min-height: 580px; 
+
+  display: grid;
+  grid-template-columns: 58% 42%;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+  z-index: 5;
+  box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+}
+
+/* =====================================================
+   LEFT PANEL
+===================================================== */
+
+.brand-section {
+  background: rgba(255,255,255,0.10);
+
+  backdrop-filter: blur(18px);
+
+  border: 1px solid rgba(255,255,255,0.08);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+
+  padding: 50px;
+}
+
+.brand-content {
+  text-align: center;
+  color: white;
+}
+
+.logo {
+  display: block;
+  margin: 0 auto 18px auto; /* Centers the logo */
+  width: 80px;
+  height: auto; /* Maintains aspect ratio */
+}
+
+
+
+/* Logo as CSS Background */
+.logo {
+  width: 80px;
+  height: 80px; /* Must define height */
+  margin-bottom: 18px;
+  border-radius: 50px;
+  background-image: url('assets/images/images.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* Illustration as CSS Background */
+.illustration {
+  width: 390px;
+  height: 300px; /* Must define height based on image aspect ratio */
+  max-width: 100%;
+  opacity: 0.96;
+  margin-top: 20px;
+
+  background-image: url('assets/images/Printing\ invoices-bro.png');
+  background-size: contain;
+  background-repeat: no-repeat;
+  background-position: center;
+}
+
+/* =====================================================
+   RIGHT PANEL
+===================================================== */
+
+.form-section {
+  background: #0f172a99;
+  backdrop-filter: blur(10px);
+  
+  /* Reduced vertical padding from 55px to 35px */
+  padding: 35px 55px; 
+
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+  overflow: visible;
+}
+/* =====================================================
+   HEADER
+===================================================== */
+
+.login-top {
+  text-align: center;
+
+}
+
+.lock-icon {
+  width: 72px;
+  height: 72px;
+
+  margin: auto auto 18px;
+
+  border-radius: 50%;
+
+  background: white;
+
+  color: #1e3a8a;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  font-size: 24px;
+}
+
+.login-top h3 {
+  color: white;
+
+  font-size: 42px;
+
+  font-family: Georgia, serif;
+  font-weight: 700;
+  padding: 0 0 40px 0;
+}
+.captcha-group {
+  position: relative;
+  max-width: 500px; /* Match your other inputs */
+  margin-top: 25px;
+}
+
+
+/* Single row layout */
+.captcha-row-wrapper {
+  display: flex;
+  align-items: center;
+  gap: 10px; /* Space between captcha and input */
+  width: 100%;
+  height: 54px;
+}
+
+/* The box containing the Canvas and Refresh button */
+.captcha-display {
+  display: flex;
+  align-items: center;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid #3e4f73;
+  border-radius: 10px;
+  padding: 0 10px;
+  height: 100%;
+  flex: 0 0 auto; /* Don't shrink */
+}
+
+.captcha-display canvas {
+  border-radius: 4px;
+}
+
+.refresh-btn {
+  background: none;
+  border: none;
+  color: #94a3b8;
+  cursor: pointer;
+  font-size: 18px;
+  margin-left: 10px;
+  transition: color 0.2s;
+}
+
+.refresh-btn:hover {
+  color: #4d8dff;
+}
+
+/* The actual text input */
+.captcha-input {
+  flex: 1; /* Take up remaining space */
+  height: 100%;
+  background: rgba(255, 255, 255, 0.05);
+  border: 1.5px solid #3e4f73;
+  border-radius: 10px;
+  padding: 0 15px;
+  color: white;
+  font-size: 14px;
+  outline: none;
+  transition: all 0.3s ease;
+}
+
+.captcha-input:focus {
+  border-color: #4d8dff;
+  background: rgba(255, 255, 255, 0.08);
+  box-shadow: 0 0 0 3px rgba(77, 141, 255, 0.15);
+}
+
+.captcha-input::placeholder {
+  color: #64748b;
+}
+/* =====================================================
+   FORM
+===================================================== */
+
+/* Container for the page background to match your image */
+body {
+  background-color: #24344d; 
+  padding: 50px;
+  font-family: sans-serif;
+}
+
+.form-group {
+  margin-bottom: 30px;
+}
+
+.input-container {
+  position: relative;
+  width: 100%;
+  max-width: 500px; /* Adjust as needed */
+}
+
+.floating-label {
+  position: absolute;
+  left: 12px;
+  top: 0;
+  /* This moves the label exactly onto the border line */
+  transform: translateY(-50%); 
+  
+  /* Matches the dark background of the label in your image */
+  background-color: #0f172a; 
+  color: #60a5fa; /* Light blue text */
+  
+  padding: 2px 8px;
+  font-size: 13px;
+  font-weight: 500;
+  border-radius: 4px;
+  z-index: 1;
+  pointer-events: none;
+}
+
+.input-container input {
+  width: 100%;
+  height: 54px;
+  background: transparent;
+  
+  /* Border style from the image */
+  border: 1.5px solid #3e4f73;
+  border-radius: 10px;
+  
+  padding: 0 15px;
+  color: white;
+  font-size: 16px;
+  box-sizing: border-box;
+  transition: all 0.2s ease;
+}
+
+/* Hover & Focus Effects */
+.input-container input:focus {
+  outline: none;
+  border-color: #4d8dff;
+  box-shadow: 0 0 0 4px rgba(77, 141, 255, 0.1);
+}
+
+.input-container input:hover {
+  border-color: #5a6b8d;
+}
+
+/* =====================================================
+   CAPTCHA
+===================================================== */
+
+.captcha-box {
+  margin-bottom: 24px;
+}
+
+.captcha-row {
+  display: flex;
+  align-items: center;
+
+  gap: 12px;
+
+  margin-bottom: 12px;
+}
+
+canvas {
+  border-radius: 6px;
+
+  background: white;
+}
+
+.refresh-btn {
+  width: 40px;
+  height: 40px;
+
+  border: none;
+  border-radius: 6px;
+
+  background: #0f4cc9;
+
+  color: white;
+
+  cursor: pointer;
+
+  transition: all 0.3s ease;
+}
+
+.refresh-btn:hover {
+  background: #2563eb;
+
+  transform: rotate(90deg);
+}
+
+.captcha-input {
+  width: 100%;
+  height: 46px;
+
+  border-radius: 6px;
+  border: none;
+
+  padding: 0 14px;
+
+  font-size: 14px;
+}
+
+/* =====================================================
+   REMEMBER
+===================================================== */
+
+.remember-box {
+  display: flex;
+  align-items: center;
+
+  gap: 10px;
+
+  margin-bottom: 28px;
+
+  color: #d6deea;
+
+  font-size: 13px;
+}
+
+/* =====================================================
+   LOGIN BUTTON
+===================================================== */
+
+.login-btn {
+  width: 100%;
+  min-height: 52px;
+
+  border: none;
+  border-radius: 6px;
+
+  background:
+    linear-gradient(
+      90deg,
+      #0056d6,
+      #2563eb
+    );
+
+  color: white;
+
+  font-size: 16px;
+  font-weight: 600;
+
+  cursor: pointer;
+
+  display: flex;
+  align-items: center;
+  justify-content: center;
+
+  transition: all 0.3s ease;
+
+  margin-top: 10px;
+}
+
+.login-btn:hover {
+  transform: translateY(-2px);
+
+  box-shadow:
+    0 10px 25px rgba(37,99,235,0.35);
+}
+
+/* =====================================================
+   FOOTER
+===================================================== */
+
+.footer-link {
+  margin-top: 24px;
+
+  text-align: center;
+}
+
+.footer-link a {
+  color: #f6b01e;
+
+  text-decoration: none;
+
+  font-size: 13px;
+}
+
+.footer-link a:hover {
+  text-decoration: underline;
+}
+
+/* =====================================================
+   RESPONSIVE
+===================================================== */
+
+@media (max-width: 992px) {
+
+  .login-card {
+    width: 92%;
+
+    min-height: auto;
+
+    grid-template-columns: 1fr;
+  }
+
+  .brand-section {
+    display: none;
+  }
+
+  .form-section {
+    padding: 40px 24px;
+  }
+
+  .login-top h3 {
+    font-size: 32px;
+  }
+}
